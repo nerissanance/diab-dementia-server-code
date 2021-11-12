@@ -13,18 +13,6 @@
 
 
 
-
-if (!require(testthatsomemore)) {
-  if (!require(devtools)) install.packages('devtools'); require(devtools)
-  install_github('robertzk/testthatsomemore')
-}
-
-
-
-
-result1 <- ltmle(data, Anodes="A", Ynodes="Y", abar=1, estimate.time = F, SL.library = "SL.glmnet")
-summary(result1)
-
 SuperLearner_override <- function (Y, X, newX = NULL, family = gaussian(), SL.library,
                                    method = "method.NNLS", id = NULL, verbose = FALSE, control = list(),
                                    cvControl = list(), obsWeights = NULL, env = parent.frame()) {
