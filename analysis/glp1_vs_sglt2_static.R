@@ -34,7 +34,7 @@ varmethod = "tmle" #variance method
 #set up parallelization on windows with the Snow package
 options(snow.cores=ncores)
 
-d_wide <- readRDS(file=here("data/time_dem_wide.rds"))                   
+d_wide <- readRDS(file=here("data/time_dem_wide.rds"))
 d_wide
 colnames(d_wide)
 
@@ -42,7 +42,7 @@ colnames(d_wide)
 d_wide_sub <- d_wide %>% filter(secdate>=yr)
 
 #Use only first N time points
-d <- d_wide %>% 
+d <- d_wide %>%
   dplyr::select(!!(baseline_vars),matches(paste0("_(",paste0(0:(N_time-1),collapse="|"),")$")))
 colnames(d)
 
@@ -59,44 +59,53 @@ d[is.na(d)] <- 0 #Missingness due to censoring should be coded 0 as long as cens
 sum(is.na(d)) # NOTE! Check that censoring nodes correspond with NA's
 
 
- 
+
 
 #-------------------------------------------------------------------------------
 #  Contrasting if everyone had glp1 versus if everyone was on sglt2
 #-------------------------------------------------------------------------------
 
 #specify LTMLE analysis
-spec_ltmle <- spec_analysis(data=d, c(long_covariates,"event_death_"), 
-                            baseline_vars, N_time, 
-                            Avars=c("glp1_","sglt2_inhib_"), 
+spec_ltmle <- spec_analysis(data=d, c(long_covariates,"event_death_"),
+                            baseline_vars, N_time,
+                            Avars=c("glp1_","sglt2_inhib_"),
                             Yvars=c("event_dementia_"))
 
 #specify the intervened treatment
 abar_spec = list(rep(c(1,0),N_time),rep(c(0,1),N_time))
 
 
+
+
+package_stub("SuperLearner", "SuperLearner", SuperLearner_override, {
+  res_RR <- ltmle(data=spec_ltmle$data,
+                  Anodes = spec_ltmle$Anodes,
+                  Cnodes = spec_ltmle$Cnodes,
+                  Lnodes = spec_ltmle$Lnodes,
+                  Ynodes = spec_ltmle$Ynodes,
+                  survivalOutcome = T,
+                  abar = abar_spec,
+                  deterministic.Q.function = det.Q.function,
+                  SL.library = SL.library,
+                  SL.cvControl = list(V=nfolds),
+                  variance.method = varmethod #use tmle variance option for accuracy with positivity violations
+  )})
+
+summary(result2)
+
+
+
 res_RR <- NULL
 start.time <- Sys.time()
-res_RR <- ltmle(data=spec_ltmle$data, 
-                Anodes = spec_ltmle$Anodes, 
-                Cnodes = spec_ltmle$Cnodes, 
-                Lnodes = spec_ltmle$Lnodes, 
-                 Ynodes = spec_ltmle$Ynodes,
-                 survivalOutcome = T, 
-                 abar = abar_spec,
-                deterministic.Q.function = det.Q.function,
-                SL.library = SL.library,
-                SL.cvControl = list(V=nfolds), 
-                 variance.method = varmethod #use tmle variance option for accuracy with positivity violations
-)
+
 end.time <- Sys.time()
 print("runtime:")
 print(difftime(end.time, start.time, units="mins"))
 summary(res_RR)
 
 
-saveRDS(res_RR$cum.g,file=here::here(paste0("data/glp1_sglt2_static_cum_g_",N_time,".rds")))  
-saveRDS(res_RR$cum.g.unbounded,file=here::here(paste0("data/glp1_sglt2_static_g_",N_time,".rds")))  
+saveRDS(res_RR$cum.g,file=here::here(paste0("data/glp1_sglt2_static_cum_g_",N_time,".rds")))
+saveRDS(res_RR$cum.g.unbounded,file=here::here(paste0("data/glp1_sglt2_static_g_",N_time,".rds")))
 save(res_RR,file=paste0("data/NOTRANSFER_glp1_sglt2_static",N_time,".RData"))
 
 sink()
