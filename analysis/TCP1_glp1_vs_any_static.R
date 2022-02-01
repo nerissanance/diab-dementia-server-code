@@ -40,8 +40,9 @@ d_wide <- readRDS(file=here("data/simdata_10k.rds"))
 d_wide
 colnames(d_wide)
 
-#subset to after yr
-d_wide_sub <- d_wide %>% filter(secdate>=yr)
+# #subset to after yr
+# #ATTN: commenting out for now, need to add secdate in later
+# d_wide_sub <- d_wide %>% filter(secdate>=yr)
 
 #Use only first N time points
 d <- d_wide %>%
