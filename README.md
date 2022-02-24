@@ -25,7 +25,7 @@ File for running all analysis subfiles (will need edited)
 
 File for running all cleaning files. Will eventually need edited and run once for final dataset
 
-# 1_data_cleaning folder
+# data_cleaning folder
 
 
 ## 1_prepare_dataset.R
@@ -93,16 +93,21 @@ tabulations of the exposure data
 
 
 
-# 2_analysis
+# analysis folder
 
-## glp1_vs_sglt2_static
+updated analysis plan in google docs (title: 1_dementia_static_regime_analysis_plan)
 
-comparing glp1 and sglt2 as static (continuous use) regimes
+## TCP1_glp1_vs_any_static.R 
 
-## glp1_vs_sglt_stochastic
+comparing glp1 to no glp1 use (do not intervene on other regime)
 
-comparing glp1 and sglt2 as stocahstic regimes allowing for 1 time bin gaps in use
+## TCP2_MSM.R 
 
+glp1 MSM
+
+## TCP3_glp1_vs_sglt2_static.R 
+
+comparing continuous glp1 to continuous sglt2 use (static regimes)
 
 # 3_results
 
@@ -130,4 +135,6 @@ Benchmark SL and contrast static regimes of continuous GLP1 use vs continuous SG
       *  GLP1 vs any second-line
       *  Death outcome
       *other sensitivity analyses
+  *  subset to places with A1c and adjust for A1c
   *  Rmd script of all relevant results to export off the server
+  
