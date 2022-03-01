@@ -2,12 +2,11 @@ getwd()  # under folder diabetes-dementia-TL-roadmap
 pkg_dir <- "../diabetes-dementia-TL-roadmap/simulation_ZW/DK_trip_2021/pkgs/ltmle/cvSL_snow_skipspeedglm_20211005/ltmle-master/R/"  # load ltmle with snow parallel SL; skip speedglm runs
 # pkg_dir <- "./simulation_ZW/DK_trip_2021/pkgs/ltmle/cvSL_skipspeedglm_20210915/ltmle-master/R/"  # load ltmle with multicore parallel SL; skip speedglm runs
 data_path <- "../diabetes-dementia-TL-roadmap/simulation_ZW/DK_trip_2021/dt_use_backup_MSM.rds"  # example data
+rm(list=ls())
 
 library(dplyr)
 library(data.table)
 library(ltmle)
-rm(list=ls())
-# sink(file="./2_analysis/TCP1_glp1_vs_any_static.Rout",append=F)
 Sys.Date()
 library(here)
 source(here::here("0_config.R"))
