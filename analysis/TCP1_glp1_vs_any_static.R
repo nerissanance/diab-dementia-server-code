@@ -13,10 +13,10 @@ yr = 2011 #year to start cohort definition (depending on which drugs)
 N_time = 11 #number of time points you want to look at
 ncores = 10 #number of cores to use
 
-#SL.library = c("SL.glmnet", "SL.glm")
-SL.library = c("glm") #for debugging
+SL.library = c("SL.glmnet")
+# SL.library = c("glm") #for debugging
 nfolds = 10 #number of folds for CV SL
-varmethod = "tmle" #variance method
+varmethod = "ic" #variance method
 
 #-----------------------------------
 #-----------------------------------
