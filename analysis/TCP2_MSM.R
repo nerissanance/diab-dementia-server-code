@@ -82,8 +82,8 @@ varmethod = "tmle" #variance method
 
 
 # ltmleMSM call
-options(snow.cores = ncores)
-test <- ltmleMSM(data, Anodes = grep("^A1_", node_names),
+package_stub("SuperLearner", "SuperLearner", SuperLearner_override, {
+  res_RR <- ltmleMSM(data, Anodes = grep("^A1_", node_names),
                  Lnodes = paste0("L_", 1:11),
                  Ynodes = grep("^Y_", node_names),
                  Cnodes = grep("^C_", node_names),
@@ -98,7 +98,8 @@ test <- ltmleMSM(data, Anodes = grep("^A1_", node_names),
                  SL.cvControl = list(V = ncores),  # control CV fold numbers; might be used in paralleled version
                  # gbounds = c(0.05, 0.95),
                  estimate.time = F  # do not run on a n=50 subsample for predicting computation time
-)
+  )})
 
-
+summary(res_RR)
+save(res_RR,file=paste0("./data/NOTRANSFER_glp1_MSM",N_time,".RData"))
 

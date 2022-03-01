@@ -1,6 +1,5 @@
 
 rm(list=ls())
-# sink(file="./2_analysis/TCP1_glp1_vs_any_static.Rout",append=F)
 Sys.Date()
 library(here)
 source(here::here("0_config.R"))
@@ -67,7 +66,7 @@ for(i in 1:(N_time+1)){
   j=i+1
   d[get(paste0("event_dementia_",i))==1, (paste0("event_dementia_",j)):=1]
   d[get(paste0("event_death_",i))==1, (paste0("event_death_",j)):=1]
-  
+
   }
 ## UNCOMMENT FOR RUNNING MANUAL COMPETING RISK FIX
 ## edit--when one occurs first, set other to zero so there's no competing event:
@@ -123,10 +122,8 @@ print(difftime(end.time, start.time, units="mins"))
 summary(res_RR)
 
 
-saveRDS(res_RR$cum.g,file=here::here(paste0("data/glp1_sglt2_static_cum_g_",N_time,".rds")))
-saveRDS(res_RR$cum.g.unbounded,file=here::here(paste0("data/glp1_sglt2_static_g_",N_time,".rds")))
-save(res_RR,file=paste0("data/NOTRANSFER_glp1_sglt2_static",N_time,".RData"))
 
-# sink()
+save(res_RR,file=paste0("./data/NOTRANSFER_glp1_any_static",N_time,".RData"))
+
 
 
