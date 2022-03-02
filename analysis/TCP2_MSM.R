@@ -2,6 +2,8 @@ getwd()  # under folder diabetes-dementia-TL-roadmap
 pkg_dir <- "../diabetes-dementia-TL-roadmap/simulation_ZW/DK_trip_2021/pkgs/ltmle/cvSL_snow_skipspeedglm_20211005/ltmle-master/R/"  # load ltmle with snow parallel SL; skip speedglm runs
 # pkg_dir <- "./simulation_ZW/DK_trip_2021/pkgs/ltmle/cvSL_skipspeedglm_20210915/ltmle-master/R/"  # load ltmle with multicore parallel SL; skip speedglm runs
 data_path <- "../diabetes-dementia-TL-roadmap/simulation_ZW/DK_trip_2021/dt_use_backup_MSM.rds"  # example data
+
+
 rm(list=ls())
 
 library(dplyr)
@@ -81,8 +83,10 @@ varmethod = "tmle" #variance method
 
 
 # ltmleMSM call
+
 package_stub("SuperLearner", "SuperLearner", SuperLearner_override, {
-  res_RR <- ltmleMSM(data, Anodes = grep("^A1_", node_names),
+  testthatsomemore::package_stub("ltmle", "Estimate", Estimate_override, {
+    res_RR <- ltmleMSM(data, Anodes = grep("^A1_", node_names),
                  Lnodes = paste0("L_", 1:11),
                  Ynodes = grep("^Y_", node_names),
                  Cnodes = grep("^C_", node_names),
@@ -97,7 +101,7 @@ package_stub("SuperLearner", "SuperLearner", SuperLearner_override, {
                  SL.cvControl = list(V = ncores),  # control CV fold numbers; might be used in paralleled version
                  # gbounds = c(0.05, 0.95),
                  estimate.time = F  # do not run on a n=50 subsample for predicting computation time
-  )})
+    )})})
 
 summary(res_RR)
 save(res_RR,file=paste0("./data/NOTRANSFER_glp1_MSM",N_time,".RData"))

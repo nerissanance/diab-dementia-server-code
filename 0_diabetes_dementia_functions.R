@@ -13,14 +13,26 @@
 
 
 
-SuperLearner_override <- function (Y, X, newX = NULL, family = gaussian(), SL.library,
-                                   method = "method.NNLS", id = NULL, verbose = FALSE, control = list(),
-                                   cvControl = list(), obsWeights = NULL, env = parent.frame()) {
+# SuperLearner_override <- function(Y, X, newX = NULL, family = gaussian(), SL.library,
+#                                   method = "method.NNLS", id = NULL, verbose = FALSE, control = list(),
+#                                   cvControl = list(), obsWeights = NULL, env = parent.frame()) {
+#   stopifnot(identical(SL.library, "SL.glmnet"))
+#
+#   res <- SL.glmnet(Y, X, newX, family, obsWeights, id)
+#   list(model=res, SL.predict = res$pred)
+# }
+
+SuperLearner_override <- function(Y, X, newX = NULL, family = gaussian(), SL.library,
+                                  method = "method.NNLS", id = NULL, verbose = FALSE, control = list(),
+                                  cvControl = list(), obsWeights = NULL, env = parent.frame()) {
   stopifnot(identical(SL.library, "SL.glmnet"))
-  list(SL.predict = SL.glmnet(Y, X, newX, family, obsWeights, id)$pred)
+
+  res <- NULL
+  try(res <- SL.glmnet(Y, X, newX, family, obsWeights, id))
+  if(is.null(res)){res <- SL.mean(Y, X, newX, family, obsWeights, id)}
+
+  list(model=res$fit, SL.predict = res$pred)
 }
-
-
 
 package_stub<-function (package_name, function_name, stubbed_value, expr){
   if (!is.element(package_name, utils::installed.packages()[,

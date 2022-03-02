@@ -63,8 +63,10 @@ abar_spec = list(rep(c(1,0),N_time),rep(c(0,1),N_time))
 
 start.time <- Sys.time()
 
+
 package_stub("SuperLearner", "SuperLearner", SuperLearner_override, {
-  res_RR <- ltmle(data=spec_ltmle$data,
+  testthatsomemore::package_stub("ltmle", "Estimate", Estimate_override, {
+    res_RR <- ltmle(data=spec_ltmle$data,
                   Anodes = spec_ltmle$Anodes,
                   Cnodes = spec_ltmle$Cnodes,
                   Lnodes = spec_ltmle$Lnodes,
@@ -75,7 +77,7 @@ package_stub("SuperLearner", "SuperLearner", SuperLearner_override, {
                   SL.library = SL.library,
                   SL.cvControl = list(V=nfolds),
                   variance.method = varmethod #use tmle variance option for accuracy with positivity violations
-  )})
+    )})})
 
 end.time <- Sys.time()
 print("runtime:")
