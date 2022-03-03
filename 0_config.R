@@ -17,7 +17,6 @@ library(glmnet)
 
 #load functions
 source(here::here("0_diabetes_dementia_functions.R"))
-source(paste0(here::here(),"/0_ltmle_Estimate_update.R"))
 
 #source(here::here("0_glmnet_specs.R"))
 

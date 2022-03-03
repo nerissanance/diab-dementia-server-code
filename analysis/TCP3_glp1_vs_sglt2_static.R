@@ -3,6 +3,7 @@ rm(list=ls())
 Sys.Date()
 library(here)
 source(here::here("0_config.R"))
+source(paste0(here::here(),"/0_ltmle_Estimate_update.R"))
 
 #-----------------------------------
 #-----------------------------------
@@ -85,7 +86,5 @@ print(difftime(end.time, start.time, units="mins"))
 summary(res_RR)
 
 
-save(res_RR,file=paste0("data/NOTRANSFER_glp1_sglt2_static",N_time,".RData"))
-
-
+saveRDS(res_RR,file=paste0("./data/NOTRANSFER_glp1_sglt2_static",N_time,".RDS"))
 
