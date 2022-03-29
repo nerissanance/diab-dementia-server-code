@@ -33,20 +33,22 @@ varmethod = "tmle" #variance method
 #-----------------------------------
 #-----------------------------------
 
+data <- readRDS(file=here("data/data_clean.rds"))
 
 
-{
 
+# {
+#
   dt_use_backup <- readRDS(data_path)
 
   set.seed(123)
   dt_use <- dt_use_backup[sample(nrow(dt_use_backup), 2000, T), ]  # target sample size
   K <- 10  # total time points
-  dt_use[, first_date_2nd_line := NULL]  # remove index dates; equivalence with censoring process
+ dt_use[, first_date_2nd_line := NULL]  # remove index dates; equivalence with censoring process
   node_names <- names(dt_use)
 
   data <- as.data.frame(dt_use)
-}
+#}
 
 # code summary covaraites in MSM models; now include accumulated exposure and time
 {
@@ -97,7 +99,7 @@ package_stub("SuperLearner", "SuperLearner", SuperLearner_override, {
                  SL.library = SL.library,
                  regimes = regimes[, , test.treated[, 1, 1]],  # only the candidate regimes
                  summary.measures = summary.measures,   # corresponding summary measures for the candidate regimes
-                 working.msm = "Y~time.on.treatment + time",
+                 working.msm = "Y~time.on.treatment * time",
                  variance.method = "ic",  # direct EIC plug in; might be underestimated with positivity and rare outcomes
                  final.Ynodes = paste0("Y_", seq(to = K+1, length.out = n_pool, by = 1)),   # to pool across these nodes
                  msm.weights = "empirical",  # h weights by obs data
@@ -110,4 +112,14 @@ package_stub("SuperLearner", "SuperLearner", SuperLearner_override, {
 
 summary(res_RR)
 saveRDS(res_RR,file=paste0("./data/NOTRANSFER_glp1_MSM",N_time,".RDS"))
+
+logit <- function(x) log(x/(1-x))
+expit <- function(x) 1/(1+exp(-x))
+
+expit(-0.19925)
+expit(0.35730)
+
+exp(-0.19925)
+exp(0.35730)
+
 

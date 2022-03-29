@@ -3,7 +3,7 @@
 # 1) overwriting NA with 0 (needs to be fixed in data! this is temporary fix)
 # 2) manual overwrite of competing event (death vs dementia)
 
-d <- readRDS(file=here("data/simdata_10k.rds"))
+d <- readRDS(file=here("data/simdata_100k.rds"))
 # d <- readRDS(file=here("data/time_dem_wide.rds"))
 
 
