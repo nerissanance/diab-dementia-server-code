@@ -6,18 +6,11 @@ source(paste0(here::here(),"/0_ltmle_Estimate_update.R"))
 source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
 
 
-#set up parallelization on windows with the Snow package
-library(snow)
-options(snow.cores=8)
 
 
-gc()
 d_wide_list <- readRDS(file=here("data/simulated_data_list.RDS"))
-gc()
 
-d_wide_list <- d_wide_list[1]
 
-#Method 1
 start.time <- Sys.time()
 resdf = NULL
 for(i in 1:length(d_wide_list)){
@@ -27,13 +20,10 @@ end.time <- Sys.time()
 
 print("runtime: ")
 print(difftime(end.time, start.time, units="mins"))
-#Time difference of 28.8765 mins
 
 head(resdf)
 
 ggplot(resdf, aes(x=estimate)) + geom_density() + scale_x_continuous(trans="log10") + geom_vline(aes(xintercept=1))
-saveRDS(resdf, here::here("/data/sim_res1.RDS"))
-
 
 #To run:
 # - IC variance
@@ -47,7 +37,6 @@ end.time <- Sys.time()
 
 print("runtime: ")
 print(difftime(end.time, start.time, units="mins"))
-#Time difference of 28.92235 mins
 
 ggplot(resdf_ic, aes(x=estimate)) + geom_density() + scale_x_continuous(trans="log10") + geom_vline(aes(xintercept=1))
 
@@ -92,7 +81,6 @@ for(i in 1:length(d_wide_list)){
   resdf_Qint <- run_ltmle(d_wide_list[[i]], varmethod = "ic", resdf=resdf_Qint, Qint=TRUE)
 }
 end.time <- Sys.time()
-#4.559691 mins
 
 print("runtime: ")
 print(difftime(end.time, start.time, units="mins"))
@@ -102,8 +90,7 @@ ggplot(resdf_Qint, aes(x=estimate)) + geom_density() + scale_x_continuous(trans=
 
 # -Q-intercept only -TMLE variance
 # - Elastic Net
-# - SuperLearner with robustly coded glmnet (sl.mean, sl.glm, lasso, elastic net)
-# - gcomp=T estimation
+# - SuperLearner with robustly coded glmnet
 
 
 #-try target causal parameter three?

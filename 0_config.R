@@ -3,17 +3,18 @@
 gc()
 
 #load required libraries
-library(heaven)
+try(library(heaven))
 library(tidyverse)
 library(data.table)
 library(SuperLearner)
 library(ltmle)
 library(snow)
-library(tictoc)
 library(caret)
 library(hal9001)
 library(here)
 library(glmnet)
+library(testthatsomemore)
+
 
 #load functions
 source(here::here("0_diabetes_dementia_functions.R"))
