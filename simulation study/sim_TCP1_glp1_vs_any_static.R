@@ -7,6 +7,10 @@ source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
 
 
 
+#set up parallelization on windows with the Snow package
+library(snow)
+options(snow.cores=8)
+
 
 d_wide_list <- readRDS(file=here("data/simulated_data_list.RDS"))
 
@@ -22,6 +26,7 @@ print("runtime: ")
 print(difftime(end.time, start.time, units="mins"))
 
 head(resdf)
+saveRDS(resdf, here::here("/data/simulation_results/sim_res1.RDS"))
 
 ggplot(resdf, aes(x=estimate)) + geom_density() + scale_x_continuous(trans="log10") + geom_vline(aes(xintercept=1))
 
@@ -91,9 +96,18 @@ ggplot(resdf_Qint, aes(x=estimate)) + geom_density() + scale_x_continuous(trans=
 # -Q-intercept only -TMLE variance
 # - Elastic Net
 # - SuperLearner with robustly coded glmnet
+# - Using AUC
 
 
 #-try target causal parameter three?
 
 
+#wishlist
+#-initial outcome model AUC
+#-covariates selected
+#Final timepoint: AUC of the untargeted estimation
 
+
+#gcomp=T
+#use glm
+#predict timepoint
