@@ -78,29 +78,23 @@ end.time <- Sys.time()
 
 print("runtime: ")
 print(difftime(end.time, start.time, units="mins"))
+#Time difference of 4.559691 mins
 
 ggplot(resdf_glm, aes(x=estimate)) + geom_density() + scale_x_continuous(trans="log10") + geom_vline(aes(xintercept=1))
 
+
+
 # -Q-intercept only
-
-d=d_wide_list[[i]]
-varmethod = "ic"
-resdf=resdf_glm
-Qint=TRUE
-SL.library="glm"
-N_time = 11
-
-
 start.time <- Sys.time()
 resdf_Qint = NULL
 for(i in 1:length(d_wide_list)){
   resdf_Qint <- run_ltmle(d_wide_list[[i]], varmethod = "ic", resdf=resdf_Qint, Qint=TRUE)
 }
 end.time <- Sys.time()
-#4.559691 mins
 
 print("runtime: ")
 print(difftime(end.time, start.time, units="mins"))
+#12.18644 mins
 
 ggplot(resdf_Qint, aes(x=estimate)) + geom_density() + scale_x_continuous(trans="log10") + geom_vline(aes(xintercept=1))
 

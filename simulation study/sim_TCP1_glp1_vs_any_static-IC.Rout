@@ -1,0 +1,21 @@
+          used  (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells 2598928 138.8    4434435 236.9  4434435 236.9
+Vcells 5255314  40.1   52964420 404.1 51793089 395.2
+           used  (Mb) gc trigger   (Mb)  max used   (Mb)
+Ncells  2599998 138.9    4434435  236.9   4434435  236.9
+Vcells 50508345 385.4  774957232 5912.5 910308923 6945.2
+[1] "iteration runtime: "
+Time difference of 28.69743 mins
+[1] "iteration runtime: "
+Time difference of 29.97509 mins
+[1] "iteration runtime: "
+Time difference of 30.89181 mins
+[1] "iteration runtime: "
+Time difference of 32.83873 mins
+[1] "iteration runtime: "
+Time difference of 26.37359 mins
+[1] "runtime: "
+Time difference of 2.47962 hours
+           used  (Mb) gc trigger   (Mb)  max used   (Mb)
+Ncells  2732880 146.0    7491247  400.1   7491247  400.1
+Vcells 52795439 402.8  282810808 2157.7 910308923 6945.2
