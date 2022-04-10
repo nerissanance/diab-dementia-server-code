@@ -1,4 +1,3 @@
-sink(file=paste0(here::here(),"/simulation study/sim_TCP1_glp1_vs_any_static-glm.Rout"),append=F)
 
 rm(list=ls())
 library(here)
@@ -16,18 +15,23 @@ d_wide_list <- d_wide_list[1:50]
 gc()
 
 
+
 int.start.time <- Sys.time()
-resdf_glm <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows') %dopar% {
-  res <- run_ltmle(d_wide_list[[i]], varmethod = "ic", resdf=NULL, SL.library="glm")
+resdf_EN_Qint_ic <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet(d_wide_list[[i]], varmethod = "ic", resdf=NULL, elastic.net=TRUE, Qint=TRUE))
+  return(res)
 }
 int.end.time <- Sys.time()
 difftime(int.end.time, int.start.time, units="mins")
-resdf_glm
+
+
+
 
 
 
 gc()
-saveRDS(resdf_glm, paste0(here::here(),"/data/sim_res_glm_ic.RDS"))
+saveRDS(resdf_EN_Qint_ic, paste0(here::here(),"/data/sim_res_EN_Qint_ic.RDS"))
 
-sink()
+
 

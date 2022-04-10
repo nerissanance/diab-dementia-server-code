@@ -12,8 +12,11 @@ library(snow)
 library(caret)
 library(hal9001)
 library(here)
+library(foreach)
 library(glmnet)
 library(testthatsomemore)
+library(parallel)
+library(doSNOW)
 
 
 #load functions

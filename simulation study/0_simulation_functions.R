@@ -1,4 +1,23 @@
 
+#Parallelize:
+parallel::detectCores()
+n.cores <- parallel::detectCores() -4
+
+#create the cluster
+my.cluster <- parallel::makeCluster(
+  n.cores,
+  type = "FORK"
+)
+
+#register it to be used by %dopar%
+doParallel::registerDoParallel(cl = my.cluster)
+
+#registerDoSNOW(my.cluster)
+# pb <- txtProgressBar(style = 3)
+# progress <- function(n) setTxtProgressBar(pb, n)
+# opts <- list(progress = progress)
+
+
 clean_sim_data <- function(d, N_time){
 
   d <- as.data.frame(sapply(d, as.numeric))
@@ -28,6 +47,8 @@ run_ltmle_glmnet <- function(d,
                       SL.library = c("SL.glmnet"),
                       resdf=NULL,
                       Qint=F,
+                      gcomp=F,
+                      elastic.net=F,
                       varmethod = "tmle" #variance method
                       ){
 
@@ -83,24 +104,70 @@ run_ltmle_glmnet <- function(d,
     )
 
 
-    package_stub("SuperLearner", "SuperLearner", SuperLearner_override, {
-      testthatsomemore::package_stub("ltmle", "Estimate", Estimate_override, {
-        try(res <- ltmle(data=spec_ltmle$data,
-                         Anodes = spec_ltmle$Anodes,
-                         Cnodes = spec_ltmle$Cnodes[spec_ltmle$Cnodes!="censor_0"],
-                         Lnodes = spec_ltmle$Lnodes[spec_ltmle$Lnodes!="event_death_0"],
-                         Ynodes = spec_ltmle$Ynodes[spec_ltmle$Ynodes!="event_dementia_0"],
-                         survivalOutcome = T,
-                         abar = abar_spec,
-                         Qform = qform,
-                         estimate.time=T,
-                         deterministic.Q.function = det.Q.function,
-                         SL.library = SL.library,
-                         variance.method = varmethod #use tmle variance option for accuracy with positivity violations
-        ))
-      })})
+    if(elastic.net){
+      SuperLearner_override_EN
+      package_stub("SuperLearner", "SuperLearner", SuperLearner_override_EN, {
+        testthatsomemore::package_stub("ltmle", "Estimate", Estimate_override, {
+          try(res <- ltmle(data=spec_ltmle$data,
+                           Anodes = spec_ltmle$Anodes,
+                           Cnodes = spec_ltmle$Cnodes[spec_ltmle$Cnodes!="censor_0"],
+                           Lnodes = spec_ltmle$Lnodes[spec_ltmle$Lnodes!="event_death_0"],
+                           Ynodes = spec_ltmle$Ynodes[spec_ltmle$Ynodes!="event_dementia_0"],
+                           survivalOutcome = T,
+                           abar = abar_spec,
+                           gcomp=gcomp,
+                           Qform = qform,
+                           estimate.time=T,
+                           deterministic.Q.function = det.Q.function,
+                           SL.library = SL.library,
+                           variance.method = varmethod #use tmle variance option for accuracy with positivity violations
+          ))
+        })})
+    }else{
+      package_stub("SuperLearner", "SuperLearner", SuperLearner_override, {
+        testthatsomemore::package_stub("ltmle", "Estimate", Estimate_override, {
+          try(res <- ltmle(data=spec_ltmle$data,
+                           Anodes = spec_ltmle$Anodes,
+                           Cnodes = spec_ltmle$Cnodes[spec_ltmle$Cnodes!="censor_0"],
+                           Lnodes = spec_ltmle$Lnodes[spec_ltmle$Lnodes!="event_death_0"],
+                           Ynodes = spec_ltmle$Ynodes[spec_ltmle$Ynodes!="event_dementia_0"],
+                           survivalOutcome = T,
+                           abar = abar_spec,
+                           gcomp=gcomp,
+                           Qform = qform,
+                           estimate.time=T,
+                           deterministic.Q.function = det.Q.function,
+                           SL.library = SL.library,
+                           variance.method = varmethod #use tmle variance option for accuracy with positivity violations
+          ))
+        })})
+    }
+
+
+
 
   }else{
+
+
+
+    if(elastic.net){
+      SuperLearner_override_EN
+        package_stub("SuperLearner", "SuperLearner", SuperLearner_override, {
+          testthatsomemore::package_stub("ltmle", "Estimate", Estimate_override, {
+            try(res <- ltmle(data=spec_ltmle$data,
+                             Anodes = spec_ltmle$Anodes,
+                             Cnodes = spec_ltmle$Cnodes[spec_ltmle$Cnodes!="censor_0"],
+                             Lnodes = spec_ltmle$Lnodes[spec_ltmle$Lnodes!="event_death_0"],
+                             Ynodes = spec_ltmle$Ynodes[spec_ltmle$Ynodes!="event_dementia_0"],
+                             survivalOutcome = T,
+                             abar = abar_spec,
+                             deterministic.Q.function = det.Q.function,
+                             SL.library = SL.library,
+                             variance.method = varmethod #use tmle variance option for accuracy with positivity violations
+            ))
+          })})
+    }else{
+
     package_stub("SuperLearner", "SuperLearner", SuperLearner_override, {
       testthatsomemore::package_stub("ltmle", "Estimate", Estimate_override, {
         try(res <- ltmle(data=spec_ltmle$data,
@@ -115,6 +182,7 @@ run_ltmle_glmnet <- function(d,
                          variance.method = varmethod #use tmle variance option for accuracy with positivity violations
         ))
       })})
+    }
   }
 
 

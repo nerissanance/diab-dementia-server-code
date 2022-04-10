@@ -43,6 +43,17 @@ Estimate_override <-function(inputs, form, subs, family, type, nodes, Qstar.kplu
         newX.list <- GetNewX(newdata)
         SetSeedIfRegressionTesting()
         try.result <- try({
+
+          #parallelized version:
+          # SuppressGivenWarnings(m <- SuperLearner::mcSuperLearner(Y = Y.subset,
+          #                                                       X = X.subset, SL.library = SL.library, cvControl = inputs$SL.cvControl,
+          #                                                       verbose = FALSE, family = family, newX = newX.list$newX,
+          #                                                       obsWeights = observation.weights.subset,
+          #                                                       id = id.subset, env = environment(SuperLearner::mcSuperLearner)),
+          #                       c("non-integer #successes in a binomial glm!",
+          #                         "prediction from a rank-deficient fit may be misleading"))
+
+
           SuppressGivenWarnings(m <- SuperLearner::SuperLearner(Y = Y.subset,
                                                                 X = X.subset, SL.library = SL.library, cvControl = inputs$SL.cvControl,
                                                                 verbose = FALSE, family = family, newX = newX.list$newX,
@@ -50,7 +61,7 @@ Estimate_override <-function(inputs, form, subs, family, type, nodes, Qstar.kplu
                                                                 id = id.subset, env = environment(SuperLearner::SuperLearner)),
                                 c("non-integer #successes in a binomial glm!",
                                   "prediction from a rank-deficient fit may be misleading"))
-        })
+         })
         predicted.values <- ProcessSLPrediction(m$SL.predict,
                                                 newX.list$new.subs, try.result)
       }
