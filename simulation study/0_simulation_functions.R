@@ -105,7 +105,6 @@ run_ltmle_glmnet <- function(d,
 
 
     if(elastic.net){
-      SuperLearner_override_EN
       package_stub("SuperLearner", "SuperLearner", SuperLearner_override_EN, {
         testthatsomemore::package_stub("ltmle", "Estimate", Estimate_override, {
           try(res <- ltmle(data=spec_ltmle$data,
