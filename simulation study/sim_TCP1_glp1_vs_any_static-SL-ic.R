@@ -17,39 +17,7 @@ gc()
 
 
 
-SL.glmnet.robust <- function (Y, X, newX, family, obsWeights, id, alpha = 1, nfolds = 10,
-          nlambda = 100, useMin = TRUE, loss = "deviance", ...){
-  #.SL.require("glmnet")
-  if (!is.matrix(X)) {
-    X <- model.matrix(~-1 + ., X)
-    newX <- model.matrix(~-1 + ., newX)
-  }
-  fitCV <- NULL
-  try(fitCV <- glmnet::cv.glmnet(x = X, y = Y, weights = obsWeights,
-                             lambda = NULL, type.measure = loss, nfolds = nfolds,
-                             family = family$family, alpha = alpha, nlambda = nlambda,
-                             ...))
-  if(is.null(fitCV)){
-    meanY <- weighted.mean(Y, w = obsWeights)
-    pred <- rep.int(meanY, times = nrow(newX))
-    fit <- list(object = meanY)
-    out <- list(pred = pred, fit = fit)
-    class(out$fit) <- c("SL.mean")
-    return(out)
-  }else{
-    pred <- predict(fitCV, newx = newX, type = "response", s = ifelse(useMin, "lambda.min", "lambda.1se"))
-    fit <- list(object = fitCV, useMin = useMin)
-    class(fit) <- "SL.glmnet"
-    out <- list(pred = pred, fit = fit)
-    return(out)
-  }
 
-}
-
-
-SL.EN.robust <- function(..., alpha = 0.5){
-  SL.glmnet.robust(...,alpha = 0.5)
-}
 
 
 SL.lib <- c("SL.mean", "SL.glm", "SL.EN.robust", "SL.glmnet.robust")
