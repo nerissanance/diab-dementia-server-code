@@ -6,14 +6,6 @@ source(paste0(here::here(),"/0_ltmle_Estimate_update.R"))
 source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
 
 
-#set up parallelization on windows with the Snow package
-library(snow)
-options(snow.cores=8)
-
-#set up parallelization on windows with the Snow package
-library(snow)
-options(snow.cores=8)
-
 
 gc()
 d_wide_list <- readRDS(file=here("data/simulated_data_list.RDS"))

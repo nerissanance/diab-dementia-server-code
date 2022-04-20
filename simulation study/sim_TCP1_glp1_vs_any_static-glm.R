@@ -1,4 +1,4 @@
-sink(file=paste0(here::here(),"/simulation study/sim_TCP1_glp1_vs_any_static-glm.Rout"),append=F)
+#sink(file=paste0(here::here(),"/simulation study/sim_TCP1_glp1_vs_any_static-glm.Rout"),append=F)
 
 rm(list=ls())
 library(here)
@@ -11,8 +11,7 @@ source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
 
 gc()
 d_wide_list <- readRDS(file=here("data/simulated_data_list.RDS"))
-
-d_wide_list <- d_wide_list[1:50]
+d_wide_list <- d_wide_list[1:100]
 gc()
 
 
@@ -29,5 +28,5 @@ resdf_glm
 gc()
 saveRDS(resdf_glm, paste0(here::here(),"/data/sim_res_glm_ic.RDS"))
 
-sink()
+#sink()
 

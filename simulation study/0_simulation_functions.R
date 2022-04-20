@@ -1,7 +1,7 @@
 
 #Parallelize:
 parallel::detectCores()
-n.cores <- parallel::detectCores() -4
+n.cores <- parallel::detectCores() -8
 
 #create the cluster
 try(my.cluster <- parallel::makeCluster( n.cores,type = "FORK"))
@@ -147,7 +147,7 @@ run_ltmle_glmnet <- function(d,
   }
 
   options(warn=warn)
-  return(list(res=res, fit=fit))
+  return(res)
 }
 
 
