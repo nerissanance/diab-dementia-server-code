@@ -39,6 +39,8 @@ resdf_RF
 gc()
 saveRDS(resdf_RF, paste0(here::here(),"/data/sim_res_rf.RDS"))
 
+res <- readRDS(paste0(here::here(),"/data/sim_res_rf.RDS"))
+
 
 
 int.start.time <- Sys.time()
