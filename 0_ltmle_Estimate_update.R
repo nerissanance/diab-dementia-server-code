@@ -107,10 +107,16 @@ Estimate_override <-function(inputs, form, subs, family, type, nodes, Qstar.kplu
       #                                     X.subset, Y.subset, onlySL = TRUE)$pred, newX.list$new.subs,
       #                             try.result = NULL)
 
+      if(identical(SL.library, "SL.randomForest")){
+        pred <- ProcessSLPrediction(predict.SL.randomForest(m$model, as.matrix(newX.list$newX), family=family),
+                                    newX.list$new.subs,
+                                    try.result = NULL)
+      }else{
+        pred <- ProcessSLPrediction(predict(m$model, as.matrix(newX.list$newX), s="lambda.min", type="response"),
+                                    newX.list$new.subs,
+                                    try.result = NULL)
+      }
 
-      pred <- ProcessSLPrediction(predict(m$model, as.matrix(newX.list$newX), s="lambda.min", type="response"),
-                                  newX.list$new.subs,
-                                  try.result = NULL)
 
     }
     return(pred)

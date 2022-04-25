@@ -27,6 +27,20 @@ saveRDS(resdf_glm, paste0(here::here(),"/data/sim_res_glm_ic.RDS"))
 
 
 
+
+int.start.time <- Sys.time()
+resdf_RF <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows') %dopar% {
+  res <- run_ltmle_glmnet(d_wide_list[[i]], varmethod = "ic", resdf=NULL, SL.library="SL.randomForest", override_function=SuperLearner_override_RF)
+}
+int.end.time <- Sys.time()
+difftime(int.end.time, int.start.time, units="mins")
+resdf_RF
+
+gc()
+saveRDS(resdf_RF, paste0(here::here(),"/data/sim_res_rf.RDS"))
+
+
+
 int.start.time <- Sys.time()
 resdf_ic <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
   res <- NULL

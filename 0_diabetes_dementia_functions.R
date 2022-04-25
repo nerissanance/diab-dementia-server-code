@@ -24,11 +24,24 @@
 
 SuperLearner_override <- function(Y, X, newX = NULL, family = gaussian(), SL.library="SL.glmnet",
                                       method = "method.NNLS", id = NULL, verbose = FALSE, control = list(),
-                                      cvControl = list(), obsWeights = NULL, env = parent.frame(), alpha=1, type.measure = "auc") {
+                                      cvControl = list(), obsWeights = NULL, env = parent.frame(), alpha=1, loss  = "auc") {
   stopifnot(identical(SL.library, "SL.glmnet"))
 
   res <- NULL
   try(res <- SL.glmnet(Y, X, newX, family, obsWeights, id, alpha=alpha, useMin =useMin,  nfolds = 5))
+  if(is.null(res)){res <- SL.mean(Y, X, newX, family, obsWeights, id)}
+
+  list(model=res$fit, SL.predict = res$pred)
+}
+
+SuperLearner_override_RF <- function(Y, X, newX = NULL, family = gaussian(), SL.library="SL.glmnet",
+                                  method = "method.NNLS", id = NULL, verbose = FALSE, control = list(),
+                                  cvControl = list(), obsWeights = NULL, env = parent.frame(), alpha=1, loss  = "auc") {
+  stopifnot(identical(SL.library, "SL.randomForest"))
+
+  res <- NULL
+  try(res <- SL.randomForest(Y, X, newX, family, obsWeights, id, mtry = ifelse(family=="gaussian", max(floor(ncol(X)/3), 1), floor(sqrt(ncol(X)))),
+                             ntree = 100, nodesize = ifelse(family == "gaussian", 5, 1), maxnodes = NULL, importance = FALSE))
   if(is.null(res)){res <- SL.mean(Y, X, newX, family, obsWeights, id)}
 
   list(model=res$fit, SL.predict = res$pred)
@@ -77,7 +90,7 @@ SuperLearner_override_AUC <- function(Y, X, newX = NULL, family = gaussian(), SL
   stopifnot(identical(SL.library, "SL.glmnet"))
 
   res <- NULL
-  try(res <- SL.glmnet(Y, X, newX, family, obsWeights, id, type.measure = "auc", nfolds = 5))
+  try(res <- SL.glmnet(Y, X, newX, family, obsWeights, id, loss  = "auc", nfolds = 5))
   if(is.null(res)){res <- SL.mean(Y, X, newX, family, obsWeights, id)}
 
   list(model=res$fit, SL.predict = res$pred)
@@ -89,7 +102,7 @@ SuperLearner_override_EN_AUC <- function(Y, X, newX = NULL, family = gaussian(),
   stopifnot(identical(SL.library, "SL.glmnet"))
 
   res <- NULL
-  try(res <- SL.glmnet(Y, X, newX, family, obsWeights, id, alpha = 0.5, type.measure = "auc", nfolds = 5))
+  try(res <- SL.glmnet(Y, X, newX, family, obsWeights, id, alpha = 0.5, loss  = "auc", nfolds = 5))
   if(is.null(res)){res <- SL.mean(Y, X, newX, family, obsWeights, id)}
 
   list(model=res$fit, SL.predict = res$pred)
@@ -102,7 +115,7 @@ SuperLearner_override_AUC_1se <- function(Y, X, newX = NULL, family = gaussian()
   stopifnot(identical(SL.library, "SL.glmnet"))
 
   res <- NULL
-  try(res <- SL.glmnet(Y, X, newX, family, obsWeights, id, alpha = 1, type.measure = "auc", useMin = FALSE, nfolds = 5))
+  try(res <- SL.glmnet(Y, X, newX, family, obsWeights, id, alpha = 1, loss  = "auc", useMin = FALSE, nfolds = 5))
   if(is.null(res)){res <- SL.mean(Y, X, newX, family, obsWeights, id)}
 
   list(model=res$fit, SL.predict = res$pred)
