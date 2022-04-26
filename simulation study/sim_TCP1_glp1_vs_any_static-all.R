@@ -55,6 +55,18 @@ difftime(int.end.time, int.start.time, units="mins")
 saveRDS(resdf_ic, paste0(here::here(),"/data/sim_res_ic.RDS"))
 
 
+int.start.time <- Sys.time()
+resdf_ic <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE))
+  return(res)
+}
+int.end.time <- Sys.time()
+difftime(int.end.time, int.start.time, units="mins")
+
+saveRDS(resdf_ic, paste0(here::here(),"/data/sim_res_Qint_ic.RDS"))
+
+
 
 int.start.time <- Sys.time()
 resdf_EN <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
