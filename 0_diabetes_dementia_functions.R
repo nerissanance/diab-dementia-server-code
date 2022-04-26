@@ -28,7 +28,7 @@ SuperLearner_override <- function(Y, X, newX = NULL, family = gaussian(), SL.lib
   stopifnot(identical(SL.library, "SL.glmnet"))
 
   res <- NULL
-  try(res <- SL.glmnet(Y, X, newX, family, obsWeights, id, alpha=alpha, useMin =useMin,  nfolds = 5))
+  try(res <- SL.glmnet(Y, X, newX, family, obsWeights, id, alpha=alpha, useMin =TRUE,  nfolds = 5))
   if(is.null(res)){res <- SL.mean(Y, X, newX, family, obsWeights, id)}
 
   list(model=res$fit, SL.predict = res$pred)

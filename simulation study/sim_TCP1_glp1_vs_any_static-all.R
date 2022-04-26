@@ -10,7 +10,7 @@ source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
 
 gc()
 d_wide_list <- readRDS(file=here("data/simulated_data_list.RDS"))
-d_wide_list <- d_wide_list[1:50]
+d_wide_list <- d_wide_list[1:200]
 gc()
 
 
@@ -27,19 +27,6 @@ saveRDS(resdf_glm, paste0(here::here(),"/data/sim_res_glm_ic.RDS"))
 
 
 
-
-int.start.time <- Sys.time()
-resdf_RF <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows') %dopar% {
-  res <- run_ltmle_glmnet(d_wide_list[[i]], varmethod = "ic", resdf=NULL, SL.library="SL.randomForest", override_function=SuperLearner_override_RF)
-}
-int.end.time <- Sys.time()
-difftime(int.end.time, int.start.time, units="mins")
-resdf_RF
-
-gc()
-saveRDS(resdf_RF, paste0(here::here(),"/data/sim_res_rf.RDS"))
-
-res <- readRDS(paste0(here::here(),"/data/sim_res_rf.RDS"))
 
 
 
@@ -142,3 +129,17 @@ int.end.time <- Sys.time()
 difftime(int.end.time, int.start.time, units="mins")
 
 saveRDS(resdf_Qint_AUC_1se, paste0(here::here(),"/data/sim_res_Qint_AUC_1se.RDS"))
+
+
+
+
+int.start.time <- Sys.time()
+resdf_RF <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows') %dopar% {
+  res <- run_ltmle_glmnet(d_wide_list[[i]], varmethod = "ic", resdf=NULL, SL.library="SL.randomForest", override_function=SuperLearner_override_RF)
+}
+int.end.time <- Sys.time()
+difftime(int.end.time, int.start.time, units="mins")
+resdf_RF
+
+gc()
+saveRDS(resdf_RF, paste0(here::here(),"/data/sim_res_rf.RDS"))
