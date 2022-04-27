@@ -1,3 +1,33 @@
+# pred <- ProcessSLPrediction(predict(m, newX.list$newX,
+#                                     X.subset, Y.subset, onlySL = TRUE)$pred, newX.list$new.subs,
+#                             try.result = NULL)
+
+
+# ProcessSLPrediction <- function(pred, new.subs, try.result) {
+#   if (inherits(try.result, "try-error")) {
+#     stop(paste("\n\nError occured during call to SuperLearner:\n",
+#                form, GetSLStopMsg(Y.subset), "\n The error reported is:\n",
+#                try.result))
+#   }
+#   if (all(is.na(pred))) {
+#     stop(paste("\n\n Unexpected error: SuperLearner returned all NAs during regression:\n",
+#                form, GetSLStopMsg(Y.subset)))
+#   }
+#   predicted.values <- rep(NA, nrow(newdata))
+#   predicted.values[new.subs] <- pred
+#   if (max(predicted.values, na.rm = T) > 1 || min(predicted.values,
+#                                                   na.rm = T) < 0) {
+#     msg <- paste("SuperLearner returned predicted.values > 1 or < 0: [min, max] = [",
+#                  min(predicted.values, na.rm = T), ",",
+#                  max(predicted.values, na.rm = T), "]. Bounding to [0,1]")
+#     warning(msg)
+#     predicted.values <- Bound(predicted.values, bounds = c(0,
+#                                                            1))
+#   }
+#   return(ValuesByType(predicted.values))
+# }
+
+
 predict.SL.glmnet <- function (object, newdata, X = NULL, Y = NULL, onlySL = FALSE, ...)
 {
   if (missing(newdata)) {

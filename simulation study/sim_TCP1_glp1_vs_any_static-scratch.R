@@ -38,11 +38,13 @@ gc()
 
 
 d = d_wide_list[[1]]
-N_time = 11
+N_time = 2
 SL.library = c("SL.glmnet")
 resdf=NULL
 Qint=F
 gcomp=T
+det.Q=FALSE
+varmethod = "ic"
 override_function=SuperLearner_override
 varmethod = "tmle"
 label=""
@@ -113,6 +115,13 @@ label=""
   }
 
 
+  if(det.Q){
+    det.q.fun = det.Q.function
+  }else{
+    det.q.fun = NULL
+  }
+
+
   package_stub("SuperLearner", "SuperLearner", override_function, {
     testthatsomemore::package_stub("ltmle", "Estimate", Estimate_override, {
       try(res <- ltmle(data=spec_ltmle$data,
@@ -125,12 +134,25 @@ label=""
                        gcomp=gcomp,
                        Qform = qform,
                        estimate.time=T,
-                       deterministic.Q.function = det.Q.function,
+                       deterministic.Q.function = det.q.fun,
                        SL.library = SL.library,
-                       variance.method = varmethod #use tmle variance option for accuracy with positivity violations
+                       variance.method = varmethod
       ))
     })})
 
+
+  package_stub("SuperLearner", "SuperLearner", override_function, {
+    testthatsomemore::package_stub("ltmle", "Estimate", Estimate_override, {
+      try(res <- ltmle(data=spec_ltmle$data,
+                       Anodes = spec_ltmle$Anodes,
+                       Cnodes = spec_ltmle$Cnodes,
+                       Lnodes = spec_ltmle$Lnodes,
+                       Ynodes = spec_ltmle$Ynodes,
+                       survivalOutcome = T,
+                       abar = abar_spec,
+                       SL.library = SL.library
+      ))
+    })})
 
 
   if(!is.null(res)){
@@ -145,5 +167,5 @@ label=""
 
   options(warn=warn)
   return(res)
-}
+
 

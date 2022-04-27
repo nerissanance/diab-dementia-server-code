@@ -10,8 +10,19 @@ source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
 
 gc()
 d_wide_list <- readRDS(file=here("data/simulated_data_list.RDS"))
-d_wide_list <- d_wide_list[1:200]
+d_wide_list <- d_wide_list[1:50]
 gc()
+
+
+#add: gcomp, no detQ IC and TMLE, with and without Qint
+i<-1
+try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE, gcomp=TRUE))
+try(res1 <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE, det.Q=FALSE, varmethod = "tmle"))
+try(res2 <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE, det.Q=FALSE, varmethod = "ic"))
+try(res3 <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, varmethod = "tmle"))
+try(res4 <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, varmethod = "ic"))
+
+
 
 
 int.start.time <- Sys.time()

@@ -1,7 +1,7 @@
 
 #Parallelize:
-parallel::detectCores()
-n.cores <- parallel::detectCores() -8
+try(parallel::detectCores())
+try(n.cores <- parallel::detectCores() -8)
 
 #create the cluster
 try(my.cluster <- parallel::makeCluster( n.cores,type = "FORK"))
@@ -46,6 +46,7 @@ run_ltmle_glmnet <- function(d,
                              resdf=NULL,
                              Qint=F,
                              gcomp=F,
+                             det.Q=T,
                              override_function=SuperLearner_override,
                              varmethod = "tmle", #variance method
                              label=""){
@@ -116,6 +117,13 @@ run_ltmle_glmnet <- function(d,
   }
 
 
+  if(det.Q){
+    det.q.fun = det.Q.function
+  }else{
+    det.q.fun = NULL
+  }
+
+
       package_stub("SuperLearner", "SuperLearner", override_function, {
         testthatsomemore::package_stub("ltmle", "Estimate", Estimate_override, {
           try(res <- ltmle(data=spec_ltmle$data,
@@ -128,9 +136,9 @@ run_ltmle_glmnet <- function(d,
                            gcomp=gcomp,
                            Qform = qform,
                            estimate.time=T,
-                           deterministic.Q.function = det.Q.function,
+                           deterministic.Q.function = det.q.fun,
                            SL.library = SL.library,
-                           variance.method = varmethod #use tmle variance option for accuracy with positivity violations
+                           variance.method = varmethod
           ))
         })})
 
