@@ -37,7 +37,7 @@ gc()
 
 
 
-d = d_wide_list[[1]]
+d = d_wide_list[[2]]
 N_time = 2
 SL.library = c("SL.glmnet")
 resdf=NULL
@@ -150,22 +150,38 @@ label=""
                        Ynodes = spec_ltmle$Ynodes,
                        survivalOutcome = T,
                        abar = abar_spec,
-                       SL.library = SL.library
+                       SL.library = SL.library,
+                       variance.method = "ic"
+      ))
+    })})
+
+  package_stub("SuperLearner", "SuperLearner", override_function, {
+    testthatsomemore::package_stub("ltmle", "Estimate", Estimate_override, {
+      try(res2 <- ltmle(data=spec_ltmle$data,
+                       Anodes = spec_ltmle$Anodes,
+                       Cnodes = spec_ltmle$Cnodes,
+                       Lnodes = spec_ltmle$Lnodes,
+                       Ynodes = spec_ltmle$Ynodes,
+                       survivalOutcome = T,
+                       abar = abar_spec,
+                       SL.library = SL.library,
+                       variance.method = "tmle"
       ))
     })})
 
 
-  if(!is.null(res)){
     fit<-res
     res <- summary(res)
     res <- as.data.frame(res$effect.measures$RR)
     res$label <- label
-  }
-  if(!is.null(resdf)){
-    res <- bind_rows(resdf, res)
-  }
+    res
 
-  options(warn=warn)
-  return(res)
+
+    fit<-res2
+    res2 <- summary(res2)
+    res2 <- as.data.frame(res2$effect.measures$RR)
+    res2$label <- label
+    res2
+
 
 
