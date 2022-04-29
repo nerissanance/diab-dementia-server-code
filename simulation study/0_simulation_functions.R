@@ -1,7 +1,7 @@
 
 #Parallelize:
 try(parallel::detectCores())
-try(n.cores <- parallel::detectCores() -8)
+try(n.cores <- parallel::detectCores() -4)
 
 #create the cluster
 try(my.cluster <- parallel::makeCluster( n.cores,type = "FORK"))
