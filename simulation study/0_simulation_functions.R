@@ -49,6 +49,7 @@ run_ltmle_glmnet <- function(d,
                              det.Q=T,
                              override_function=SuperLearner_override,
                              varmethod = "tmle", #variance method
+                             alt=FALSE,
                              label=""){
 
   warn = getOption("warn")
@@ -65,7 +66,8 @@ run_ltmle_glmnet <- function(d,
   spec_ltmle <- spec_analysis(data=d, c(long_covariates,"event_death_"),
                               baseline_vars, N_time,
                               Avars=c("glp1_"),
-                              Yvars=c("event_dementia_"))
+                              Yvars=c("event_dementia_"),
+                              alt=alt)
   abar_spec = list(rep(1,N_time),rep(0,N_time))
 
   #Drop the baseline events
