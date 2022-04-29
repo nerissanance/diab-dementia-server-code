@@ -53,18 +53,31 @@ Ynodes = spec_ltmle$Ynodes
 ## Proportion of cohort following each regime throughout their follow up
 
 ```{r,  echo=F}
-for(x in 1:nrow(d)){
-  #they just need to follow until they get the outcome or until censored (take min)
-  max_fu <- min(match(1, data[x,..Ynodes]),match(1, data[x,..Cnodes]),N_time,na.rm=T)
+# for(x in 1:nrow(d)){
+#   #they just need to follow until they get the outcome or until censored (take min)
+#   max_fu <- min(match(1, data[x,..Ynodes]),match(1, data[x,..Cnodes]),N_time,na.rm=T)
+#   a_sub <- Anodes[1:max_fu]
+#   data$regime_fu <- max_fu
+#   #if sum of subsetted A nodes is = to follw up time, then they followed full regime
+#   data$full_regime_1[[x]] <- ifelse(sum(data[x,..a_sub])==max_fu,TRUE, FALSE)
+#   #if sum of subsetted a nodes is 0 then they had no glp1 throughout follow up
+#   data$full_regime_0[[x]] <- ifelse(sum(data[x,..a_sub])==0,TRUE, FALSE)
+# }
+
+
+  data[,maxfu_y:= N_time-rowSums(.SD),.SDcols=c(Ynodes)]#max fu y
+  data[,maxfu_c:= N_time-rowSums(.SD),.SDcols=c(Cnodes)]#max fu c
+  data[,maxfu_total:= min(N_time,maxfu_y,maxfu_c)] #total time fu (taking min)
   a_sub <- Anodes[1:max_fu]
   data$regime_fu <- max_fu
+  data[,a_sub_sum:= rowSums(.SD),.SDcols=a_sub]#manodes follow in fu
+
   #if sum of subsetted A nodes is = to follw up time, then they followed full regime
-  data$full_regime_1[[x]] <- ifelse(sum(data[x,..a_sub])==max_fu,TRUE, FALSE)
+  data[a_sub_sum==max_fu,full_regime_1:=T,]
+  
   #if sum of subsetted a nodes is 0 then they had no glp1 throughout follow up
   data$full_regime_0[[x]] <- ifelse(sum(data[x,..a_sub])==0,TRUE, FALSE)
 }
-
-
 data$switchers<- ifelse(data$full_regime_1==F & data$full_regime_0==F, TRUE,FALSE)
 
 tab <- CreateCatTable(c("full_regime_1","full_regime_0","switchers","regime_fu"),data=data)
