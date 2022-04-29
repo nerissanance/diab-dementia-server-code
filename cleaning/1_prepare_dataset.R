@@ -1,24 +1,24 @@
 # Created: 2021-09-26
 # Author(s): zyp6582 - Christian Torp-Pedersen
-# Input files: 
+# Input files:
 # This program uses first datasets located: x:/Data/Rawdata_Hurtig/706582
 #  and this represents data until and including 2018. Later datasets were
 #  delivered for Covid projects and are mostly found in the latest delivery:
 #  V:/Data/Workdata/706582/Corona_update/Data/11. levering. The hospital registry
-#  changed to a new version during 2019 and the final delivery of the older 
+#  changed to a new version during 2019 and the final delivery of the older
 #  version is from: V:/Data/Workdata/706582/Corona_update/Data
 # Output files: For flexibility all files with detailed data are saved and
 # the final part of the program creates a longitudinal version of baseline
 # data. Preparation for LTMLE is a separate program
 #
-# drugdiab has for each class of diabetes drug 
+# drugdiab has for each class of diabetes drug
 #   pnr is patient identifier
 #   drugdiab is hypoglycermic class (character)
 #   start/end is start end end of each treatment per prescription
 #   value=1 - indicating that treatment is given
 # n_metformin defines first secondary treatment
 #   pnr is patient identifier
-#   first_other name of class of first other treatment 
+#   first_other name of class of first other treatment
 #   secdate is date of  first other treatment following metformin
 # pop
 #   pnr is patient identifier
@@ -30,12 +30,12 @@
 #   bef_year is last year with data indicating real residence - not relevant
 #   sex 0=female 1=male
 #   bop_vfra seneste_indvandring familie_id e_faelle_id - are not used
-# diag are all diagnoses of the diabetes population within selected range. 
+# diag are all diagnoses of the diabetes population within selected range.
 #    Currently both inpatient and out  patient diagnoses are accepted
 #   pnr is patient identifier
 #   diag is ICD code for condition
 #   inddto is date of admission
-#   pattype is not used. Zero identifies hospital admission, but only with 
+#   pattype is not used. Zero identifies hospital admission, but only with
 #     the older version of patient register.
 # charlson is a list of two data.tables
 #   charlsoncode has pnr and charlson index for all with an index above zero
@@ -43,17 +43,17 @@
 #   Charlson is calculated at a specific date, currently first ever secondary
 #   treatment.  It needs to be recalculated for other times.
 # cov are selected covariates by diagnosis the dataset includes pnr and
-#   first date of the following conditions: "any.malignancy", "chronic.pulmonary.disease", 
+#   first date of the following conditions: "any.malignancy", "chronic.pulmonary.disease",
 #   "dementia", "heart.failure","hypertension","ischemic.heart.disease",
-#   "myocardial.infarction", "renal.disease" 
+#   "myocardial.infarction", "renal.disease"
 #   Note: Dementia and hypertension is also defined by medication in the dataset
 # doede - Death registration. Includes pnr and doddato=date of death.
 #   Until end of 2018 it also includes specific causes of death as:
 #   dod_AMI, dod_stroke and dod_cv (cardiovascular) with "1" indicating presence
 # lab - All laboratory for diabetes population
 #   class - CREA, HBA1C, T_chol, LDL_chol, HDL_chol
-#   res - value,  
-#   start - date 
+#   res - value,
+#   start - date
 # edu - Education level each year
 #   pnr - patient identifier
 #   year - calender year
@@ -66,7 +66,7 @@
 #   pnr - patient identifier
 #   year
 #   household - number of people
-#   
+#
 ######################################################################
 library(data.table)
 library(heaven)
@@ -85,9 +85,9 @@ setwd('z:/Workdata/706582/christiantorp-pedersen/Diabetes/data')
 # variables focusing only  on diabetes patients.
 #
 ######################################################################
-A10_1 <- importSAS('x:/Data/Rawdata_Hurtig/706582/lmdb.sas7bdat', 
+A10_1 <- importSAS('x:/Data/Rawdata_Hurtig/706582/lmdb.sas7bdat',
                    date.vars = "eksd", where="atc=:'A10'")
-A10_2 <- importSAS('V:/Data/Workdata/706582/Corona_update/Data/11. levering/lmdb.sas7bdat', 
+A10_2 <- importSAS('V:/Data/Workdata/706582/Corona_update/Data/11. levering/lmdb.sas7bdat',
                    date.vars = "eksd", where="atc=:'A10'")
 
 A10 <- rbind(A10_1[eksd<=as.Date("2018-12-31")],A10_2,fill=TRUE)
@@ -99,7 +99,7 @@ gc()
 # but also as part of combination therapy drugs.  Each entry is the "start" of
 # the code defining a drug
 diab <- list(
-  insulin="A10A",  
+  insulin="A10A",
   metformin=c("A10BA02","A10BD02","A10BD03","A10BD05","A10BD07","A10BD08","A10BD10",
               "A10BD11","A10BD13","A10BD14","A10BD15","A10BD16","A10BD17",
               "A10BD18","A10BD20","A10BD22","A10BD23","A10BD25","A10BD26"),
@@ -131,12 +131,12 @@ n_metformin <- n_metformin[,.SD[1],by="pnr"]
 n_metformin <- n_metformin[,.(pnr,X,eksd)]
 pnr <- n_metformin[,.(pnr)]
 setnames(n_metformin,c("X","eksd"),c("first_other","secdate"))
-# n_metformin holds date of first secondary treatment (secdate) and the secondary treatment - 
+# n_metformin holds date of first secondary treatment (secdate) and the secondary treatment -
 # only for those starting secondary treatment.
 
 # Prepare drugdiab for splitting in time intervals. The splitting program
 # requires that there are no time overlaps within a single drug class. The
-# use currently is to let any prescription identify treatment during the next 
+# use currently is to let any prescription identify treatment during the next
 # six months OR until there is another prescription.
 setnames(drugdiab,c("X","eksd"),c("drugdiab","start"))
 setkeyv(drugdiab,c("pnr","drugdiab","start"))
@@ -152,7 +152,7 @@ saveRDS(n_metformin,file='n_metformin.rds')
 # Input Danish population
 #
 ######################################################################
-pop1 <- importSAS('x:/Data/Rawdata_Hurtig/706582/pop.sas7bdat', 
+pop1 <- importSAS('x:/Data/Rawdata_Hurtig/706582/pop.sas7bdat',
                   date.vars = c("fdato","first_ind","last_ind","first_ud","last_ud"),
                   drop="quarter",where="bef_year ne .",filter = pnr)
 pop2 <- importSAS('V:/Data/Workdata/706582/Corona_update/Data/pop_9march2020.sas7bdat',
@@ -173,7 +173,7 @@ saveRDS(pop,file="pop.rds")
 #
 ######################################################################
 
-diag1 <- importSAS('x:/Data/Rawdata_Hurtig/706582/diag_indl.sas7bdat', 
+diag1 <- importSAS('x:/Data/Rawdata_Hurtig/706582/diag_indl.sas7bdat',
                    date.vars = "inddto", keep=c("pnr","diag","inddto","pattype"),
                    where="(substr(diag,1,1) in ('0','1','2','4','5')
                          or substr(diag,1,2) in ('DI','DG','DH','DJ','DM','DB','DK','DE','DN','DC'))
@@ -185,7 +185,7 @@ diag2 <- importSAS('V:/Data/Workdata/706582/Corona_update/Data/diag_indl_9march2
 diag3 <- isas('V:/Data/Workdata/706582/Corona_update/Data/11. levering/diag_indl_lpr3.sas7bdat',
               where="substr(diag,1,2) in ('DI','DG','DH','DJ','DM','DB','DK','DE','DN','DC')", filter=pnr,
               keep=c("pnr","diag","inddto","starttidspunkt","sluttidspunkt"))
-diag3 <- diag3[(sluttidspunkt-starttidspunkt)/(60*60)>12] 
+diag3 <- diag3[(sluttidspunkt-starttidspunkt)/(60*60)>12]
 diag3[,c("starttidspunkt","sluttidspunkt"):=NULL]
 diag3[,dif:=NULL]
 diag3[,inddto:=as.Date(inddto,format="%Y%m%d")]
@@ -215,8 +215,10 @@ covariates <- c(charlson.codes["heart.failure"],
 covariates <- c(covariates,list(
   ischemic.heart.disease=c("411","412","413","414","I20","I23","I24","I25"),
   myocardial.infarction=c("410","I21"),
-  hypertension=c(paste0('40',1:4),'41009','41099','I10','I109','I11','I110','I119','I119A',         
-                 'I12','I120','I129','I129A','I13','I130','I131','I132','I139','I15','I150','I151','I152','I158','I159')
+  hypertension=c(paste0('40',1:4),'41009','41099','I10','I109','I11','I110','I119','I119A',
+                 'I12','I120','I129','I129A','I13','I130','I131','I132','I139','I15','I150','I151','I152','I158','I159'),
+  dementia_newdef=c(charlson.codes["dementia"],
+                    '293.0','293.1','G31.8','G31.9')
 ))
 
 cov <- findCondition(diag,"diag",c("pnr","inddto"),covariates,match="start")
@@ -242,9 +244,9 @@ saveRDS(doede,file='doede.rds')
 # Hypertension medication - and dementia medication
 #
 ######################################################################
-c1 <- importSAS('x:/Data/Rawdata_Hurtig/706582/lmdb.sas7bdat', 
+c1 <- importSAS('x:/Data/Rawdata_Hurtig/706582/lmdb.sas7bdat',
                 date.vars = "eksd", where="atc=:'C'or atc=:'N06D'",filter=pnr)
-c2 <- importSAS('V:/Data/Workdata/706582/Corona_update/Data/11. levering/lmdb.sas7bdat', 
+c2 <- importSAS('V:/Data/Workdata/706582/Corona_update/Data/11. levering/lmdb.sas7bdat',
                 date.vars = "eksd", where="atc=:'C' or atc=:'N06D'",filter=pnr)
 c12 <- rbind(c1,c2,fill=TRUE)
 c12 <- c12[,.(pnr,eksd,atc)]
@@ -358,7 +360,7 @@ hbc9 <- importSAS('X:/Data/Rawdata_Hurtig/706582/Data til COVID-19 studier/11_le
                   where="analysiscode  in ('NPU27300','NPU03835','NPU02307','NPU18016','NPU18105','NPU01807',
       'NPU01566','NPU01567','NPU01568')",
                   character.vars="patient_cpr")
-setnames(hbc9,"patient_cpr","pnr") 
+setnames(hbc9,"patient_cpr","pnr")
 hbc9 <- merge(hbc9,pnr,by="pnr")
 hbc89 <- rbind(hbc8,hbc9)
 hbc89[,res:=as.numeric(value)]
@@ -409,7 +411,7 @@ saveRDS(income,file='income.rds')
 
 ######################################################################
 #
-# Household size 
+# Household size
 #
 ######################################################################
 
