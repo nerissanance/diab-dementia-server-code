@@ -47,6 +47,9 @@ resdf_Qint_AUC_1se <- readRDS(paste0(here::here(),"/data/sim_res_Qint_AUC_1se.RD
 resdf_SL <- readRDS(paste0(here::here(),"/data/sim_res_SL_ic.RDS"))
 resdf_RF <- readRDS(paste0(here::here(),"/data/sim_res_rf.RDS"))
 
+resdf_noDetQ_ic <- readRDS(paste0(here::here(),"/data/sim_res_noDetQ_ic.RDS"))
+resdf_noDetQ_tmle <- readRDS(paste0(here::here(),"/data/sim_res_noDetQ_tmle.RDS"))
+
 
 
 plotdf <- bind_rows(
@@ -62,7 +65,9 @@ plotdf <- bind_rows(
   resdf_AUC %>% mutate(analysis="LASSO AUC"),
   resdf_AUC_1se %>% mutate(analysis="LASSO AUC 1se"),
   resdf_Qint_AUC %>% mutate(analysis="LASSO Q-intercept AUC"),
-  resdf_Qint_AUC_1se %>% mutate(analysis="LASSO Q-intercept AUC 1se"))
+  resdf_Qint_AUC_1se %>% mutate(analysis="LASSO Q-intercept AUC 1se"),
+  resdf_noDetQ_ic %>% mutate(analysis="LASSO no DetQ IC"),
+  resdf_noDetQ_tmle %>% mutate(analysis="LASSO no DetQ tmle"))
 
 head(plotdf)
 
