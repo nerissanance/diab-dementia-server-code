@@ -31,13 +31,13 @@ for(i in 1:n){
   }
 
   #note: once events jump to 1, need to remain 1 for remainder of follow up
-  for(i in 1:(N_time+1)){
-    j=i+1
-    d[get(paste0("event_dementia_",i))==1, (paste0("event_dementia_",j)):=1]
-    d[get(paste0("event_death_",i))==1, (paste0("event_death_",j)):=1]
-    d[get(paste0("event_death_",i))==1, (paste0("censor_",i)):=0]
-    d[get(paste0("event_death_",i))==1, (paste0("censor_",j)):=1]
-    d[get(paste0("censor_",i))==1, (paste0("censor_",j)):=1]
+  for(k in 1:(N_time+1)){
+    j=k+1
+    d[get(paste0("event_dementia_",k))==1, (paste0("event_dementia_",j)):=1]
+    d[get(paste0("event_death_",k))==1, (paste0("event_death_",j)):=1]
+    d[get(paste0("event_death_",k))==1, (paste0("censor_",i)):=0]
+    d[get(paste0("event_death_",k))==1, (paste0("censor_",j)):=1]
+    d[get(paste0("censor_",k))==1, (paste0("censor_",j)):=1]
 
   }
   ## UNCOMMENT FOR RUNNING MANUAL COMPETING RISK FIX
@@ -46,14 +46,11 @@ for(i in 1:n){
   death.nodes<- grep("event_death_",names(d))
   d[, sum_death :=rowSums(.SD,na.rm=T), .SDcols = death.nodes]
   d[, sum_dementia :=rowSums(.SD,na.rm=T), .SDcols = dementia.nodes]
-  table(d$sum_death)
-  table(d$event_dementia_10)
-  table(d$sum_dementia)
+
   d[sum_death > sum_dementia, (dementia.nodes) := replace(.SD, .SD == 1, 0), .SDcols = dementia.nodes]
   d[sum_death < sum_dementia, (death.nodes) := replace(.SD, .SD == 1, 0), .SDcols = death.nodes]
   # NOTE: decided to prioritize dementia in the event that both death and dementia occur in the same time bin
   d[sum_death== sum_dementia, (death.nodes) := replace(.SD, .SD == 1, 0), .SDcols = death.nodes]
-  table(d$event_dementia_10)
 
   sim_list[[i]] <- d
   gc()

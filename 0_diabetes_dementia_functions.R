@@ -174,14 +174,18 @@ spec_nodes <- function(baseline_vars, longitudinal_vars, num_time){
 
 
 
-spec_analysis <- function(data, long_covariates, baseline_vars, N_time, Avars=c("glp1_","sglt2_inhib_"), Yvars=c("event_dementia_")){
+spec_analysis <- function(data, long_covariates, baseline_vars, N_time, Avars=c("glp1_","sglt2_inhib_"), Yvars=c("event_dementia_"), alt=FALSE){
 
-  node_names <- spec_nodes(baseline_vars=baseline_vars,
-                           longitudinal_vars=c(Avars,long_covariates, "censor_",Yvars),
-                           num_time=0:(N_time-1))
-  # node_names <- spec_nodes(baseline_vars=baseline_vars,
-  #                          longitudinal_vars=c(long_covariates, "censor_",Avars,Yvars),
-  #                          num_time=0:(N_time-1))
+  if(!alt){
+    node_names <- spec_nodes(baseline_vars=baseline_vars,
+                             longitudinal_vars=c(Avars,long_covariates, "censor_",Yvars),
+                             num_time=0:(N_time-1))
+  }else{
+    node_names <- spec_nodes(baseline_vars=baseline_vars,
+                             longitudinal_vars=c(Avars,"censor_",long_covariates, Yvars),
+                             num_time=0:(N_time-1))
+  }
+
 
   Lnode_names <- c(baseline_vars, expand.grid(long_covariates,0:(N_time-1)) %>% apply(1, function(row) paste0(row, collapse = "")))
   Lnode_names <- gsub(" ","", Lnode_names)
