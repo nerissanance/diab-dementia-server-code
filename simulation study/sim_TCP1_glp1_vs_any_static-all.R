@@ -13,6 +13,7 @@ d_wide_list <- readRDS(file=here("data/simulated_data_list.RDS"))
 #d_wide_list <- d_wide_list[1:50]
 gc()
 
+d <- d_wide_list[[1]]
 
 # #add: gcomp, no detQ IC and TMLE, with and without Qint
 # i<-1
@@ -22,6 +23,11 @@ gc()
 # try(res3 <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, varmethod = "tmle"))
 # try(res4 <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, varmethod = "ic"))
 #
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+NOTE: NEED TO TRY OUT ZEYIs NODE ORDERING SWITCH
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
 
 
 
