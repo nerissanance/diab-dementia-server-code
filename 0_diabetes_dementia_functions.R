@@ -71,6 +71,18 @@ SuperLearner_override_EN <- function(Y, X, newX = NULL, family = gaussian(), SL.
   list(model=res$fit, SL.predict = res$pred)
 }
 
+SuperLearner_override_ridge <- function(Y, X, newX = NULL, family = gaussian(), SL.library,
+                                     method = "method.NNLS", id = NULL, verbose = FALSE, control = list(),
+                                     cvControl = list(), obsWeights = NULL, env = parent.frame()) {
+  stopifnot(identical(SL.library, "SL.glmnet"))
+
+  res <- NULL
+  try(res <- SL.glmnet(Y, X, newX, family, obsWeights, id, alpha = 0, nfolds = 5))
+  if(is.null(res)){res <- SL.mean(Y, X, newX, family, obsWeights, id)}
+
+  list(model=res$fit, SL.predict = res$pred)
+}
+
 SuperLearner_override_EN_1se <- function(Y, X, newX = NULL, family = gaussian(), SL.library,
                                      method = "method.NNLS", id = NULL, verbose = FALSE, control = list(),
                                      cvControl = list(), obsWeights = NULL, env = parent.frame()) {
@@ -182,7 +194,7 @@ spec_analysis <- function(data, long_covariates, baseline_vars, N_time, Avars=c(
                              num_time=0:(N_time-1))
   }else{
     node_names <- spec_nodes(baseline_vars=baseline_vars,
-                             longitudinal_vars=c(Avars,"censor_",long_covariates, Yvars),
+                             longitudinal_vars=c(long_covariates, Avars,"censor_", Yvars),
                              num_time=0:(N_time-1))
   }
 
