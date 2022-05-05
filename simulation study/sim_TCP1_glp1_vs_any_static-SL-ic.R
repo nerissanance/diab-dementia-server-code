@@ -22,13 +22,13 @@ res
 
 SL.lib <- c("SL.mean", "SL.glm", "SL.EN.robust", "SL.glmnet.robust")
 
-res <- NULL
+#res <- NULL
 i<-1
 res <- run_ltmle(d_wide_list[[i]], resdf=res, SL.library = SL.lib, Qint=FALSE)
 i<-i+1
 gc()
 saveRDS(res, paste0(here::here(),"/data/sim_res_SL_ic.RDS"))
-i<-1
+
 res <- run_ltmle(d_wide_list[[i]], resdf=res, SL.library = SL.lib, Qint=FALSE)
 i<-i+1
 gc()

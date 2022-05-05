@@ -213,3 +213,55 @@ resdf_RF
 
 gc()
 saveRDS(resdf_RF, paste0(here::here(),"/data/sim_res_rf.RDS"))
+
+
+
+
+
+
+
+#NEW
+int.start.time <- Sys.time()
+resdf_ridge <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE, override_function=SuperLearner_override_ridge))
+  return(res)
+}
+int.end.time <- Sys.time()
+difftime(int.end.time, int.start.time, units="mins")
+
+saveRDS(resdf_ridge, paste0(here::here(),"/data/sim_res_ridge.RDS"))
+resdf_ridge
+
+
+int.start.time <- Sys.time()
+resdf_ridge_AUC <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE, override_function=SuperLearner_override_ridge_AUC))
+  return(res)
+}
+int.end.time <- Sys.time()
+difftime(int.end.time, int.start.time, units="mins")
+
+saveRDS(resdf_ridge_AUC, paste0(here::here(),"/data/sim_res_ridge_AUC.RDS"))
+
+resdf_Qint_1se_altOrd <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, override_function=SuperLearner_override_1se, alt=TRUE))
+  return(res)
+}
+saveRDS(resdf_Qint_1se_altOrd, paste0(here::here(),"/data/sim_res_Qint_1se_altOrd.RDS"))
+
+
+
+int.start.time <- Sys.time()
+resdf_RF_gcomp <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows') %dopar% {
+  res <- run_ltmle_glmnet(d_wide_list[[i]], varmethod = "ic", resdf=NULL, gcomp=TRUE, SL.library="SL.randomForest", override_function=SuperLearner_override_RF)
+}
+int.end.time <- Sys.time()
+difftime(int.end.time, int.start.time, units="mins")
+resdf_RF_gcomp
+
+gc()
+saveRDS(resdf_RF_gcomp, paste0(here::here(),"/data/sim_res_rf_gcomp.RDS"))
+
