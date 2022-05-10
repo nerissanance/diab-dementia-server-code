@@ -49,6 +49,8 @@ resdf_RF <- readRDS(paste0(here::here(),"/data/sim_res_rf.RDS"))
 
 resdf_noDetQ_ic <- readRDS(paste0(here::here(),"/data/sim_res_noDetQ_ic.RDS"))
 resdf_noDetQ_tmle <- readRDS(paste0(here::here(),"/data/sim_res_noDetQ_tmle.RDS"))
+resdf_noDetQ_Qint_ic <- readRDS(paste0(here::here(),"/data/sim_res_noDetQ_Qint_ic.RDS"))
+resdf_noDetQ_Qint_tmle <- readRDS(paste0(here::here(),"/data/sim_res_noDetQ_Qint_tmle.RDS"))
 
 
 
@@ -57,7 +59,7 @@ plotdf <- bind_rows(
   resdf_RF %>% mutate(analysis="Random Forest"),
   resdf_Qint %>% mutate(analysis="LASSO, Q-intercept"),
   #resdf_ic %>% mutate(analysis="LASSO"),
-  #resdf_gcomp %>% mutate(analysis="G-Comp - LASSO"),
+  resdf_gcomp %>% mutate(analysis="G-Comp - LASSO"),
   resdf_EN_ic %>% mutate(analysis="EN"),
   resdf_EN_Qint %>% mutate(analysis="EN, Q-intercept"),
   resdf_1se %>% mutate(analysis="LASSO 1se"),
@@ -67,7 +69,11 @@ plotdf <- bind_rows(
   resdf_Qint_AUC %>% mutate(analysis="LASSO Q-intercept AUC"),
   resdf_Qint_AUC_1se %>% mutate(analysis="LASSO Q-intercept AUC 1se"),
   resdf_noDetQ_ic %>% mutate(analysis="LASSO no DetQ IC"),
-  resdf_noDetQ_tmle %>% mutate(analysis="LASSO no DetQ tmle"))
+  resdf_noDetQ_tmle %>% mutate(analysis="LASSO no DetQ tmle"),
+  resdf_noDetQ_Qint_ic %>% mutate(analysis="LASSO no DetQ Qint IC"),
+  resdf_noDetQ_Qint_tmle %>% mutate(analysis="LASSO no DetQ Qint tmle")
+
+  )
 
 head(plotdf)
 
@@ -95,16 +101,21 @@ perf_tab %>% arrange(mse)
 plotdf <- left_join(plotdf,perf_tab, by="analysis") %>% arrange(mse) %>%
           mutate(analysis=factor(analysis, levels=unique(analysis)))
 
+#Try out glmnet with interactions (all, or just with interactions with A)
+# RF with Gcomp=T
+# How many continious with spline terms
+
+
 #--------------------------------
 # Plots
 #--------------------------------
 
-# set.seed(123)
-# ggplot(plotdf, aes(y=analysis, x=estimate)) +
-#   geom_jitter(width=0, height=0.05, alpha=0.75) +
-#   geom_vline(xintercept = 1) +
-#   geom_vline(aes(xintercept = true.RR), linetype="dashed") +
-#   scale_x_continuous(trans = "log10")
+set.seed(123)
+ggplot(plotdf, aes(y=analysis, x=estimate)) +
+  geom_jitter(width=0, height=0.05, alpha=0.75) +
+  geom_vline(xintercept = 1) +
+  geom_vline(aes(xintercept = true.RR), linetype="dashed") +
+  scale_x_continuous(trans = "log10")
 
 
 # ggplot(plotdf, aes(x=estimate, color=analysis, fill=analysis)) +
