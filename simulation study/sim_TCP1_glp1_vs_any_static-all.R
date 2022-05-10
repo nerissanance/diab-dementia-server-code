@@ -14,14 +14,20 @@ d_wide_list <- readRDS(file=here("data/simulated_data_list.RDS"))
 gc()
 
 
-# #add: gcomp, no detQ IC and TMLE, with and without Qint
-# i<-1
-# try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE, gcomp=TRUE))
-# try(res1 <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE, det.Q=FALSE, varmethod = "tmle"))
-# try(res2 <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE, det.Q=FALSE, varmethod = "ic"))
-# try(res3 <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, varmethod = "tmle"))
-# try(res4 <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, varmethod = "ic"))
-#
+resdf_Qint_1se_int <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet_interaction(d_wide_list[[i]], resdf=NULL, Qint=TRUE, override_function=SuperLearner_override_1se))
+  return(res)
+}
+saveRDS(resdf_Qint_1se_int, paste0(here::here(),"/data/sim_res_Qint_1se_int.RDS"))
+
+
+resdf_1se_int <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet_interaction(d_wide_list[[i]], resdf=NULL, Qint=FALSE, override_function=SuperLearner_override_1se))
+  return(res)
+}
+saveRDS(resdf_1se_int, paste0(here::here(),"/data/sim_res_1se_int.RDS"))
 
 
 

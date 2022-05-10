@@ -39,7 +39,6 @@ clean_sim_data <- function(d, N_time){
 
 
 
-
 run_ltmle_glmnet <- function(d,
                              N_time = 11, #number of time points you want to look at
                              SL.library = c("SL.glmnet"),
@@ -64,6 +63,158 @@ run_ltmle_glmnet <- function(d,
 
 
   spec_ltmle <- spec_analysis(data=d, c(long_covariates,"event_death_"),
+                              baseline_vars, N_time,
+                              Avars=c("glp1_"),
+                              Yvars=c("event_dementia_"),
+                              alt=alt)
+  abar_spec = list(rep(1,N_time),rep(0,N_time))
+
+  #Drop the baseline events
+  spec_ltmle$data <- spec_ltmle$data %>% subset(., select = -c(event_death_0, censor_0, event_dementia_0))
+  spec_ltmle$Cnodes = spec_ltmle$Cnodes[spec_ltmle$Cnodes!="censor_0"]
+  spec_ltmle$Lnodes = spec_ltmle$Lnodes[spec_ltmle$Lnodes!="event_death_0"]
+  spec_ltmle$Ynodes = spec_ltmle$Ynodes[spec_ltmle$Ynodes!="event_dementia_0"]
+
+  set.seed(12345)
+  res = NULL
+
+
+  if(Qint){
+
+    if(N_time==11){
+      qform = c(
+        insulin_0="Q.kplus1 ~ 1",
+        insulin_1="Q.kplus1 ~ 1",
+        event_dementia_1="Q.kplus1 ~ 1",
+        insulin_2="Q.kplus1 ~ 1",
+        event_dementia_2="Q.kplus1 ~ 1",
+        insulin_3="Q.kplus1 ~ 1",
+        event_dementia_3="Q.kplus1 ~ 1",
+        insulin_4="Q.kplus1 ~ 1",
+        event_dementia_4="Q.kplus1 ~ 1",
+        insulin_5="Q.kplus1 ~ 1",
+        event_dementia_5="Q.kplus1 ~ 1",
+        insulin_6="Q.kplus1 ~ 1",
+        event_dementia_6="Q.kplus1 ~ 1",
+        insulin_7="Q.kplus1 ~ 1",
+        event_dementia_7="Q.kplus1 ~ 1",
+        insulin_8="Q.kplus1 ~ 1",
+        event_dementia_8="Q.kplus1 ~ 1",
+        insulin_9="Q.kplus1 ~ 1",
+        event_dementia_9="Q.kplus1 ~ 1",
+        insulin_10="Q.kplus1 ~ 1",
+        event_dementia_10="Q.kplus1 ~ 1"
+      )
+    }
+
+    if(N_time==2){
+      qform = c(
+        insulin_0="Q.kplus1 ~ 1",
+        insulin_1="Q.kplus1 ~ 1",
+        event_dementia_1="Q.kplus1 ~ 1")
+    }
+  }else{
+    qform=NULL
+  }
+
+
+  if(det.Q){
+    det.q.fun = det.Q.function
+  }else{
+    det.q.fun = NULL
+  }
+
+
+  package_stub("SuperLearner", "SuperLearner", override_function, {
+    testthatsomemore::package_stub("ltmle", "Estimate", Estimate_override, {
+      try(res <- ltmle(data=spec_ltmle$data,
+                       Anodes = spec_ltmle$Anodes,
+                       Cnodes = spec_ltmle$Cnodes,
+                       Lnodes = spec_ltmle$Lnodes,
+                       Ynodes = spec_ltmle$Ynodes,
+                       survivalOutcome = T,
+                       abar = abar_spec,
+                       gcomp=gcomp,
+                       Qform = qform,
+                       estimate.time=T,
+                       deterministic.Q.function = det.q.fun,
+                       SL.library = SL.library,
+                       variance.method = varmethod
+      ))
+    })})
+
+
+
+  if(!is.null(res)){
+    fit<-res
+    res <- summary(res)
+    res <- as.data.frame(res$effect.measures$RR)
+    res$label <- label
+  }
+  if(!is.null(resdf)){
+    res <- bind_rows(resdf, res)
+  }
+
+  options(warn=warn)
+  return(res)
+}
+
+
+run_ltmle_glmnet_interaction <- function(d,
+                             N_time = 11, #number of time points you want to look at
+                             SL.library = c("SL.glmnet"),
+                             resdf=NULL,
+                             Qint=F,
+                             gcomp=F,
+                             det.Q=T,
+                             override_function=SuperLearner_override,
+                             varmethod = "tmle", #variance method
+                             alt=FALSE,
+                             label=""){
+
+  warn = getOption("warn")
+  options(warn=-1)
+
+  #clean competing events
+  d <-clean_sim_data(d, N_time=N_time)
+
+  #make interactions between A and L
+  long_covariates
+
+  i=1
+  j=long_covariates[1]
+
+  d <- data.frame(d)
+
+  int_vars <- NULL
+  for(i in 0:(N_time-1)){
+    for(j in long_covariates){
+      int_varname<-paste0("glp1X",j)
+      new_varname<-paste0("glp1X",j, i)
+      var1 <- paste0("glp1_", i)
+      var2 <- paste0(j, i)
+
+      newvar <- d[[var1]] * d[[var2]]
+      d[[new_varname]] <- newvar
+      int_vars = c(int_vars, int_varname)
+    }
+  }
+  int_vars = unique(int_vars)
+
+  # Yvars=c("event_dementia_")
+  #
+  # long_covariates = c(long_covariates, int_vars, "event_death_")
+  # node_names <- spec_nodes(baseline_vars=baseline_vars,
+  #                          longitudinal_vars=c(Avars,"censor_",long_covariates, Yvars),
+  #                          num_time=0:(N_time-1))
+
+  #Use only first N time points
+  d <- d %>%
+    dplyr::select(!!(baseline_vars),matches(paste0("_(",paste0(0:(N_time-1),collapse="|"),")$")))
+
+  colnames(d)
+
+  spec_ltmle <- spec_analysis(data=d, c(long_covariates, int_vars, "event_death_"),
                               baseline_vars, N_time,
                               Avars=c("glp1_"),
                               Yvars=c("event_dementia_"),
