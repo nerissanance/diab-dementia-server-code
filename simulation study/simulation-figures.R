@@ -28,6 +28,8 @@ source(here::here("0_config.R"))
 # )
 #
 # head(plotdf)
+resdf_unadj <- readRDS(paste0(here::here(),"/data/sim_res_unadj.RDS"))
+resdf_unadj_Qint <- readRDS(paste0(here::here(),"/data/sim_res_unadj_Qint.RDS"))
 
 resdf_glm <- readRDS(paste0(here::here(),"/data/sim_res_glm_ic.RDS"))
 resdf_Qint <- readRDS(paste0(here::here(),"/data/sim_res_Qint_ic.RDS"))
@@ -62,6 +64,8 @@ resdf_1se_int <- readRDS(paste0(here::here(),"/data/sim_res_1se_int.RDS"))
 resdf_Qint_1se_int <- readRDS(paste0(here::here(),"/data/sim_res_Qint_1se_int.RDS"))
 
 plotdf <- bind_rows(
+  resdf_unadj %>% mutate(analysis="unadj"),
+  resdf_unadj_Qint %>% mutate(analysis="unadj, Q-intercept"),
   resdf_glm %>% mutate(analysis="glm"),
   resdf_RF %>% mutate(analysis="Random Forest"),
   resdf_Qint %>% mutate(analysis="LASSO, Q-intercept"),

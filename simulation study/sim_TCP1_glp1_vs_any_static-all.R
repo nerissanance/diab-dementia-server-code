@@ -14,6 +14,9 @@ d_wide_list <- readRDS(file=here("data/simulated_data_list.RDS"))
 gc()
 
 
+#unadjusted
+
+
 resdf_Qint_1se_int <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
   res <- NULL
   try(res <- run_ltmle_glmnet_interaction(d_wide_list[[i]], resdf=NULL, Qint=TRUE, override_function=SuperLearner_override_1se))
