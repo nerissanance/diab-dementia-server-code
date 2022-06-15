@@ -10,8 +10,21 @@ source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
 
 gc()
 d_wide_list <- readRDS(file=here("data/simulated_data_list.RDS"))
-#d_wide_list <- d_wide_list[1:50]
+d_wide_list <- d_wide_list[1:5]
 gc()
+
+#Add:
+
+#lasso prescreen
+try(res <- run_ltmle_glmnet(d_wide_list[[1]], resdf=NULL, Qint=TRUE, override_function=SuperLearner_override_lasso_prescreen))
+res
+
+#all interactions with A - check on simulation? no interactions in the data
+try(res <- run_ltmle_glmnet_interaction(d_wide_list[[1]], resdf=NULL, Qint=TRUE, override_function=SuperLearner_override_1se))
+
+#Make sglt2+glp1
+#Make all non-deterministic with tmle variance option
+#Make more common and rerun
 
 
 #unadjusted

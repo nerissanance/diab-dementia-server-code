@@ -112,9 +112,15 @@ Estimate_override <-function(inputs, form, subs, family, type, nodes, Qstar.kplu
                                     newX.list$new.subs,
                                     try.result = NULL)
       }else{
+        if(identical(SL.library, "SL.glmnet")){
         pred <- ProcessSLPrediction(predict(m$model, as.matrix(newX.list$newX), s="lambda.min", type="response"),
                                     newX.list$new.subs,
                                     try.result = NULL)
+        }else{
+          pred <- ProcessSLPrediction(predict(m$model, as.matrix(newX.list$newX), type="response"),
+                                      newX.list$new.subs,
+                                      try.result = NULL)
+        }
       }
 
 

@@ -34,6 +34,58 @@ SuperLearner_override <- function(Y, X, newX = NULL, family = gaussian(), SL.lib
   list(model=res$fit, SL.predict = res$pred)
 }
 
+
+SuperLearner_override_lasso_prescreen <- function(Y, X, newX = NULL, family = gaussian(), SL.library="SL.glm",
+                                  method = "method.NNLS", id = NULL, verbose = FALSE, control = list(),
+                                  cvControl = list(), obsWeights = NULL, env = parent.frame(), alpha=1, loss  = "auc") {
+  SL.library="SL.glm"
+  stopifnot(identical(SL.library, "SL.glm"))
+
+  minscreen=2
+
+  #.SL.require("glmnet")
+  if (!is.matrix(X)) {
+    X <- model.matrix(~-1 + ., X)
+  }
+  fitCV <- glmnet::cv.glmnet(x = X, y = Y, lambda = NULL, type.measure = "deviance",
+                             nfolds = 5, family = family$family, alpha = alpha,
+                             nlambda = 100)
+  whichVariable <- (as.numeric(coef(fitCV$glmnet.fit, s = fitCV$lambda.min))[-1] !=
+                      0)
+  if (sum(whichVariable) < minscreen) {
+    warning("fewer than minscreen variables passed the glmnet screen, increased lambda to allow minscreen variables")
+    sumCoef <- apply(as.matrix(fitCV$glmnet.fit$beta), 2,
+                     function(x) sum((x != 0)))
+    newCut <- which.max(sumCoef >= minscreen)
+    whichVariable <- (as.matrix(fitCV$glmnet.fit$beta)[,
+                                                       newCut] != 0)
+  }
+
+  # cat(whichVariable)
+  # X <- X %>% subset(., select==!!(whichVariable))
+  X<-as.data.frame(X)
+  X<-X[,whichVariable]
+  #print(class(X))
+
+
+  # res <- NULL
+  # try(res <- SL.glm(Y, X, newX, family, obsWeights, id))
+  fit.glm <- glm(Y ~ ., data = data.frame(Y,X), family = family, weights = obsWeights, model = TRUE)
+  if (is.matrix(newX)) {
+    newX = as.data.frame(newX)
+  }
+  pred <- predict(fit.glm, newdata = newX, type = "response")
+  fit <- list(object = fit.glm)
+  class(fit) <- "SL.glm"
+  res <- list(pred = pred, fit = fit)
+
+  if(is.null(res)){res <- SL.mean(Y, X, newX, family, obsWeights, id)}
+
+  #print( res$fit)
+
+  list(model=res$fit, SL.predict = res$pred)
+}
+
 SuperLearner_override_RF <- function(Y, X, newX = NULL, family = gaussian(), SL.library="SL.glmnet",
                                   method = "method.NNLS", id = NULL, verbose = FALSE, control = list(),
                                   cvControl = list(), obsWeights = NULL, env = parent.frame(), alpha=1, loss  = "auc") {
