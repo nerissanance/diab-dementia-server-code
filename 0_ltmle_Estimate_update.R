@@ -143,7 +143,9 @@ Estimate_override <-function(inputs, form, subs, family, type, nodes, Qstar.kplu
                                  na.action = na.pass)
     newX.temp <- model.matrix(terms(f), new.mod.frame)
     if (!use.glm) {
-      colnames(newX.temp) <- paste0("Xx.", 1:ncol(newX.temp))
+      #XXXXXXXXXXXXXXXXXXXXXXXXXXX
+      #colnames(newX.temp) <- paste0("Xx.", 1:ncol(newX.temp))
+      #XXXXXXXXXXXXXXXXXXXXXXXXXXX
     }
     new.subs <- !rowAnyMissings(newX.temp)
     newX <- as.data.frame(newX.temp[new.subs, , drop = FALSE])
@@ -234,7 +236,9 @@ Estimate_override <-function(inputs, form, subs, family, type, nodes, Qstar.kplu
       family <- binomial()
     if (!is.null(offst))
       stop("offset in formula not supported with SuperLearner")
-    colnames(X) <- paste0("Xx.", 1:ncol(X))
+    #XXXXXXXXXXXXXXXXXXXXXXXXXXX
+    #colnames(X) <- paste0("Xx.", 1:ncol(X))
+    #XXXXXXXXXXXXXXXXXXXXXXXXXXX
     X <- as.data.frame(X)
   }
   fit <- vector("list", num.regimes)

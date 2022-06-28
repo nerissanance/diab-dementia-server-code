@@ -43,11 +43,16 @@ SuperLearner_override_lasso_prescreen <- function(Y, X, newX = NULL, family = ga
 
   minscreen=2
 
-  #.SL.require("glmnet")
-  if (!is.matrix(X)) {
-    X <- model.matrix(~-1 + ., X)
+  X_Avar <- as.data.frame(X) %>% select(starts_with("glp1_"))
+  X_Lvars <- as.data.frame(X) %>% select(!starts_with("glp1_"))
+  if (!is.matrix(X_Lvars)) {
+    X_Lvars <- model.matrix(~-1 + ., X_Lvars)
   }
-  fitCV <- glmnet::cv.glmnet(x = X, y = Y, lambda = NULL, type.measure = "deviance",
+
+  # if (!is.matrix(X)) {
+  #   X <- model.matrix(~-1 + ., X)
+  # }
+  fitCV <- glmnet::cv.glmnet(x = X_Lvars, y = Y, lambda = NULL, type.measure = "deviance",
                              nfolds = 5, family = family$family, alpha = alpha,
                              nlambda = 100)
   whichVariable <- (as.numeric(coef(fitCV$glmnet.fit, s = fitCV$lambda.min))[-1] !=
@@ -63,9 +68,10 @@ SuperLearner_override_lasso_prescreen <- function(Y, X, newX = NULL, family = ga
 
   # cat(whichVariable)
   # X <- X %>% subset(., select==!!(whichVariable))
-  X<-as.data.frame(X)
-  X<-X[,whichVariable]
-  #print(class(X))
+  X_Lvars<-as.data.frame(X_Lvars)
+  X_Lvars<-X_Lvars[,whichVariable]
+  X <- cbind(X_Avar,X_Lvars)
+
 
 
   # res <- NULL
