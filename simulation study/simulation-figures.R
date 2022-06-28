@@ -63,35 +63,39 @@ resdf_ridge_AUC <- readRDS(paste0(here::here(),"/data/sim_res_ridge_AUC.RDS"))
 resdf_1se_int <- readRDS(paste0(here::here(),"/data/sim_res_1se_int.RDS"))
 resdf_Qint_1se_int <- readRDS(paste0(here::here(),"/data/sim_res_Qint_1se_int.RDS"))
 
+resdf_Qint_noDetQ_lasso_prescreen <- readRDS(paste0(here::here(),"/data/sim_res_Qint_noDetQ_lasso_prescreen.RDS"))
+
 plotdf <- bind_rows(
   resdf_unadj %>% mutate(analysis="unadj"),
   resdf_unadj_Qint %>% mutate(analysis="unadj, Q-intercept"),
-  resdf_glm %>% mutate(analysis="glm"),
-  resdf_RF %>% mutate(analysis="Random Forest"),
-  resdf_Qint %>% mutate(analysis="LASSO, Q-intercept"),
-  resdf_ic %>% mutate(analysis="LASSO"),
-  resdf_gcomp %>% mutate(analysis="G-Comp - LASSO"),
-  resdf_EN_ic %>% mutate(analysis="EN"),
-  resdf_EN_Qint %>% mutate(analysis="EN, Q-intercept"),
-  resdf_1se %>% mutate(analysis="LASSO 1se"),
-  resdf_Qint_1se %>% mutate(analysis="LASSO Q-intercept 1se"),
-  resdf_AUC %>% mutate(analysis="LASSO AUC"),
-  resdf_AUC_1se %>% mutate(analysis="LASSO AUC 1se"),
-  resdf_Qint_AUC %>% mutate(analysis="LASSO Q-intercept AUC"),
-  resdf_Qint_AUC_1se %>% mutate(analysis="LASSO Q-intercept AUC 1se"),
+  # resdf_glm %>% mutate(analysis="glm"),
+  # resdf_RF %>% mutate(analysis="Random Forest"),
+  # resdf_Qint %>% mutate(analysis="LASSO, Q-intercept"),
+  # resdf_ic %>% mutate(analysis="LASSO"),
+  # resdf_gcomp %>% mutate(analysis="G-Comp - LASSO"),
+  # resdf_EN_ic %>% mutate(analysis="EN"),
+  # resdf_EN_Qint %>% mutate(analysis="EN, Q-intercept"),
+  # resdf_1se %>% mutate(analysis="LASSO 1se"),
+  # resdf_Qint_1se %>% mutate(analysis="LASSO Q-intercept 1se"),
+  # resdf_AUC %>% mutate(analysis="LASSO AUC"),
+  # resdf_AUC_1se %>% mutate(analysis="LASSO AUC 1se"),
+  # resdf_Qint_AUC %>% mutate(analysis="LASSO Q-intercept AUC"),
+  # resdf_Qint_AUC_1se %>% mutate(analysis="LASSO Q-intercept AUC 1se"),
   resdf_noDetQ_ic %>% mutate(analysis="LASSO no DetQ IC"),
   resdf_noDetQ_tmle %>% mutate(analysis="LASSO no DetQ tmle"),
   resdf_noDetQ_Qint_ic %>% mutate(analysis="LASSO no DetQ Qint IC"),
   resdf_noDetQ_Qint_tmle %>% mutate(analysis="LASSO no DetQ Qint tmle"),
-  resdf_alt_ord  %>% mutate(analysis="LASSO Q-intercept 1se, alt order"),
-  resdf_rf_gcomp %>% mutate(analysis="Random Forest, G-comp"),
-  resdf_ridge %>% mutate(analysis="Ridge"),
-  resdf_ridge_AUC %>% mutate(analysis="Ridge-AUC"),
-  resdf_1se %>% mutate(analysis="LASSO 1se interactions"),
-  resdf_Qint_1se %>% mutate(analysis="LASSO Q-intercept 1se interactions")
+  # resdf_alt_ord  %>% mutate(analysis="LASSO Q-intercept 1se, alt order"),
+  # resdf_rf_gcomp %>% mutate(analysis="Random Forest, G-comp"),
+  # resdf_ridge %>% mutate(analysis="Ridge"),
+  # resdf_ridge_AUC %>% mutate(analysis="Ridge-AUC"),
+  # resdf_1se %>% mutate(analysis="LASSO 1se interactions"),
+  # resdf_Qint_1se %>% mutate(analysis="LASSO Q-intercept 1se interactions"),
+  resdf_Qint_noDetQ_lasso_prescreen %>% mutate(analysis="GLM Q-intercept LASSO prescreen -TMLE var")
   )
 
 head(plotdf)
+
 
 
 
@@ -114,7 +118,7 @@ perf_tab <- plotdf %>% group_by(analysis) %>%
                                  bias_std_ratio=mean(abs(log(estimate) - log(true.RR))/std.dev),
                                  mse=variance + bias^2)
 res <- perf_tab %>% arrange(mse)
-res
+res %>% select(analysis,  bias, variance,    mse, coverage)
 
 plotdf <- left_join(plotdf,perf_tab, by="analysis") %>% arrange(mse) %>%
           mutate(analysis=factor(analysis, levels=unique(analysis)))
