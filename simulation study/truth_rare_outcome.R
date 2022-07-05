@@ -1,24 +1,24 @@
-### synthesizeDD.R --- 
+### synthesizeDD.R ---
 #----------------------------------------------------------------------
 ## Author: Thomas Alexander Gerds
-## Created: Nov  3 2021 (15:20) 
-## Version: 
-## Last-Updated: Nov  5 2021 (17:47) 
+## Created: Nov  3 2021 (15:20)
+## Version:
+## Last-Updated: Nov  5 2021 (17:47)
 ##           By: Thomas Alexander Gerds
 ##     Update #: 6
 #----------------------------------------------------------------------
-## 
-### Commentary: 
-## 
+##
+### Commentary:
+##
 ### Change Log:
 #----------------------------------------------------------------------
-## 
+##
 ### Code:
 ##' Synthesizing longitudinal diabetes dementia followup data
 ##'
 ##' A sequence of logistic regression models Danmark Statistics
 ##' @title Synthesizing longitudinal diabetes dementia followup data
-##' @param coefficients Intercepts and regression coefficients (log-odds-ratios) 
+##' @param coefficients Intercepts and regression coefficients (log-odds-ratios)
 ##' @return \code{lvm} object for simulation
 ##' @seealso \code{lvm}, \code{distribution}, \code{regression}, \code{sim}
 ##' @examples
@@ -27,7 +27,7 @@
 ##' cc <- fread("data/coefficients.txt")
 ##' u <- synthesizeDD(cc)
 ##' d <- sim(u,1000)
-##' @export 
+##' @export
 ##' @author Thomas A. Gerds <tag@@biostat.ku.dk>
 synthesizeDD <- function(coefficients){
     requireNamespace("lava")
@@ -48,7 +48,7 @@ synthesizeDD <- function(coefficients){
         beta <- unlist(BETA[j,])
         X <- XNAMES[!is.na(beta)]
         beta <- beta[!is.na(beta)]
-        # add V ~ Intercept + beta X 
+        # add V ~ Intercept + beta X
         distribution(m,V) <- binomial.lvm()
         intercept(m,V) <- INTERCEPT[j]
         regression(m,from=X,to=V) <- beta
@@ -80,8 +80,8 @@ synthesizeDD.always <- function(coefficients, A_name = "glp1"){
     beta_A <- BETA[, loc_A, with = F]
     loc_C <- grep("^censor_", XNAMES)
     beta_C <- BETA[, loc_C, with = F]
-    
-    
+
+
     INTERCEPT <- coefficients[["(Intercept)"]]
     # empty lava model for simulation
     m <- lvm()
@@ -103,10 +103,10 @@ synthesizeDD.always <- function(coefficients, A_name = "glp1"){
         beta <- unlist(BETA[j,])
         beta[loc_A] <- NA  # absorb A coefficient into intercept for always-on group; not depending on observed A values any more
         beta[loc_C] <- NA  # C is also intervened so will be ignored in conditional logistic models
-        
+
         X <- XNAMES[!is.na(beta)]
         beta <- beta[!is.na(beta)]
-        # add V ~ Intercept + beta X 
+        # add V ~ Intercept + beta X
         distribution(m,V) <- binomial.lvm()
         # intercept(m,V) <- INTERCEPT[j]
         intercept(m,V) <- temp_intercept[j]
@@ -139,8 +139,8 @@ synthesizeDD.never <- function(coefficients, A_name = "glp1"){
     beta_A <- BETA[, loc_A, with = F]
     loc_C <- grep("^censor_", XNAMES)
     beta_C <- BETA[, loc_C, with = F]
-    
-    
+
+
     INTERCEPT <- coefficients[["(Intercept)"]]
     # empty lava model for simulation
     m <- lvm()
@@ -157,15 +157,15 @@ synthesizeDD.never <- function(coefficients, A_name = "glp1"){
         temp_intercept <- INTERCEPT
         temp_sum_A_coef <- rowSums(beta_A, na.rm = T)  # intercept + At coefficients
         temp_intercept <- temp_intercept + temp_sum_A_coef
-        
+
         V <- coefficients$var[j]
         beta <- unlist(BETA[j,])
         beta[loc_A] <- NA  # absorb A coefficient into intercept for always-on group; not depending on observed A values any more
         beta[loc_C] <- NA  # C is also intervened so will be ignored in conditional logistic models
-        
+
         X <- XNAMES[!is.na(beta)]
         beta <- beta[!is.na(beta)]
-        # add V ~ Intercept + beta X 
+        # add V ~ Intercept + beta X
         distribution(m,V) <- binomial.lvm()
         intercept(m,V) <- INTERCEPT[j]#keep only intercept for "never on"
         # intercept(m,V) <- temp_intercept[j]
@@ -186,13 +186,13 @@ cc <- fread("../powerhouse/data/coefficients.txt")
 set.seed(1234)
 u.always <- synthesizeDD.always(cc)
 d.always <- sim(u.always, 17000)
-(prop.always <- d.always$event_dementia_12 %>% table %>% prop.table)
+(prop.always <- d.always$event_dementia_10 %>% table %>% prop.table)
 
 
 set.seed(1234)
 u.never <- synthesizeDD.never(cc)
 d.never <- sim(u.never, 17000)
-(prop.never <- d.never$event_dementia_12 %>% table %>% prop.table)
+(prop.never <- d.never$event_dementia_10 %>% table %>% prop.table)
 
 (cRD <-  prop.always[2] - prop.never[2])
 (cRR <- (prop.always[2])/prop.never[2])
