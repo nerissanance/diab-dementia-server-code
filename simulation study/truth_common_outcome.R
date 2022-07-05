@@ -191,22 +191,46 @@ library(data.table)
 library(tidyverse)
 
 #nsamp <- 17,000
-#truth: 0.4345383
+
+#truth:
 #nsamp <- 100000
 #RR=
-nsamp <- 1000000
+nsamp <- 10000000
 gc()
 
 set.seed(1234)
 u.always <- synthesizeDD.always(cc)
 d.always <- sim(u.always, nsamp)
-(prop.always <- d.always$event_dementia_12 %>% table %>% prop.table)
+
+(prop.always <-
+    1*(d.always$event_dementia_1 +
+    d.always$event_dementia_2 +
+    d.always$event_dementia_3 +
+    d.always$event_dementia_4 +
+    d.always$event_dementia_5 +
+    d.always$event_dementia_6 +
+    d.always$event_dementia_7 +
+    d.always$event_dementia_8 +
+    d.always$event_dementia_9 +
+    d.always$event_dementia_10 >0)  %>% table %>% prop.table)
 
 
 set.seed(1234)
 u.never <- synthesizeDD.never(cc)
 d.never <- sim(u.never, nsamp)
-(prop.never <- d.never$event_dementia_12 %>% table %>% prop.table)
+
+(prop.never <-
+    1*(d.never$event_dementia_1 +
+    d.never$event_dementia_2 +
+    d.never$event_dementia_3 +
+    d.never$event_dementia_4 +
+    d.never$event_dementia_5 +
+    d.never$event_dementia_6 +
+    d.never$event_dementia_7 +
+    d.never$event_dementia_8 +
+    d.never$event_dementia_9 +
+    d.never$event_dementia_10 >0) %>% table %>% prop.table)
+
 
 (cRD <-  prop.always[2] - prop.never[2])
 (cRR <- (prop.always[2])/prop.never[2])

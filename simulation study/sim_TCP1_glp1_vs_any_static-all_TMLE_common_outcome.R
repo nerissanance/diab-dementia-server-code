@@ -13,7 +13,9 @@ d_wide_list <- readRDS(file=here("data/simulated_data_list_commonoutcome.RDS"))
 #d_wide_list <- d_wide_list[1:5]
 gc()
 
-#Add:
+
+
+
 
 
 #primary
@@ -27,3 +29,17 @@ int.end.time <- Sys.time()
 difftime(int.end.time, int.start.time, units="mins")
 
 saveRDS(resdf_noDetQ_Qint_tmle_common, paste0(here::here(),"/data/sim_res_noDetQ_Qint_tmle_common.RDS"))
+
+
+
+#No Qint, DetQ
+int.start.time <- Sys.time()
+resdf_tmle_common <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE, det.Q=TRUE, varmethod = "tmle"))
+  return(res)
+}
+int.end.time <- Sys.time()
+difftime(int.end.time, int.start.time, units="mins")
+
+saveRDS(resdf_tmle_common, paste0(here::here(),"/data/sim_res_resdf_tmle_common.RDS"))
