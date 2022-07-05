@@ -149,6 +149,8 @@ run_ltmle_glmnet <- function(d,
     fit<-res
     res <- summary(res)
     res <- as.data.frame(res$effect.measures$RR)
+    res.ate <- as.data.frame(res$effect.measures$ATE) %>% rename(ate=estimate, ate.sd=std.dev , ate.pval=pvalue, ate.ci.lb=CI.2.5., ate.ci.ub=  CI.97.5.)
+    res <- cbind(res, res.ate)
     res$label <- label
   }
   if(!is.null(resdf)){
