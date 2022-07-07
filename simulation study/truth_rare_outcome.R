@@ -194,6 +194,7 @@ nsamp <- 10000000
 
 set.seed(1234)
 u.always <- synthesizeDD.always(cc)
+
 d.always <- sim(u.always, nsamp)
 (prop.always <-
     1*(d.always$event_dementia_1 +
@@ -210,6 +211,7 @@ d.always <- sim(u.always, nsamp)
 
 set.seed(1234)
 u.never <- synthesizeDD.never(cc)
+
 d.never <- sim(u.never, nsamp)
 
 (prop.never <-

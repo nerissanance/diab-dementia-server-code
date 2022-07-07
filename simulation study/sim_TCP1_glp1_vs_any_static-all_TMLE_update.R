@@ -13,7 +13,6 @@ d_wide_list <- readRDS(file=here("data/simulated_data_list.RDS"))
 #d_wide_list <- d_wide_list[1:5]
 gc()
 
-
 #Unadjusted
 resdf_noDetQ_Qint_tmle_unadj <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
   res <- NULL
