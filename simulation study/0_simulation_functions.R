@@ -443,6 +443,7 @@ run_ltmle <- function(d,
                       SL.library = c("SL.glmnet"),
                       resdf=NULL,
                       Qint=F,
+                      det.Q=T,
                       varmethod = "tmle", #variance method
                       label=""
 ){
@@ -511,6 +512,11 @@ run_ltmle <- function(d,
     }
 
 
+    if(det.Q){
+      det.q.fun = det.Q.function
+    }else{
+      det.q.fun = NULL
+    }
 
 
         try(res <- ltmle(data=spec_ltmle$data,
@@ -521,7 +527,7 @@ run_ltmle <- function(d,
                          survivalOutcome = T,
                          abar = abar_spec,
                          Qform = qform,
-                         deterministic.Q.function = det.Q.function,
+                         deterministic.Q.function = det.q.fun,
                          SL.library = SL.library,
                          variance.method = varmethod #use tmle variance option for accuracy with positivity violations
         ))

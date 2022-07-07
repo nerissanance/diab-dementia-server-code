@@ -129,12 +129,12 @@ for(i in rows){
 
 }
 
-set.seed(123)
+set.seed(12345)
 
 u <- synthesizeDD(cc)
 d <- sim(u,10^6)
 if_always_on <- d[, grep("glp1_", names(d)), with=F] %>% apply(1, function(u) all(u==1))
-d[if_always_on, ]$event_dementia_12 %>% table
+d[if_always_on, ]$event_dementia_10 %>% table
 
 
 synthesizeDD.never <- function(coefficients, A_name = "glp1"){
@@ -193,12 +193,12 @@ library(tidyverse)
 #nsamp <- 17,000
 
 #truth:
-#nsamp <- 100000
+nsamp <- 100000
 #RR=
-nsamp <- 10000000
+#nsamp <- 10000000
 gc()
 
-set.seed(1234)
+set.seed(12345)
 u.always <- synthesizeDD.always(cc)
 d.always <- sim(u.always, nsamp)
 
@@ -215,7 +215,7 @@ d.always <- sim(u.always, nsamp)
     d.always$event_dementia_10 >0)  %>% table %>% prop.table)
 
 
-set.seed(1234)
+set.seed(12345)
 u.never <- synthesizeDD.never(cc)
 d.never <- sim(u.never, nsamp)
 
@@ -232,7 +232,8 @@ d.never <- sim(u.never, nsamp)
     d.never$event_dementia_10 >0) %>% table %>% prop.table)
 
 
-(cRD <-  prop.always[2] - prop.never[2])
-(cRR <- (prop.always[2])/prop.never[2])
+(cRD_common <-  prop.always[2] - prop.never[2])
+(cRR_common <- (prop.always[2])/prop.never[2])
 
+save(cRD_common, cRR_common, d.never, d.always, file=paste0(here::here(),"/results/truth_common.Rdata"))
 
