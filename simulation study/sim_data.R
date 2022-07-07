@@ -11,7 +11,7 @@ u <- synthesizeDD(cc)
 #head(d)
 
 sim_list <- NULL
-n<-100
+n<-500
 N_time=10
 
 

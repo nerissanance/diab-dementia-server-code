@@ -190,14 +190,15 @@ library(lava)
 library(data.table)
 library(tidyverse)
 
-#nsamp <- 17,000
-#truth:
-#nsamp <- 100000
-#RR=
-nsamp <- 10000000
+#nsamp <- 17000
+#truth:0.649256
+nsamp <- 100000
+#RR=0.6501652
+#nsamp <- 10000000
+#RR: 0.6483788
 gc()
 
-set.seed(1234)
+set.seed(101)
 u.always <- synthesizeDD.always(cc)
 d.always <- sim(u.always, nsamp)
 (prop.always <-
@@ -213,7 +214,7 @@ d.always <- sim(u.always, nsamp)
     d.always$event_dementia_10 >0)  %>% table %>% prop.table)
 
 
-set.seed(1234)
+set.seed(101)
 u.never <- synthesizeDD.never(cc)
 d.never <- sim(u.never, nsamp)
 
