@@ -76,7 +76,7 @@ run_ltmle_glmnet <- function(d,
   spec_ltmle$Ynodes = spec_ltmle$Ynodes[spec_ltmle$Ynodes!="event_dementia_0"]
 
   set.seed(12345)
-  res = NULL
+  fit = NULL
 
 
   if(Qint){
@@ -127,7 +127,7 @@ run_ltmle_glmnet <- function(d,
 
   package_stub("SuperLearner", "SuperLearner", override_function, {
     testthatsomemore::package_stub("ltmle", "Estimate", Estimate_override, {
-      try(res <- ltmle(data=spec_ltmle$data,
+      try(fit <- ltmle(data=spec_ltmle$data,
                        Anodes = spec_ltmle$Anodes,
                        Cnodes = spec_ltmle$Cnodes,
                        Lnodes = spec_ltmle$Lnodes,
@@ -145,12 +145,11 @@ run_ltmle_glmnet <- function(d,
 
 
 
-  if(!is.null(res)){
-    fit<-res
-    res <- summary(res)
-    res <- as.data.frame(res$effect.measures$RR)
-    res.ate <- as.data.frame(res$effect.measures$ATE) %>% rename(ate=estimate, ate.sd=std.dev , ate.pval=pvalue, ate.ci.lb=CI.2.5., ate.ci.ub=  CI.97.5.)
-    res <- cbind(res, res.ate)
+  if(!is.null(fit)){
+    res <- summary(fit)
+    res.RR <- as.data.frame(res$effect.measures$RR)
+    res.ate <- as.data.frame(res$effect.measures$ATE) %>% rename(ate.long.name=long.name,ate=estimate, ate.sd=std.dev , ate.pval=pvalue, ate.ci.lb=CI.2.5., ate.ci.ub=  CI.97.5., ate.log.std.err=log.std.err)
+    res <- cbind(res.RR, res.ate)
     res$label <- label
   }
   if(!is.null(resdf)){
@@ -187,7 +186,7 @@ run_ltmle_glmnet_unadj <- function(d,
 
 
   spec_ltmle <- spec_analysis(data=d, c("event_death_"),
-                              baseline_vars, N_time,
+                              baseline_vars=NULL, N_time,
                               Avars=c("glp1_"),
                               Yvars=c("event_dementia_"),
                               alt=alt)
@@ -200,46 +199,45 @@ run_ltmle_glmnet_unadj <- function(d,
   spec_ltmle$Ynodes = spec_ltmle$Ynodes[spec_ltmle$Ynodes!="event_dementia_0"]
 
   set.seed(12345)
-  res = NULL
+  fit = NULL
 
 
-  if(Qint){
+           if(Qint){
 
-    if(N_time==11){
-      qform = c(
-        insulin_0="Q.kplus1 ~ 1",
-        insulin_1="Q.kplus1 ~ 1",
-        event_dementia_1="Q.kplus1 ~ 1",
-        insulin_2="Q.kplus1 ~ 1",
-        event_dementia_2="Q.kplus1 ~ 1",
-        insulin_3="Q.kplus1 ~ 1",
-        event_dementia_3="Q.kplus1 ~ 1",
-        insulin_4="Q.kplus1 ~ 1",
-        event_dementia_4="Q.kplus1 ~ 1",
-        insulin_5="Q.kplus1 ~ 1",
-        event_dementia_5="Q.kplus1 ~ 1",
-        insulin_6="Q.kplus1 ~ 1",
-        event_dementia_6="Q.kplus1 ~ 1",
-        insulin_7="Q.kplus1 ~ 1",
-        event_dementia_7="Q.kplus1 ~ 1",
-        insulin_8="Q.kplus1 ~ 1",
-        event_dementia_8="Q.kplus1 ~ 1",
-        insulin_9="Q.kplus1 ~ 1",
-        event_dementia_9="Q.kplus1 ~ 1",
-        insulin_10="Q.kplus1 ~ 1",
-        event_dementia_10="Q.kplus1 ~ 1"
-      )
-    }
+             if(N_time==11){
+               qform = c(
+                 event_death_1="Q.kplus1 ~ 1",
+                 event_dementia_1="Q.kplus1 ~ 1",
+                 event_death_2="Q.kplus1 ~ 1",
+                 event_dementia_2="Q.kplus1 ~ 1",
+                 event_death_3="Q.kplus1 ~ 1",
+                 event_dementia_3="Q.kplus1 ~ 1",
+                 event_death_4="Q.kplus1 ~ 1",
+                 event_dementia_4="Q.kplus1 ~ 1",
+                 event_death_5="Q.kplus1 ~ 1",
+                 event_dementia_5="Q.kplus1 ~ 1",
+                 event_death_6="Q.kplus1 ~ 1",
+                 event_dementia_6="Q.kplus1 ~ 1",
+                 event_death_7="Q.kplus1 ~ 1",
+                 event_dementia_7="Q.kplus1 ~ 1",
+                 event_death_8="Q.kplus1 ~ 1",
+                 event_dementia_8="Q.kplus1 ~ 1",
+                 event_death_9="Q.kplus1 ~ 1",
+                 event_dementia_9="Q.kplus1 ~ 1",
+                 event_death_10="Q.kplus1 ~ 1",
+                 event_dementia_10="Q.kplus1 ~ 1"
+               )
+             }
 
-    if(N_time==2){
-      qform = c(
-        insulin_0="Q.kplus1 ~ 1",
-        insulin_1="Q.kplus1 ~ 1",
-        event_dementia_1="Q.kplus1 ~ 1")
-    }
-  }else{
-    qform=NULL
-  }
+             if(N_time==2){
+               qform = c(
+                 event_death_1="Q.kplus1 ~ 1",
+                 event_dementia_1="Q.kplus1 ~ 1")
+             }
+           }else{
+             qform=NULL
+           }
+
 
 
   if(det.Q){
@@ -251,7 +249,7 @@ run_ltmle_glmnet_unadj <- function(d,
 
   package_stub("SuperLearner", "SuperLearner", override_function, {
     testthatsomemore::package_stub("ltmle", "Estimate", Estimate_override, {
-      try(res <- ltmle(data=spec_ltmle$data,
+      try(fit <- ltmle(data=spec_ltmle$data,
                        Anodes = spec_ltmle$Anodes,
                        Cnodes = spec_ltmle$Cnodes,
                        Lnodes = spec_ltmle$Lnodes,
@@ -269,10 +267,11 @@ run_ltmle_glmnet_unadj <- function(d,
 
 
 
-  if(!is.null(res)){
-    fit<-res
-    res <- summary(res)
-    res <- as.data.frame(res$effect.measures$RR)
+  if(!is.null(fit)){
+    res <- summary(fit)
+    res.RR <- as.data.frame(res$effect.measures$RR)
+    res.ate <- as.data.frame(res$effect.measures$ATE) %>% rename(ate.long.name=long.name,ate=estimate, ate.sd=std.dev , ate.pval=pvalue, ate.ci.lb=CI.2.5., ate.ci.ub=  CI.97.5., ate.log.std.err=log.std.err)
+    res <- cbind(res.RR, res.ate)
     res$label <- label
   }
   if(!is.null(resdf)){
@@ -282,6 +281,7 @@ run_ltmle_glmnet_unadj <- function(d,
   options(warn=warn)
   return(res)
 }
+
 
 
 run_ltmle_glmnet_interaction <- function(d,
