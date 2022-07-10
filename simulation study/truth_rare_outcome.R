@@ -231,3 +231,5 @@ d.never <- sim(u.never, nsamp)
 (cRD <-  prop.always[2] - prop.never[2])
 (cRR <- (prop.always[2])/prop.never[2])
 
+
+save(cRD, cRR, d.never, d.always, file=paste0(here::here(),"/results/truth_rare.Rdata"))

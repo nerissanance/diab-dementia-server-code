@@ -9,9 +9,25 @@ source(here::here("0_config.R"))
 # Load simulation results
 #--------------------------------
 
+#unadjusted
+
+rm(list=ls())
+library(here)
+source(here::here("0_config.R"))
+source(paste0(here::here(),"/0_ltmle_Estimate_update.R"))
+source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
+
+
+
+
+#Unadjusted
 resdf_noDetQ_Qint_tmle_unadj<- readRDS(paste0(here::here(),"/data/sim_res_noDetQ_Qint_tmle_unadj.RDS"))
 resdf_noDetQ_tmle_unadj<- readRDS(paste0(here::here(),"/data/sim_res_noDetQ_tmle_unadj.RDS"))
-resdf_noDetQ_ic_tmle_unadj<- readRDS(paste0(here::here(),"/data/sim_res_noDetQ_Qint_ic_unadj.RDS"))
+resdf_noDetQ_Qint_ic_tmle_unadj<- readRDS(paste0(here::here(),"/data/sim_res_noDetQ_Qint_ic_unadj.RDS"))
+resdf_noDetQ_ic_tmle_unadj<- readRDS(paste0(here::here(),"/data/sim_res_noDetQ_ic_unadj.RDS"))
+
+
+#adjusted
 resdf_noDetQ_Qint_AUC<- readRDS(paste0(here::here(),"/data/sim_res_noDetQ_Qint_tmle_AUC.RDS"))
 resdf_noDetQ_tmle<- readRDS(paste0(here::here(),"/data/sim_res_noDetQ_tmle.RDS"))
 resdf_Qint_noDetQ_lasso_prescreen<- readRDS(paste0(here::here(),"/data/sim_res_Qint_noDetQ_lasso_prescreen.RDS"))
@@ -19,6 +35,8 @@ resdf_noDetQ_Qint_tmle<- readRDS(paste0(here::here(),"/data/sim_res_noDetQ_Qint_
 resdf_noDetQ_Qint_tmle_ridge<- readRDS(paste0(here::here(),"/data/sim_res_ridge_noDetQ_Qint_tmle.RDS"))
 resdf_noDetQ_Qint_tmle_EN<- readRDS(paste0(here::here(),"/data/sim_res_EN_noDetQ_Qint_tmle.RDS"))
 resdf_AUC <- readRDS(paste0(here::here(),"/data/sim_res_AUC_Qint_tmle.RDS"))
+
+#common outcomes
 resdf_noDetQ_Qint_tmle_common <- readRDS(paste0(here::here(),"/data/sim_res_noDetQ_Qint_tmle_common.RDS"))
 summary(resdf_noDetQ_Qint_tmle_common$estimate)
 
@@ -42,9 +60,11 @@ summary(resdf_noDetQ_Qint_tmle_common$estimate)
 # resdf_Qint_noDetQ_lasso_prescreen <- readRDS(paste0(here::here(),"/data/sim_res_Qint_noDetQ_lasso_prescreen.RDS"))
 
 plotdf <- bind_rows(
-  resdf_noDetQ_tmle_unadj  %>% mutate(analysis="unadj, tmle, no detQ"),
+  resdf_noDetQ_tmle_unadj  %>% mutate(analysis="unadj, no detQ, tmle"),
   resdf_noDetQ_Qint_tmle_unadj %>% mutate(analysis="unadj, Q-intercept, no detQ, tmle"),
-  #resdf_noDetQ_ic_tmle_unadj %>% mutate(analysis="unadj, Q-intercept, no detQ, ic"),
+  resdf_noDetQ_Qint_ic_tmle_unadj  %>% mutate(analysis="unadj, Q-intercept, no detQ, ic"),
+  resdf_noDetQ_ic_tmle_unadj %>% mutate(analysis="unadj, no detQ, ic"),
+
   resdf_ic %>% mutate(analysis="LASSO IC"),
   resdf_noDetQ_ic %>% mutate(analysis="LASSO no DetQ IC"),
   resdf_noDetQ_tmle %>% mutate(analysis="LASSO no DetQ tmle"),

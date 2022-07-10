@@ -137,6 +137,9 @@ if_always_on <- d[, grep("glp1_", names(d)), with=F] %>% apply(1, function(u) al
 d[if_always_on, ]$event_dementia_10 %>% table
 
 
+coefficients=cc
+A_name = "glp1"
+
 synthesizeDD.never <- function(coefficients, A_name = "glp1"){
     requireNamespace("lava")
     coefficients <- data.table(coefficients)
@@ -196,8 +199,57 @@ library(tidyverse)
 #nsamp <- 10000000
 #RR: 0.6483788
 nsamp <- 100000
+#nsamp <- 10000
 #RR=
 gc()
+
+
+set.seed(12345)
+u.obs <- synthesizeDD(cc)
+d.obs <- sim(u.obs, nsamp)
+
+
+prop.table(table((d.obs$glp1_0 + d.obs$glp1_1 +
+                    d.obs$glp1_2 +
+                    d.obs$glp1_3 +
+                    d.obs$glp1_4 +
+                    d.obs$glp1_5 +
+                    d.obs$glp1_6 +
+                    d.obs$glp1_7 +
+                    d.obs$glp1_8 +
+                    d.obs$glp1_9 +
+                    d.obs$glp1_10 ==11),1*(d.obs$event_dementia_1 +
+                                         d.obs$event_dementia_2 +
+                                         d.obs$event_dementia_3 +
+                                         d.obs$event_dementia_4 +
+                                         d.obs$event_dementia_5 +
+                                         d.obs$event_dementia_6 +
+                                         d.obs$event_dementia_7 +
+                                         d.obs$event_dementia_8 +
+                                         d.obs$event_dementia_9 +
+                                         d.obs$event_dementia_10 >0)),1)
+
+tab<- table((d.obs$glp1_0 + d.obs$glp1_1 +
+         d.obs$glp1_2 +
+         d.obs$glp1_3 +
+         d.obs$glp1_4 +
+         d.obs$glp1_5 +
+         d.obs$glp1_6 +
+         d.obs$glp1_7 +
+         d.obs$glp1_8 +
+         d.obs$glp1_9 +
+         d.obs$glp1_10 ==11),1*(d.obs$event_dementia_1 +
+                              d.obs$event_dementia_2 +
+                              d.obs$event_dementia_3 +
+                              d.obs$event_dementia_4 +
+                              d.obs$event_dementia_5 +
+                              d.obs$event_dementia_6 +
+                              d.obs$event_dementia_7 +
+                              d.obs$event_dementia_8 +
+                              d.obs$event_dementia_9 +
+                              d.obs$event_dementia_10 >0))
+tab
+(tab[2,2]*tab[1,1])/(tab[1,2]*tab[2,1])
 
 set.seed(12345)
 u.always <- synthesizeDD.always(cc)
@@ -235,6 +287,8 @@ d.never <- sim(u.never, nsamp)
 
 (cRD_common <-  prop.always[2] - prop.never[2])
 (cRR_common <- (prop.always[2])/prop.never[2])
+cRD_common
+cRR_common
 
 save(cRD_common, cRR_common, d.never, d.always, file=paste0(here::here(),"/results/truth_common.Rdata"))
 
