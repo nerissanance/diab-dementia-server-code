@@ -36,7 +36,7 @@ for(i in 1:n){
   #     flag <- ifelse(min(table(d$cum_glp1==11, d$cum_dementia>0))<6, TRUE, FALSE)
   #   }
   # }
-  d <- sim(u,100000)
+  d <- sim(u,115698)
 
   #note: once events jump to 1, need to remain 1 for remainder of follow up
   for(k in 1:(N_time+1)){
