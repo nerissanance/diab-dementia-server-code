@@ -232,4 +232,4 @@ d.never <- sim(u.never, nsamp)
 (cRR <- (prop.always[2])/prop.never[2])
 
 
-save(cRD, cRR, d.never, d.always, file=paste0(here::here(),"/results/truth_rare.Rdata"))
+save(cRD, cRR, file=paste0(here::here(),"/results/truth_rare.Rdata"))

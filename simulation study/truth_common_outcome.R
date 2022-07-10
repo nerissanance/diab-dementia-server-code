@@ -196,9 +196,9 @@ library(tidyverse)
 #nsamp <- 17000
 #truth:0.649256
 #RR=0.6501652
-#nsamp <- 10000000
+nsamp <- 1000000
 #RR: 0.6483788
-nsamp <- 100000
+#nsamp <- 100000
 #nsamp <- 10000
 #RR=
 gc()
