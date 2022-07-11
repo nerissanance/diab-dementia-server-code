@@ -13,8 +13,21 @@ d_wide_list <- readRDS(file=here("data/simulated_data_list.RDS"))
 d_wide_list <- d_wide_list[1:100]
 gc()
 
-d <- d_wide_list[[1]]
-dim(d)
+
+
+#Interaction
+int.start.time <- Sys.time()
+resdf_noDetQ_Qint_tmle_interaction <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet_interaction(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, varmethod = "tmle"))
+  return(res)
+}
+int.end.time <- Sys.time()
+difftime(int.end.time, int.start.time, units="mins")
+
+saveRDS(resdf_noDetQ_Qint_tmle_interaction, paste0(here::here(),"/data/sim_res_noDetQ_Qint_tmle_interaction.RDS"))
+
+
 
 # #primary-no Qint
 # resdf_noDetQ_tmle <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
