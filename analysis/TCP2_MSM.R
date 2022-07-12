@@ -27,6 +27,7 @@ ncores = 10 #number of cores to use
 
 #SL.library = c("SL.glmnet", "SL.glm")
 SL.library = c("glm") #for debugging
+SL.library = c("SL.glmnet")
 nfolds = 10 #number of folds for CV SL
 varmethod = "tmle" #variance method
 

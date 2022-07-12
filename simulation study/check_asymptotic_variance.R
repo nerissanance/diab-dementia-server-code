@@ -44,12 +44,12 @@ plotdf$true.RR <- 0.392377
 
 perf_tab <- plotdf %>% group_by(analysis) %>%
                        summarize(coverage=mean(CI.2.5.<true.RR & true.RR<CI.97.5.)*100,
-                                 bias=mean(log(estimate))-log(true.RR),
+                                 bias=mean((estimate))-(true.RR),
                                  #calculate variance of the estimator
                                  #https://www.statlect.com/fundamentals-of-statistics/variance-estimation
                                  #http://www.dliebl.com/RM_ES_Script/estimation-theory.html
                                  #variance=mean(std.dev^2),
-                                 variance=mean((mean(log(estimate))-log(estimate))^2),
+                                 variance=mean((mean((estimate))-(estimate))^2),
                                  #variance2=mean((mean(estimate)-estimate)^2),
                                  #bias_std_ratio=mean(abs(log(estimate) - log(true.RR))/std.dev),
                                  mse=variance + bias^2#,

@@ -40,8 +40,9 @@ resdf_noDetQ_Qint_tmle_EN<- readRDS(paste0(here::here(),"/data/sim_res_EN_noDetQ
 resdf_AUC <- readRDS(paste0(here::here(),"/data/sim_res_AUC_Qint_tmle.RDS"))
 
 #common outcomes
+resdf_tmle_common <- readRDS(paste0(here::here(),"/data/sim_res_resdf_tmle_common_tmle.RDS"))
 resdf_noDetQ_Qint_tmle_common <- readRDS(paste0(here::here(),"/data/sim_res_noDetQ_Qint_tmle_common.RDS"))
-resdf_tmle_common <- readRDS(paste0(here::here(),"/data/sim_res_resdf_tmle_common.RDS"))
+resdf_ic_common <- readRDS(paste0(here::here(),"/data/sim_res_resdf_tmle_common.RDS"))
 summary(resdf_noDetQ_Qint_tmle_common$estimate)
 
 
@@ -69,14 +70,17 @@ plotdf <- bind_rows(
   resdf_noDetQ_Qint_ic_tmle_unadj  %>% mutate(analysis="unadj, Q-intercept, no detQ, ic"),
   resdf_noDetQ_ic_tmle_unadj %>% mutate(analysis="unadj, no detQ, ic"),
 
+  resdf_ic_common %>% mutate(analysis="LASSO IC - common outcome"),
+  resdf_tmle_common %>% mutate(analysis="LASSO tmle - common outcome"),
+  resdf_noDetQ_Qint_tmle_common %>% mutate(analysis="LASSO no DetQ Qint tmle - common outcome"),
+
+
   resdf_ic %>% mutate(analysis="LASSO IC"),
   resdf_noDetQ_ic %>% mutate(analysis="LASSO no DetQ IC"),
   resdf_noDetQ_tmle %>% mutate(analysis="LASSO no DetQ tmle"),
   resdf_noDetQ_Qint_ic %>% mutate(analysis="LASSO no DetQ Qint IC"),
   resdf_noDetQ_Qint_tmle %>% mutate(analysis="LASSO no DetQ Qint tmle"),
   resdf_noDetQ_Qint_tmle_interaction %>% mutate(analysis="LASSO no DetQ Qint tmle- interactions"),
-  resdf_noDetQ_Qint_tmle_common %>% mutate(analysis="LASSO no DetQ Qint tmle - common outcome"),
-  resdf_tmle_common %>% mutate(analysis="LASSO tmle - common outcome"),
   resdf_noDetQ_Qint_tmle_ridge %>% mutate(analysis="Ridge no DetQ Qint tmle"),
   resdf_noDetQ_Qint_tmle_EN %>% mutate(analysis="Elastic Net no DetQ Qint tmle"),
   resdf_AUC %>% mutate(analysis="LASSO Qint tmle AUC"),
@@ -110,6 +114,7 @@ plotdf$true.RD[grepl("common outcome",plotdf$analysis)] <- cRD_common
 
 perf_tab <- plotdf %>% group_by(analysis) %>%
   mutate(variance=mean((estimate-mean(estimate))^2), #check if the brackets in this formula are right
+
          RD.variance=mean((mean(ate)-ate)^2),
 
          o.ci.lb = estimate - 1.96 * sqrt(variance),
