@@ -147,9 +147,14 @@ run_ltmle_glmnet <- function(d,
 
   if(!is.null(fit)){
     res <- summary(fit)
+    res.iptw <- summary(fit, estimator="iptw")
     res.RR <- as.data.frame(res$effect.measures$RR)
     res.ate <- as.data.frame(res$effect.measures$ATE) %>% rename(ate.long.name=long.name,ate=estimate, ate.sd=std.dev , ate.pval=pvalue, ate.ci.lb=CI.2.5., ate.ci.ub=  CI.97.5., ate.log.std.err=log.std.err)
-    res <- cbind(res.RR, res.ate)
+
+    res.RR.iptw <- as.data.frame(res.iptw$effect.measures$RR) %>% rename(iptw.long.name=long.name, iptw.estimate=estimate, iptw.sd=std.dev , iptw.pval=pvalue, iptw.ci.lb=CI.2.5., iptw.ci.ub=  CI.97.5., iptw.log.std.err=log.std.err)
+    res.ate.iptw <- as.data.frame(res$effect.measures$ATE) %>% rename(iptw.ate.long.name=long.name, iptw.ate=estimate, iptw.ate.sd=std.dev , iptw.ate.pval=pvalue, iptw.ate.ci.lb=CI.2.5., iptw.ate.ci.ub=  CI.97.5., iptw.ate.log.std.err=log.std.err)
+
+    res <- cbind(res.RR, res.ate, res.RR.iptw, res.ate.iptw)
     res$label <- label
   }
   if(!is.null(resdf)){
