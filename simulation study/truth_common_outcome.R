@@ -132,9 +132,9 @@ for(i in rows){
 set.seed(12345)
 
 u <- synthesizeDD(cc)
-d <- sim(u,10^6)
-if_always_on <- d[, grep("glp1_", names(d)), with=F] %>% apply(1, function(u) all(u==1))
-d[if_always_on, ]$event_dementia_10 %>% table
+# d <- sim(u,10^6)
+# if_always_on <- d[, grep("glp1_", names(d)), with=F] %>% apply(1, function(u) all(u==1))
+# d[if_always_on, ]$event_dementia_10 %>% table
 
 
 coefficients=cc
@@ -290,5 +290,5 @@ d.never <- sim(u.never, nsamp)
 cRD_common
 cRR_common
 
-save(cRD_common, cRR_common, d.never, d.always, file=paste0(here::here(),"/results/truth_common.Rdata"))
+save(cRD_common, cRR_common, file=paste0(here::here(),"/results/truth_common.Rdata"))
 
