@@ -117,6 +117,18 @@ SuperLearner_override_1se <- function(Y, X, newX = NULL, family = gaussian(), SL
   list(model=res$fit, SL.predict = res$pred)
 }
 
+SuperLearner_override_ridge_1se <- function(Y, X, newX = NULL, family = gaussian(), SL.library,
+                                      method = "method.NNLS", id = NULL, verbose = FALSE, control = list(),
+                                      cvControl = list(), obsWeights = NULL, env = parent.frame()) {
+  stopifnot(identical(SL.library, "SL.glmnet"))
+
+  res <- NULL
+  try(res <- SL.glmnet(Y, X, newX, family, obsWeights, alpha = 0, id, nfolds = 5, useMin = FALSE))
+  if(is.null(res)){res <- SL.mean(Y, X, newX, family, obsWeights, id)}
+
+  list(model=res$fit, SL.predict = res$pred)
+}
+
 SuperLearner_override_EN <- function(Y, X, newX = NULL, family = gaussian(), SL.library,
                                          method = "method.NNLS", id = NULL, verbose = FALSE, control = list(),
                                          cvControl = list(), obsWeights = NULL, env = parent.frame()) {
