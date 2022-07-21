@@ -312,11 +312,6 @@ run_ltmle_glmnet_interaction <- function(d,
   d <-clean_sim_data(d, N_time=N_time)
 
   #make interactions between A and L
-  long_covariates
-
-  i=1
-  j=long_covariates[1]
-
   d <- data.frame(d)
 
   int_vars <- NULL
@@ -334,12 +329,6 @@ run_ltmle_glmnet_interaction <- function(d,
   }
   int_vars = unique(int_vars)
 
-  # Yvars=c("event_dementia_")
-  #
-  # long_covariates = c(long_covariates, int_vars, "event_death_")
-  # node_names <- spec_nodes(baseline_vars=baseline_vars,
-  #                          longitudinal_vars=c(Avars,"censor_",long_covariates, Yvars),
-  #                          num_time=0:(N_time-1))
 
   #Use only first N time points
   d <- d %>%

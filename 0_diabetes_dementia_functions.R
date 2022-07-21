@@ -280,11 +280,11 @@ spec_nodes <- function(baseline_vars, longitudinal_vars, num_time){
 
 
 
-spec_analysis <- function(data, long_covariates, baseline_vars, N_time, Avars=c("glp1_","sglt2_inhib_"), Yvars=c("event_dementia_"), alt=FALSE){
+spec_analysis <- function(data, long_covariates, baseline_vars, N_time, Avars=c("glp1_"), Yvars=c("event_dementia_"), alt=FALSE){
 
   if(!alt){
     node_names <- spec_nodes(baseline_vars=baseline_vars,
-                             longitudinal_vars=c(Avars,long_covariates, "censor_",Yvars),
+                             longitudinal_vars=c(Avars,"censor_",Yvars, long_covariates),
                              num_time=0:(N_time-1))
   }else{
     node_names <- spec_nodes(baseline_vars=baseline_vars,
