@@ -122,11 +122,11 @@ library(lava)
 library(data.table)
 cc <- fread("data/coefficients.txt")
 
-set.seed(123)
-u <- synthesizeDD(cc)
-d <- sim(u,10^6)
-if_always_on <- d[, grep("glp1_", names(d)), with=F] %>% apply(1, function(u) all(u==1))
-d[if_always_on, ]$event_dementia_12 %>% table
+# set.seed(123)
+# u <- synthesizeDD(cc)
+# d <- sim(u,10^6)
+# if_always_on <- d[, grep("glp1_", names(d)), with=F] %>% apply(1, function(u) all(u==1))
+# d[if_always_on, ]$event_dementia_12 %>% table
 
 
 synthesizeDD.never <- function(coefficients, A_name = "glp1"){
@@ -230,6 +230,23 @@ d.never <- sim(u.never, nsamp)
 
 (cRD <-  prop.always[2] - prop.never[2])
 (cRR <- (prop.always[2])/prop.never[2])
+
+
+set.seed(1234)
+u.always <- synthesizeDD.always(cc)
+d.always <- sim(u.always, 17000)
+(prop.always <- d.always$event_dementia_12 %>% table %>% prop.table)
+
+
+set.seed(1234)
+u.never <- synthesizeDD.never(cc)
+d.never <- sim(u.never, 17000)
+(prop.never <- d.never$event_dementia_12 %>% table %>% prop.table)
+
+#RD
+( prop.always[2] - prop.never[2])
+#RR
+((prop.always[2])/prop.never[2])
 
 
 save(cRD, cRR, file=paste0(here::here(),"/results/truth_rare.Rdata"))

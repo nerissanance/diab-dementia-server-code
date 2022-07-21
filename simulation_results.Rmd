@@ -1,0 +1,144 @@
+---
+title: "Simulation results"
+author: "Andrew Mertens"
+date: '2022-07-19'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+
+source(here::here("0_config.R"))
+source(paste0(here::here(),"/0_ltmle_Estimate_update.R"))
+try(source(paste0(here::here(),"/simulation study/0_simulation_functions.R")))
+plotdf <- readRDS(file=paste0(here::here(),"/results/compiled_simulatation_results.rds"))
+
+library(knitr)
+
+#--------------------------------
+# Calc bias, variance, and MSE
+#--------------------------------
+
+#relative scale methods:
+#https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/s12874-018-0519-5
+
+
+plotdf <- plotdf[!grepl("common outcome",plotdf$analysis),] 
+plotdf <- plotdf[!grepl(" ic",plotdf$analysis),] 
+
+#temp drop extreme outliers
+plotdf <- plotdf%>% filter(estimate > 1/128)
+
+# perf_tab <- plotdf %>% group_by(analysis) %>%
+#   mutate(variance=mean((estimate-mean(estimate))^2), #check if the brackets in this formula are right
+#          variance_log=mean((log(estimate)-mean(log(estimate)))^2),
+#          RD.variance=mean((mean(ate)-ate)^2),
+#          o.ci.lb = estimate - 1.96 * sqrt(variance),
+#          o.ci.ub = estimate + 1.96 * sqrt(variance),
+#          o.ci.lb2 = log(estimate) - 1.96 * sqrt(variance_log),
+#          o.ci.ub2 = log(estimate) + 1.96 * sqrt(variance_log)) %>%
+#   summarize(
+#             log_bias=mean(log(estimate))-log(true.RR),
+#             log_variance=mean((mean(log(estimate))-log(estimate))^2),
+#             empirical_se = mean(std.dev^2),
+#             empirical_variance = mean(std.dev^2),
+#             mse = log_bias^2 + log_variance,
+#             relative_bias_perc = (mean(log(estimate))-log(true.RR))/log(true.RR) * 100,
+#             standardized_bias = (mean(log(estimate))-log(true.RR))/mean(empirical_se) * 100,
+#             log_bias_empirical_variance_ratio=log_bias/empirical_variance,
+#             relative_mse = log_bias^2 + empirical_variance,
+#             abs_RR_bias=mean((estimate))-(true.RR),
+#             abs_RR_variance=mean((estimate-mean(estimate))^2),
+#             abs_RR_mse=abs_RR_variance + abs_RR_bias^2,
+#             abs_bias_variance_ratio=abs_RR_bias/abs_RR_variance,
+#             coverage=mean(CI.2.5.<=true.RR & true.RR<=CI.97.5.)*100,
+#            mean_ci_width=mean(CI.97.5.-CI.2.5.),
+#            log_mean_ci_width=mean(log(CI.97.5.)-log(CI.2.5.)),
+#            #oracle coverage
+#            o.coverage=mean(o.ci.lb<=true.RR & true.RR<= o.ci.ub)*100,
+#            log_o.coverage=mean(o.ci.lb2<=log(true.RR) & log(true.RR)<= o.ci.ub2)*100,
+#            #log-trans bias
+#             # bias3=exp(mean(log(estimate))-log(true.RR)),
+#             # variance3=exp(mean((mean(log(estimate))-log(estimate))^2)),
+#             power=mean((CI.2.5. > 1 & CI.97.5.>1)|(CI.2.5. < 1 & CI.97.5.<1))*100,
+#             RD.coverage=mean(ate.ci.lb<=true.RD & true.RD<=ate.ci.ub)*100,
+#             RD.bias=mean(ate)-true.RD,
+#             RD.variance=mean((mean(ate)-ate)^2),
+#             RD.bias_variance_ratio=RD.bias/RD.variance,
+#             RD.mse=RD.variance + RD.bias^2,
+#             RD.power=mean((ate.ci.lb > 0 & ate.ci.ub>0)|(ate.ci.lb < 0 & ate.ci.ub<0))*100) %>%
+#   distinct()
+
+plotdf <- plotdf[!grepl("common outcome",plotdf$analysis),] 
+plotdf <- plotdf[!grepl(" ic",plotdf$analysis),] 
+
+#temp drop extreme outliers
+plotdf <- plotdf%>% filter(estimate > 1/128)
+
+perf_tab <- plotdf %>% group_by(analysis) %>%
+  mutate(variance=mean((estimate-mean(estimate))^2), #check if the brackets in this formula are right
+         variance_log=mean((log(estimate)-mean(log(estimate)))^2),
+         RD.variance=mean((mean(ate)-ate)^2),
+         o.ci.lb = estimate - 1.96 * sqrt(variance),
+         o.ci.ub = estimate + 1.96 * sqrt(variance),
+         o.ci.lb2 = log(estimate) - 1.96 * sqrt(variance_log),
+         o.ci.ub2 = log(estimate) + 1.96 * sqrt(variance_log)) %>%
+  summarize(
+    bias_logRR=mean(log(estimate))-log(true.RR),
+    variance_logRR=mean((mean(log(estimate))-log(estimate))^2),
+    mse = bias_logRR^2 + variance_logRR,
+    bias_se_ratio= bias_logRR/sqrt(variance_logRR),
+    coverage=mean(CI.2.5.<=true.RR & true.RR<=CI.97.5.)*100,
+    #oracle coverage
+    o.coverage=mean(o.ci.lb<=true.RR & true.RR<= o.ci.ub)*100,
+    o.coverage_logRR=mean(o.ci.lb2<=log(true.RR) & log(true.RR)<= o.ci.ub2)*100,
+    mean_ci_width_logRR=mean(log(CI.97.5.)-log(CI.2.5.)),
+    power=mean((CI.2.5. > 1 & CI.97.5.>1)|(CI.2.5. < 1 & CI.97.5.<1))*100
+    ) %>%
+  distinct()
+
+res <- perf_tab %>% arrange(mse)
+
+kable(res, digits =3)
+
+
+
+
+#res %>% select(analysis,  bias, variance,    mse, coverage, power)
+
+# plotdf <- left_join(plotdf,perf_tab, by="analysis") %>% arrange(mse) %>%
+#           mutate(analysis=factor(analysis, levels=unique(analysis)))
+
+#Try out glmnet with interactions (all, or just with interactions with A)
+# How many continious with spline terms
+
+
+# #--------------------------------
+# # Plots
+# #--------------------------------
+# 
+set.seed(123)
+ggplot(plotdf, aes(y=analysis, x=estimate)) +
+  geom_jitter(width=0, height=0.05, alpha=0.75) +
+  geom_vline(xintercept = 1) +
+  geom_vline(aes(xintercept = true.RR), linetype="dashed") +
+  scale_x_continuous(trans = "log10")
+
+
+
+
+ggplot(plotdf, aes(x=estimate)) +
+  facet_wrap(~analysis) +
+  geom_density() +
+  geom_vline(xintercept = 1) +
+  geom_vline(aes(xintercept = true.RR), linetype="dashed") +
+  scale_x_continuous(trans = "log10") + theme_bw()
+
+
+
+
+```
