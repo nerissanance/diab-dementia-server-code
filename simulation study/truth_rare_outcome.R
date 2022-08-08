@@ -186,9 +186,9 @@ cc <- fread("../powerhouse/data/coefficients.txt")
 gc()
 nsamp <- 17000
 #truth: 0.3600823
-#nsamp <- 100000
+nsamp <- 100000
 #RR=
-nsamp <- 10000000
+#nsamp <- 10000000
 #RR=0.392377
 
 
@@ -207,6 +207,7 @@ d.always <- sim(u.always, nsamp)
          d.always$event_dementia_8 +
          d.always$event_dementia_9 +
          d.always$event_dementia_10 >0)  %>% table %>% prop.table)
+(prop.always10 <- d.always$event_dementia_10 %>% table %>% prop.table)
 
 
 set.seed(1234)
@@ -225,8 +226,8 @@ d.never <- sim(u.never, nsamp)
          d.never$event_dementia_8 +
          d.never$event_dementia_9 +
          d.never$event_dementia_10 >0) %>% table %>% prop.table)
-
-
+(prop.never10 <- d.never$event_dementia_10 %>% table %>% prop.table)
+prop.always10[2] - prop.never10[2]
 
 (cRD <-  prop.always[2] - prop.never[2])
 (cRR <- (prop.always[2])/prop.never[2])
