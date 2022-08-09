@@ -127,7 +127,8 @@ cc <- fread("data/coefficients.txt")
 # d <- sim(u,10^6)
 # if_always_on <- d[, grep("glp1_", names(d)), with=F] %>% apply(1, function(u) all(u==1))
 # d[if_always_on, ]$event_dementia_12 %>% table
-
+coefficients=cc
+A_name = "glp1"
 
 synthesizeDD.never <- function(coefficients, A_name = "glp1"){
     requireNamespace("lava")
@@ -181,18 +182,16 @@ synthesizeDD.never <- function(coefficients, A_name = "glp1"){
 library(lava)
 library(data.table)
 library(tidyverse)
-cc <- fread("../powerhouse/data/coefficients.txt")
+cc <- fread("data/coefficients.txt")
 
 gc()
+seed <- 3457347
 nsamp <- 17000
-#truth: 0.3600823
 #nsamp <- 100000
-#RR=
-nsamp <- 10000000
-#RR=0.392377
 
 
-set.seed(1234)
+
+set.seed(seed)
 u.always <- synthesizeDD.always(cc)
 
 d.always <- sim(u.always, nsamp)
@@ -207,9 +206,11 @@ d.always <- sim(u.always, nsamp)
          d.always$event_dementia_8 +
          d.always$event_dementia_9 +
          d.always$event_dementia_10 >0)  %>% table %>% prop.table)
+(prop.always10 <- d.always$event_dementia_10 %>% table %>% prop.table)
+(prop.always12 <- d.always$event_dementia_12 %>% table %>% prop.table)
 
 
-set.seed(1234)
+set.seed(seed)
 u.never <- synthesizeDD.never(cc)
 
 d.never <- sim(u.never, nsamp)
@@ -225,12 +226,22 @@ d.never <- sim(u.never, nsamp)
          d.never$event_dementia_8 +
          d.never$event_dementia_9 +
          d.never$event_dementia_10 >0) %>% table %>% prop.table)
+(prop.never10 <- d.never$event_dementia_10 %>% table %>% prop.table)
+(prop.never12 <- d.never$event_dementia_12 %>% table %>% prop.table)
 
 
+prop.always[2] - prop.never[2]
+prop.always10[2] - prop.never10[2]
+prop.always12[2] - prop.never12[2]
+
+prop.always[2] / prop.never[2]
+prop.always10[2] / prop.never10[2]
+prop.always12[2] / prop.never12[2]
 
 (cRD <-  prop.always[2] - prop.never[2])
 (cRR <- (prop.always[2])/prop.never[2])
-
+cRD
+cRR
 
 set.seed(1234)
 u.always <- synthesizeDD.always(cc)

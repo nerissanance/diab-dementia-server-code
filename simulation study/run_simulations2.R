@@ -13,6 +13,22 @@ d_wide_list <- readRDS(file=here("data/simulated_data_list.RDS"))
 d_wide_list <- d_wide_list[1:100]
 gc()
 
+#temp
+d=d_wide_list[[1]]
+N_time = 11 #number of time points you want to look at
+SL.library = c("SL.glmnet")
+resdf=NULL
+Qint=F
+gcomp=F
+det.Q=F
+gbound = c(0.01, 1)
+override_function=SuperLearner_override
+varmethod = "ic" #variance method
+alt=FALSE
+label=""
+try(res <- run_ltmle_glmnet(d_wide_list[[1]], resdf=NULL, Qint=FALSE, det.Q=FALSE, varmethod = "ic"))
+
+
 
 #primary-no Qint
 resdf_noDetQ_tmle <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {

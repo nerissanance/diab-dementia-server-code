@@ -70,7 +70,7 @@ run_ltmle_glmnet <- function(d,
                               alt=alt)
   abar_spec = list(rep(1,N_time),rep(0,N_time))
 
-  #Drop the baseline events
+  # #Drop the baseline events
   spec_ltmle$data <- spec_ltmle$data %>% subset(., select = -c(event_death_0, censor_0, event_dementia_0))
   spec_ltmle$Cnodes = spec_ltmle$Cnodes[spec_ltmle$Cnodes!="censor_0"]
   spec_ltmle$Lnodes = spec_ltmle$Lnodes[spec_ltmle$Lnodes!="event_death_0"]
