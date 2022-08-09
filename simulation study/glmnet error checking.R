@@ -12,6 +12,9 @@ source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
 
 sink("glmnet_error_checking.txt")
 
+
+#-updated to print X dimensions
+
 # #temp
 # d=d_wide_list[[1]]
 # N_time = 11 #number of time points you want to look at
