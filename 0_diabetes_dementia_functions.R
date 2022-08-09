@@ -78,6 +78,7 @@ SuperLearner_override_ridge <- function(Y, X, newX = NULL, family = gaussian(), 
     try(res <- SL.glmnet(Y, X, newX, family, obsWeights, id, alpha=alpha, useMin =TRUE,  nfolds = 5))
   }
 
+
   if(is.null(res)){res <- SL.mean(Y, X, newX, family, obsWeights, id)}
 
   list(model=res$fit, SL.predict = res$pred)

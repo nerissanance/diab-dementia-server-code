@@ -187,7 +187,12 @@ cc <- fread("data/coefficients.txt")
 gc()
 seed <- 3457347
 nsamp <- 17000
-#nsamp <- 100000
+
+#truth: 0.3600823
+nsamp <- 100000
+#RR=
+#nsamp <- 10000000
+#RR=0.392377
 
 
 
@@ -207,8 +212,6 @@ d.always <- sim(u.always, nsamp)
          d.always$event_dementia_9 +
          d.always$event_dementia_10 >0)  %>% table %>% prop.table)
 (prop.always10 <- d.always$event_dementia_10 %>% table %>% prop.table)
-(prop.always12 <- d.always$event_dementia_12 %>% table %>% prop.table)
-
 
 set.seed(seed)
 u.never <- synthesizeDD.never(cc)
@@ -227,16 +230,7 @@ d.never <- sim(u.never, nsamp)
          d.never$event_dementia_9 +
          d.never$event_dementia_10 >0) %>% table %>% prop.table)
 (prop.never10 <- d.never$event_dementia_10 %>% table %>% prop.table)
-(prop.never12 <- d.never$event_dementia_12 %>% table %>% prop.table)
 
-
-prop.always[2] - prop.never[2]
-prop.always10[2] - prop.never10[2]
-prop.always12[2] - prop.never12[2]
-
-prop.always[2] / prop.never[2]
-prop.always10[2] / prop.never10[2]
-prop.always12[2] / prop.never12[2]
 
 (cRD <-  prop.always[2] - prop.never[2])
 (cRR <- (prop.always[2])/prop.never[2])

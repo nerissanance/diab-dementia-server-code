@@ -65,7 +65,8 @@ sim_df <- bind_rows(
   resdf_noDetQ_Qint_tmle_ridge_gbound005_9<- readRDS(paste0(here::here(),"/data/sim_res_ridge_noDetQ_Qint_tmle_gbound005_9.RDS")) %>% mutate(analysis="Ridge no DetQ Qint tmle gbound 0.005-0.9"),
   resdf_noDetQ_Qint_tmle_ridge_gbound001<- readRDS(paste0(here::here(),"/data/sim_res_ridge_noDetQ_Qint_tmle_gbound001.RDS")) %>% mutate(analysis="Ridge no DetQ Qint tmle gbound 0.001"),
 
-    resdf_noDetQ_Qint_tmle_EN<- readRDS(paste0(here::here(),"/data/sim_res_EN_noDetQ_Qint_tmle.RDS")) %>% mutate(analysis="Elastic Net no DetQ Qint tmle"),
+  resdf_noDetQ_tmle_EN<- readRDS(paste0(here::here(),"/data/sim_res_noDetQ_EN_tmle.RDS")) %>% mutate(analysis="Elastic Net no DetQ tmle"),
+  resdf_noDetQ_Qint_tmle_EN<- readRDS(paste0(here::here(),"/data/sim_res_EN_noDetQ_Qint_tmle.RDS")) %>% mutate(analysis="Elastic Net no DetQ Qint tmle"),
    resdf_AUC <- readRDS(paste0(here::here(),"/data/sim_res_AUC_Qint_tmle.RDS")) %>% mutate(analysis="LASSO Qint tmle AUC"),
    resdf_ic <- readRDS(paste0(here::here(),"/data/sim_res_ic.RDS"))%>% mutate(analysis="LASSO IC"),
    resdf_noDetQ_ic <- readRDS(paste0(here::here(),"/data/sim_res_noDetQ_ic.RDS")) %>% mutate(analysis="LASSO no DetQ IC"),
