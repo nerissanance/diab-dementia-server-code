@@ -83,27 +83,39 @@ run_ltmle_glmnet <- function(d,
   if(Qint){
 
     if(N_time==11){
+      # qform = c(
+      #   insulin_0="Q.kplus1 ~ 1",
+      #   insulin_1="Q.kplus1 ~ 1",
+      #   event_dementia_1="Q.kplus1 ~ 1",
+      #   insulin_2="Q.kplus1 ~ 1",
+      #   event_dementia_2="Q.kplus1 ~ 1",
+      #   insulin_3="Q.kplus1 ~ 1",
+      #   event_dementia_3="Q.kplus1 ~ 1",
+      #   insulin_4="Q.kplus1 ~ 1",
+      #   event_dementia_4="Q.kplus1 ~ 1",
+      #   insulin_5="Q.kplus1 ~ 1",
+      #   event_dementia_5="Q.kplus1 ~ 1",
+      #   insulin_6="Q.kplus1 ~ 1",
+      #   event_dementia_6="Q.kplus1 ~ 1",
+      #   insulin_7="Q.kplus1 ~ 1",
+      #   event_dementia_7="Q.kplus1 ~ 1",
+      #   insulin_8="Q.kplus1 ~ 1",
+      #   event_dementia_8="Q.kplus1 ~ 1",
+      #   insulin_9="Q.kplus1 ~ 1",
+      #   event_dementia_9="Q.kplus1 ~ 1",
+      #   event_dementia_10="Q.kplus1 ~ 1"
+      # )
       qform = c(
         insulin_0="Q.kplus1 ~ 1",
-        insulin_1="Q.kplus1 ~ 1",
         event_dementia_1="Q.kplus1 ~ 1",
-        insulin_2="Q.kplus1 ~ 1",
         event_dementia_2="Q.kplus1 ~ 1",
-        insulin_3="Q.kplus1 ~ 1",
         event_dementia_3="Q.kplus1 ~ 1",
-        insulin_4="Q.kplus1 ~ 1",
         event_dementia_4="Q.kplus1 ~ 1",
-        insulin_5="Q.kplus1 ~ 1",
         event_dementia_5="Q.kplus1 ~ 1",
-        insulin_6="Q.kplus1 ~ 1",
         event_dementia_6="Q.kplus1 ~ 1",
-        insulin_7="Q.kplus1 ~ 1",
         event_dementia_7="Q.kplus1 ~ 1",
-        insulin_8="Q.kplus1 ~ 1",
         event_dementia_8="Q.kplus1 ~ 1",
-        insulin_9="Q.kplus1 ~ 1",
         event_dementia_9="Q.kplus1 ~ 1",
-        insulin_10="Q.kplus1 ~ 1",
         event_dementia_10="Q.kplus1 ~ 1"
       )
     }
@@ -299,7 +311,7 @@ run_ltmle_glmnet_interaction <- function(d,
                              resdf=NULL,
                              Qint=F,
                              gcomp=F,
-                             det.Q=T,
+                             det.Q=F,
                              override_function=SuperLearner_override,
                              varmethod = "tmle", #variance method
                              alt=FALSE,
@@ -331,10 +343,10 @@ run_ltmle_glmnet_interaction <- function(d,
 
 
   #Use only first N time points
+  #Use only first N time points
   d <- d %>%
     dplyr::select(!!(baseline_vars),matches(paste0("_(",paste0(0:(N_time-1),collapse="|"),")$")))
 
-  colnames(d)
 
   spec_ltmle <- spec_analysis(data=d, c(long_covariates, int_vars, "event_death_"),
                               baseline_vars, N_time,
@@ -343,11 +355,16 @@ run_ltmle_glmnet_interaction <- function(d,
                               alt=alt)
   abar_spec = list(rep(1,N_time),rep(0,N_time))
 
+
   #Drop the baseline events
   spec_ltmle$data <- spec_ltmle$data %>% subset(., select = -c(event_death_0, censor_0, event_dementia_0))
   spec_ltmle$Cnodes = spec_ltmle$Cnodes[spec_ltmle$Cnodes!="censor_0"]
   spec_ltmle$Lnodes = spec_ltmle$Lnodes[spec_ltmle$Lnodes!="event_death_0"]
   spec_ltmle$Ynodes = spec_ltmle$Ynodes[spec_ltmle$Ynodes!="event_dementia_0"]
+
+
+
+
 
   set.seed(12345)
   res = NULL
@@ -358,25 +375,15 @@ run_ltmle_glmnet_interaction <- function(d,
     if(N_time==11){
       qform = c(
         insulin_0="Q.kplus1 ~ 1",
-        insulin_1="Q.kplus1 ~ 1",
         event_dementia_1="Q.kplus1 ~ 1",
-        insulin_2="Q.kplus1 ~ 1",
         event_dementia_2="Q.kplus1 ~ 1",
-        insulin_3="Q.kplus1 ~ 1",
         event_dementia_3="Q.kplus1 ~ 1",
-        insulin_4="Q.kplus1 ~ 1",
         event_dementia_4="Q.kplus1 ~ 1",
-        insulin_5="Q.kplus1 ~ 1",
         event_dementia_5="Q.kplus1 ~ 1",
-        insulin_6="Q.kplus1 ~ 1",
         event_dementia_6="Q.kplus1 ~ 1",
-        insulin_7="Q.kplus1 ~ 1",
         event_dementia_7="Q.kplus1 ~ 1",
-        insulin_8="Q.kplus1 ~ 1",
         event_dementia_8="Q.kplus1 ~ 1",
-        insulin_9="Q.kplus1 ~ 1",
         event_dementia_9="Q.kplus1 ~ 1",
-        insulin_10="Q.kplus1 ~ 1",
         event_dementia_10="Q.kplus1 ~ 1"
       )
     }

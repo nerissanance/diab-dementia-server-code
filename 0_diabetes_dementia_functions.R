@@ -324,7 +324,8 @@ spec_analysis <- function(data, long_covariates, baseline_vars, N_time, Avars=c(
   for(i in long_covariates){
     node_names <- node_names[!grepl(paste0(i, (N_time-1)), node_names)]
   }
-
+  #Drop A_0
+  node_names <- node_names[node_names!=paste0(Avars,"0")]
 
   Lnode_names <- c(baseline_vars, expand.grid(long_covariates,0:(N_time-1)) %>% apply(1, function(row) paste0(row, collapse = "")))
   Lnode_names <- gsub(" ","", Lnode_names)

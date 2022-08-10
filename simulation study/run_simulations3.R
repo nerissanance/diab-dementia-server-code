@@ -47,6 +47,7 @@ resdf_noDetQ_ic <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .e
 saveRDS(resdf_noDetQ_ic, paste0(here::here(),"/data/sim_res_noDetQ_ic_est_update.RDS"))
 gc()
 
+
 resdf_noDetQ_Qint_tmle <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
   res <- NULL
   try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, varmethod = "tmle"))
@@ -81,6 +82,15 @@ saveRDS(resdf_noDetQ_ic_ridge, paste0(here::here(),"/data/sim_res_ridge_noDetQ_i
 gc()
 
 
+resdf_noDetQ_tmle_ridge <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE, det.Q=FALSE, varmethod = "tmle", override_function=SuperLearner_override_ridge))
+  return(res)
+}
+saveRDS(resdf_noDetQ_tmle_ridge, paste0(here::here(),"/data/sim_res_ridge_noDetQ_tmle_est_update.RDS"))
+gc()
+
+
 #lasso prescreen
 resdf_noDetQ_lasso_prescreen <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
   res <- NULL
@@ -88,7 +98,7 @@ resdf_noDetQ_lasso_prescreen <- foreach(i = 1:length(d_wide_list), .combine = 'b
 
   return(res)
 }
-saveRDS(resdf_Qint_noDetQ_lasso_prescreen, paste0(here::here(),"/data/sim_res_noDetQ_lasso_prescreen_est_update.RDS"))
+saveRDS(resdf_noDetQ_lasso_prescreen, paste0(here::here(),"/data/sim_res_noDetQ_lasso_prescreen_est_update.RDS"))
 
 
 

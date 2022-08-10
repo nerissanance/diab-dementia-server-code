@@ -15,12 +15,12 @@ sink("glmnet_error_checking.txt")
 
 #-updated to print X dimensions
 
-# #temp
+#temp
 # d=d_wide_list[[1]]
 # N_time = 11 #number of time points you want to look at
 # SL.library = c("SL.glmnet")
 # resdf=NULL
-# Qint=F
+# Qint=T
 # gcomp=F
 # det.Q=F
 # gbound = c(0.01, 1)
@@ -28,6 +28,7 @@ sink("glmnet_error_checking.txt")
 # varmethod = "ic" #variance method
 # alt=FALSE
 # label=""
+set.seed(12345)
 try(res <- run_ltmle_glmnet(d_wide_list[[1]], resdf=NULL, Qint=FALSE, det.Q=FALSE, varmethod = "ic"))
 
 print(res)
