@@ -1,0 +1,17 @@
+estimator,parameter,estimate,std.dev,ci.lb,ci.ub,pvalue,V8,TCP,analysis,outcome
+tmle,ATE,-0.008003,0.002871,-0.013629,-0.002376,0,6,TCP1,DetQ_IC,dementia
+tmle,RR,0,0.382805,0,0,0,6,TCP1,DetQ_IC,dementia
+iptw,ATE,0,0,0,0,0,6,TCP1,DetQ_IC,dementia
+iptw,RR,0.596786,0.107308,0.483591,0.736477,0,6,TCP1,DetQ_IC,dementia
+tmle,ATE,-0.007769,0.003148,-0.01394,-0.001599,0,6,TCP1,subset 2011,dementia
+tmle,RR,0,0.428045,0,0,0,6,TCP1,subset 2011,dementia
+iptw,ATE,0,0,0,0,0,6,TCP1,subset 2011,dementia
+iptw,RR,0.343234,0.175349,0.243407,0.484003,0,6,TCP1,subset 2011,dementia
+tmle,ATE,-0.008341,0.00345,-0.015103,-0.001579,0,6,TCP1,3mo nodes,dementia
+tmle,RR,0,0.453221,0,0,0,6,TCP1,3mo nodes,dementia
+iptw,ATE,0,0,0,0,0,6,TCP1,3mo nodes,dementia
+iptw,RR,0.303609,0.2598,0.182462,0.505192,0,6,TCP1,3mo nodes,dementia
+tmle,ATE,-0.007478,0.003012,-0.013382,-0.001575,0,6,TCP1,12mo nodes,dementia
+tmle,RR,0,0.416058,0,0,0,6,TCP1,12mo nodes,dementia
+iptw,ATE,0,0,0,0,0,6,TCP1,12mo nodes,dementia
+iptw,RR,0.370492,0.157881,0.271888,0.504856,0,6,TCP1,12mo nodes,dementia
