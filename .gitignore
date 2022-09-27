@@ -3,6 +3,7 @@
 .RData
 .Ruserdata
 data/NOTRANSFER_glp1_MSM11.RDS
+data/null_simulated_data_list.RDS
 data/simulated_data_list.RDS
 data/simulated_data_list_commonoutcome.RDS
 .RDS

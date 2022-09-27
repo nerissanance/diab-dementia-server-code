@@ -1,7 +1,7 @@
 
 #Parallelize:
 try(parallel::detectCores())
-try(n.cores <- parallel::detectCores() -4)
+try(n.cores <- parallel::detectCores() -24)
 
 #create the cluster
 try(my.cluster <- parallel::makeCluster( n.cores,type = "FORK"))
@@ -50,13 +50,18 @@ run_ltmle_glmnet <- function(d,
                              override_function=SuperLearner_override,
                              varmethod = "tmle", #variance method
                              alt=FALSE,
-                             label=""){
+                             label="",
+                             id=NULL){
 
   warn = getOption("warn")
   options(warn=-1)
 
   #clean competing events
   d <-clean_sim_data(d, N_time=N_time)
+
+  if(!is.null(id)){
+    baseline_vars <- c(baseline_vars,id)
+  }
 
   #Use only first N time points
   d <- d %>%
@@ -68,7 +73,7 @@ run_ltmle_glmnet <- function(d,
                               Avars=c("glp1_"),
                               Yvars=c("event_dementia_"),
                               alt=alt)
-  abar_spec = list(rep(1,N_time),rep(0,N_time))
+  abar_spec = list(rep(1,N_time-1),rep(0,N_time-1))
 
   # #Drop the baseline events
   spec_ltmle$data <- spec_ltmle$data %>% subset(., select = -c(event_death_0, censor_0, event_dementia_0))
@@ -137,6 +142,9 @@ run_ltmle_glmnet <- function(d,
     det.q.fun = NULL
   }
 
+  if(!is.null(id)){
+    id <- spec_ltmle$data[[id]]
+  }
 
   package_stub("SuperLearner", "SuperLearner", override_function, {
     testthatsomemore::package_stub("ltmle", "Estimate", Estimate_override, {
@@ -153,7 +161,8 @@ run_ltmle_glmnet <- function(d,
                        estimate.time=T,
                        deterministic.Q.function = det.q.fun,
                        SL.library = SL.library,
-                       variance.method = varmethod
+                       variance.method = varmethod,
+                       id=id
       ))
     })})
 
