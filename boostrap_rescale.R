@@ -1,5 +1,11 @@
-boot <- foreach(i=1:9,.combine=rbind)%do%
-rio::import(paste0("./targets/dementia/export/boot_res",i,".txt"))
+library(data.table)
+library(tidyverse)
+library(doParallel)
+
+boot <- foreach(i=1:9,.combine=rbind) %do% {
+  rio::import(paste0("./targets/dementia/export/boot_res",i,".txt"))
+
+}
 n <- 113000
 
 #We now want to shrink it back to respect that sample size is n and not
