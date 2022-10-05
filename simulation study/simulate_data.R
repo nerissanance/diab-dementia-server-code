@@ -7,9 +7,8 @@ source(paste0(here::here(),"/synthesizeDD.R"))
 
 cc <- fread(paste0(here::here(),"/data/coefficients.txt"))
 u <- synthesizeDD(cc)
-#d <- sim(u,1000)
-#head(d)
 
+set.seed(12345)
 sim_list <- NULL
 n<-300
 N_time=10

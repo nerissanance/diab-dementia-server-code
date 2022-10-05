@@ -12,6 +12,7 @@ require(matrixStats)
 Estimate_override <-function(inputs, form, subs, family, type, nodes, Qstar.kplus1,
           cur.node, calc.meanL, called.from.estimate.g, regimes.meanL,
           regimes.with.positive.weight){
+
   FitAndPredict <- function() {
     if (length(Y.subset) < 2)
       stop("Estimation failed because there are fewer than 2 observations to fit")

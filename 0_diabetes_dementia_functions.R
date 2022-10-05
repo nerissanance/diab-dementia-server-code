@@ -24,15 +24,70 @@
 
 SuperLearner_override <- function(Y, X, newX = NULL, family = gaussian(), SL.library="SL.glmnet",
                                       method = "method.NNLS", id = NULL, verbose = FALSE, control = list(),
-                                      cvControl = list(), obsWeights = NULL, env = parent.frame(), alpha=1, loss  = "auc") {
+                                      cvControl = list(), obsWeights = NULL, env = parent.frame(), alpha=1) {
   stopifnot(identical(SL.library, "SL.glmnet"))
 
   res <- NULL
-  try(res <- SL.glmnet(Y, X, newX, family, obsWeights, id, alpha=alpha, useMin =TRUE,  nfolds = 5))
+  if(length(unique(Y))>2){
+    family[1]$family="gaussian"
+    try(res <- SL.glmnet(Y, X, newX, family= gaussian(), obsWeights, id, alpha=alpha, useMin =TRUE,  nfolds = 5))
+  }else{
+    try(res <- SL.glmnet(Y, X, newX, family, obsWeights, id, alpha=alpha, useMin =TRUE,  nfolds = 5))
+  }
+  #try(res <- SL.glmnet(Y, X, newX, family, obsWeights, id, alpha=alpha, useMin =TRUE,  nfolds = 5), silent=TRUE)
+
+  if(is.null(res)){
+      cat("glmnet failed!!!!!!!!!!!!!!!!!!!!!!!!!!\n")
+      cat("family:",family[1]$family,"\n")
+      cat("summary:\n")
+      print(summary((Y)))
+      cat("unique outcome:\n")
+      cat(length(unique(Y)))
+      cat("num predictors:\n")
+      cat(ncol((X)))
+      cat("\n")
+      cat("N outcome:",min(table(Y)))
+      cat("\n")
+
+
+      res <- SL.mean(Y, X, newX, family, obsWeights, id)
+    }else{
+      cat("glmnet succeeded\n")
+      cat("family:",family[1]$family,"\n")
+      cat("summary:\n")
+      print(summary((Y)))
+      cat("unique outcome:\n")
+      cat(length(unique(Y)))
+      cat("num predictors:\n")
+      cat(ncol((X)))
+      cat("\n")
+      cat("N outcome:",min(table(Y)))
+      cat("\n")
+    }
+
+  list(model=res$fit, SL.predict = res$pred)
+}
+
+
+SuperLearner_override_ridge <- function(Y, X, newX = NULL, family = gaussian(), SL.library="SL.glmnet",
+                                  method = "method.NNLS", id = NULL, verbose = FALSE, control = list(),
+                                  cvControl = list(), obsWeights = NULL, env = parent.frame(), alpha=0) {
+  stopifnot(identical(SL.library, "SL.glmnet"))
+
+  res <- NULL
+  if(length(unique(Y))>2){
+    family[1]$family="gaussian"
+    try(res <- SL.glmnet(Y, X, newX, family= gaussian(), obsWeights, id, alpha=alpha, useMin =TRUE,  nfolds = 5))
+  }else{
+    try(res <- SL.glmnet(Y, X, newX, family, obsWeights, id, alpha=alpha, useMin =TRUE,  nfolds = 5))
+  }
+
+
   if(is.null(res)){res <- SL.mean(Y, X, newX, family, obsWeights, id)}
 
   list(model=res$fit, SL.predict = res$pred)
 }
+
 
 
 SuperLearner_override_lasso_prescreen <- function(Y, X, newX = NULL, family = gaussian(), SL.library="SL.glm",
@@ -49,12 +104,18 @@ SuperLearner_override_lasso_prescreen <- function(Y, X, newX = NULL, family = ga
     X_Lvars <- model.matrix(~-1 + ., X_Lvars)
   }
 
-  # if (!is.matrix(X)) {
-  #   X <- model.matrix(~-1 + ., X)
-  # }
-  fitCV <- glmnet::cv.glmnet(x = X_Lvars, y = Y, lambda = NULL, type.measure = "deviance",
-                             nfolds = 5, family = family$family, alpha = alpha,
-                             nlambda = 100)
+
+  if(length(unique(Y))>2){
+    fitCV <- glmnet::cv.glmnet(x = X_Lvars, y = Y, lambda = NULL, type.measure = "deviance",
+                               nfolds = 5, family = gaussian(), alpha = alpha,
+                               nlambda = 100)
+    }else{
+    fitCV <- glmnet::cv.glmnet(x = X_Lvars, y = Y, lambda = NULL, type.measure = "deviance",
+                               nfolds = 5, family = family$family, alpha = alpha,
+                               nlambda = 100)
+    }
+
+
   whichVariable <- (as.numeric(coef(fitCV$glmnet.fit, s = fitCV$lambda.min))[-1] !=
                       0)
   if (sum(whichVariable) < minscreen) {
@@ -129,29 +190,8 @@ SuperLearner_override_ridge_1se <- function(Y, X, newX = NULL, family = gaussian
   list(model=res$fit, SL.predict = res$pred)
 }
 
-SuperLearner_override_EN <- function(Y, X, newX = NULL, family = gaussian(), SL.library,
-                                         method = "method.NNLS", id = NULL, verbose = FALSE, control = list(),
-                                         cvControl = list(), obsWeights = NULL, env = parent.frame()) {
-  stopifnot(identical(SL.library, "SL.glmnet"))
 
-  res <- NULL
-  try(res <- SL.glmnet(Y, X, newX, family, obsWeights, id, alpha = 0.5, nfolds = 5))
-  if(is.null(res)){res <- SL.mean(Y, X, newX, family, obsWeights, id)}
 
-  list(model=res$fit, SL.predict = res$pred)
-}
-
-SuperLearner_override_ridge <- function(Y, X, newX = NULL, family = gaussian(), SL.library,
-                                     method = "method.NNLS", id = NULL, verbose = FALSE, control = list(),
-                                     cvControl = list(), obsWeights = NULL, env = parent.frame()) {
-  stopifnot(identical(SL.library, "SL.glmnet"))
-
-  res <- NULL
-  try(res <- SL.glmnet(Y, X, newX, family, obsWeights, id, alpha = 0, nfolds = 5))
-  if(is.null(res)){res <- SL.mean(Y, X, newX, family, obsWeights, id)}
-
-  list(model=res$fit, SL.predict = res$pred)
-}
 
 SuperLearner_override_EN_1se <- function(Y, X, newX = NULL, family = gaussian(), SL.library,
                                      method = "method.NNLS", id = NULL, verbose = FALSE, control = list(),
@@ -191,17 +231,6 @@ SuperLearner_override_EN_AUC <- function(Y, X, newX = NULL, family = gaussian(),
 }
 
 
-SuperLearner_override_ridge <- function(Y, X, newX = NULL, family = gaussian(), SL.library,
-                                            method = "method.NNLS", id = NULL, verbose = FALSE, control = list(),
-                                            cvControl = list(), obsWeights = NULL, env = parent.frame()) {
-  stopifnot(identical(SL.library, "SL.glmnet"))
-
-  res <- NULL
-  try(res <- SL.glmnet(Y, X, newX, family, obsWeights, id, alpha = 0,  nfolds = 5))
-  if(is.null(res)){res <- SL.mean(Y, X, newX, family, obsWeights, id)}
-
-  list(model=res$fit, SL.predict = res$pred)
-}
 
 SuperLearner_override_ridge_AUC <- function(Y, X, newX = NULL, family = gaussian(), SL.library,
                                      method = "method.NNLS", id = NULL, verbose = FALSE, control = list(),
@@ -288,14 +317,21 @@ spec_analysis <- function(data, long_covariates, baseline_vars, N_time, Avars=c(
                              num_time=0:(N_time-1))
   }else{
     node_names <- spec_nodes(baseline_vars=baseline_vars,
-                             longitudinal_vars=c(long_covariates, Avars,"censor_", Yvars),
+                             longitudinal_vars=c(Avars,"censor_",Yvars, long_covariates),
                              num_time=0:(N_time-1))
   }
 
+  for(i in long_covariates){
+    node_names <- node_names[!grepl(paste0(i, (N_time-1)), node_names)]
+  }
+  #Drop A_0
+  node_names <- node_names[node_names!=paste0(Avars,"0")]
 
   Lnode_names <- c(baseline_vars, expand.grid(long_covariates,0:(N_time-1)) %>% apply(1, function(row) paste0(row, collapse = "")))
   Lnode_names <- gsub(" ","", Lnode_names)
-
+  for(i in long_covariates){
+     Lnode_names <- Lnode_names[!grepl(paste0(i, (N_time-1)), Lnode_names)]
+  }
 
   #subset to analysis columns and arrange
   d_ltmle <- data %>% dplyr::select(!!(node_names))
