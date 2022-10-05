@@ -64,7 +64,11 @@ run_ltmle_glmnet <- function(d,
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     baseline_vars <- c(baseline_vars,"id")
+=======
+    baseline_vars <- c(baseline_vars,id)
+>>>>>>> 48c3eea89b036aef116454c69313a8033352a63c
 =======
     baseline_vars <- c(baseline_vars,id)
 >>>>>>> 48c3eea89b036aef116454c69313a8033352a63c
@@ -158,7 +162,11 @@ run_ltmle_glmnet <- function(d,
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     id <- spec_ltmle$data[["id"]]
+=======
+    id <- spec_ltmle$data[[id]]
+>>>>>>> 48c3eea89b036aef116454c69313a8033352a63c
 =======
     id <- spec_ltmle$data[[id]]
 >>>>>>> 48c3eea89b036aef116454c69313a8033352a63c
