@@ -11,7 +11,7 @@ u <- synthesizeDD(cc)
 
 set.seed(12345)
 sim_list <- NULL
-n<-300
+n<-200
 N_time=10
 
 

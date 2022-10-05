@@ -61,23 +61,7 @@ run_ltmle_glmnet <- function(d,
   d <-clean_sim_data(d, N_time=N_time)
 
   if(!is.null(id)){
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
     baseline_vars <- c(baseline_vars,"id")
-=======
-    baseline_vars <- c(baseline_vars,id)
->>>>>>> 48c3eea89b036aef116454c69313a8033352a63c
-=======
-    baseline_vars <- c(baseline_vars,id)
->>>>>>> 48c3eea89b036aef116454c69313a8033352a63c
-=======
-    baseline_vars <- c(baseline_vars,id)
->>>>>>> 48c3eea89b036aef116454c69313a8033352a63c
-=======
-    baseline_vars <- c(baseline_vars,id)
->>>>>>> 48c3eea89b036aef116454c69313a8033352a63c
   }
 
   #Use only first N time points
@@ -159,23 +143,9 @@ run_ltmle_glmnet <- function(d,
   }
 
   if(!is.null(id)){
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
+
     id <- spec_ltmle$data[["id"]]
-=======
-    id <- spec_ltmle$data[[id]]
->>>>>>> 48c3eea89b036aef116454c69313a8033352a63c
-=======
-    id <- spec_ltmle$data[[id]]
->>>>>>> 48c3eea89b036aef116454c69313a8033352a63c
-=======
-    id <- spec_ltmle$data[[id]]
->>>>>>> 48c3eea89b036aef116454c69313a8033352a63c
-=======
-    id <- spec_ltmle$data[[id]]
->>>>>>> 48c3eea89b036aef116454c69313a8033352a63c
+
   }
 
   package_stub("SuperLearner", "SuperLearner", override_function, {

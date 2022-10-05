@@ -8,7 +8,7 @@ source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
 
 
 
-
+rm(list=ls())
 gc()
 d_wide_list <- readRDS(file=here("data/null_simulated_data_list_subsampled.RDS"))
 d_wide_list <- d_wide_list[1:200]
@@ -16,7 +16,9 @@ gc()
 
 i<-j<-1
 resdf_boot = NULL
-for(i in 1:length(d_wide_list)){
+#for(i in 1:length(d_wide_list)){
+#temp rerun
+for(i in 132:length(d_wide_list)){
 
   cat(i,"\n")
   d <- d_wide_list[[i]]
@@ -56,8 +58,4 @@ for(i in 1:length(d_wide_list)){
 saveRDS(resdf_boot, paste0(here::here(),"/data/sim_res_boot_null_T2.RDS"))
 
 
-
-#load and bind data
-i<-1
-d1 <- readRDS(paste0(here::here(),"/data/bootstrap/sim_res_boot_null_T2_",i,".RDS"))
 
