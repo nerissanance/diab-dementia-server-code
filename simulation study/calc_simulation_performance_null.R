@@ -11,11 +11,14 @@ source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
 #--------------------------------
 
 
+files <- dir(path=paste0(here::here(),"/sim_res/"), pattern = "*.RDS")
+setwd(paste0(here::here(),"/sim_res/"))
+d <- files %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="analysis")
+factor(d$analysis)
+d <- d %>% mutate(analysis = factor(analysis))
+levels(d$analysis) = files
+d$analysis <- gsub(".RDS","",d$analysis)
 
-#Unadjusted
-sim_df <- bind_rows(
-  resdf_boot_T2 <- readRDS(paste0(here::here(),"/data/sim_res_boot_null_T2.RDS")) %>% mutate(analysis="A")
-)
 
 #--------------------------------
 # Set truth
@@ -23,15 +26,18 @@ sim_df <- bind_rows(
 
 
 
-sim_df$true.RR <- 1
-sim_df$true.RD <- 0
+d$true.RR <- 1
+d$true.RD <- 0
 
 #--------------------------------
 # Calc performance
 #--------------------------------
 
+#temp drop extreme outliers
+d <- d%>% filter(estimate > 1/128)
+d <- d%>% filter(estimate < 128)
 
-perf_tab <- sim_df %>% group_by(analysis) %>%
+perf_tab_RR <- d %>% group_by(analysis) %>%
   mutate(variance=mean((estimate-mean(estimate))^2), #check if the brackets in this formula are right
          variance_log=mean((log(estimate)-mean(log(estimate)))^2),
          RD.variance=mean((mean(ate)-ate)^2),
@@ -53,11 +59,75 @@ perf_tab <- sim_df %>% group_by(analysis) %>%
   ) %>%
   distinct()
 
-res <- perf_tab %>% arrange(mse)
+d <- d%>% filter(estimate > 1/128)
+d <- d%>% filter(estimate < 128)
 
-kable(res, digits =3)
+perf_tab_diff <- d %>% filter(!is.na(ate)) %>%
+  subset(., select = -c(estimate, std.dev, CI.2.5., CI.97.5.)) %>%
+  rename(estimate= ate, std.dev= ate.sd, CI.2.5.=ate.ci.lb, CI.97.5.=ate.ci.ub)%>%
+  group_by(analysis) %>%
+  mutate(variance=mean((estimate-mean(estimate))^2),
+         o.ci.lb = estimate - 1.96 * sqrt(variance),
+         o.ci.ub = estimate + 1.96 * sqrt(variance)) %>%
+  summarize(
+    bias=mean((estimate))-(true.RD),
+    variance=mean((estimate-mean(estimate))^2),
+    mse = bias^2 + variance,
+    bias_se_ratio= bias/sqrt(variance),
+    coverage=mean(CI.2.5.<=true.RD & true.RD<=CI.97.5.)*100,
+    #oracle coverage
+    o.coverage=mean(o.ci.lb<=true.RD & true.RD<= o.ci.ub)*100,
+    mean_ci_width=mean((CI.97.5.)-(CI.2.5.)),
+    power=mean((CI.2.5. > 0 & CI.97.5.>0)|(CI.2.5. < 0 & CI.97.5.<0))*100,
+    o.power=mean((o.ci.lb > 0 & o.ci.ub>0)|(o.ci.lb < 0 & o.ci.ub<0))*100
+  ) %>%
+  distinct()
+
+
+
+res <- perf_tab_RR %>% arrange(mse)
+knitr::kable(res, digits =3)
+
+res_diff <- perf_tab_diff %>% arrange(mse)
+knitr::kable(res_diff, digits =3)
 
 #--------------------------------
 # Save data
 #--------------------------------
 saveRDS(sim_df, file=paste0(here::here(),"/results/compiled_simulation_results_null.rds"))
+
+
+
+#--------------------------------
+# Plots
+#--------------------------------
+
+# RR plots
+set.seed(123)
+ggplot(d, aes(y=analysis, x=estimate)) +
+  geom_jitter(width=0, height=0.05, alpha=0.75) +
+  geom_vline(xintercept = 1) +
+  geom_vline(aes(xintercept = true.RR), linetype="dashed") +
+  scale_x_continuous(trans = "log10")
+
+
+ggplot(d, aes(x=estimate)) +
+  facet_wrap(~analysis) +
+  geom_density() +
+  geom_vline(xintercept = 1) +
+  geom_vline(aes(xintercept = true.RR), linetype="dashed") +
+  scale_x_continuous(trans = "log10") + theme_bw()
+
+
+#ATE plots
+set.seed(123)
+ggplot(d, aes(y=analysis, x=ate)) +
+  geom_jitter(width=0, height=0.05, alpha=0.75) +
+  geom_vline(xintercept = 0) +
+  geom_vline(aes(xintercept = true.RD), linetype="dashed")
+
+ggplot(d, aes(x=ate)) +
+  facet_wrap(~analysis) +
+  geom_density() +
+  geom_vline(xintercept = 0) +
+  geom_vline(aes(xintercept = true.RD), linetype="dashed") + theme_bw()

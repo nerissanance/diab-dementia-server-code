@@ -61,23 +61,7 @@ run_ltmle_glmnet <- function(d,
   d <-clean_sim_data(d, N_time=N_time)
 
   if(!is.null(id)){
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
     baseline_vars <- c(baseline_vars,"id")
-=======
-    baseline_vars <- c(baseline_vars,id)
->>>>>>> 48c3eea89b036aef116454c69313a8033352a63c
-=======
-    baseline_vars <- c(baseline_vars,id)
->>>>>>> 48c3eea89b036aef116454c69313a8033352a63c
-=======
-    baseline_vars <- c(baseline_vars,id)
->>>>>>> 48c3eea89b036aef116454c69313a8033352a63c
-=======
-    baseline_vars <- c(baseline_vars,id)
->>>>>>> 48c3eea89b036aef116454c69313a8033352a63c
   }
 
   #Use only first N time points
@@ -94,10 +78,6 @@ run_ltmle_glmnet <- function(d,
 
   # #Drop the baseline events
   spec_ltmle$data <- spec_ltmle$data %>% subset(., select = -c(event_death_0, censor_0, event_dementia_0))
-  spec_ltmle$Cnodes = spec_ltmle$Cnodes[spec_ltmle$Cnodes!="censor_0"]
-  spec_ltmle$Lnodes = spec_ltmle$Lnodes[spec_ltmle$Lnodes!="event_death_0"]
-  spec_ltmle$Ynodes = spec_ltmle$Ynodes[spec_ltmle$Ynodes!="event_dementia_0"]
-
   set.seed(12345)
   fit = NULL
 
@@ -159,24 +139,8 @@ run_ltmle_glmnet <- function(d,
   }
 
   if(!is.null(id)){
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
     id <- spec_ltmle$data[["id"]]
-=======
-    id <- spec_ltmle$data[[id]]
->>>>>>> 48c3eea89b036aef116454c69313a8033352a63c
-=======
-    id <- spec_ltmle$data[[id]]
->>>>>>> 48c3eea89b036aef116454c69313a8033352a63c
-=======
-    id <- spec_ltmle$data[[id]]
->>>>>>> 48c3eea89b036aef116454c69313a8033352a63c
-=======
-    id <- spec_ltmle$data[[id]]
->>>>>>> 48c3eea89b036aef116454c69313a8033352a63c
-  }
+    }
 
   package_stub("SuperLearner", "SuperLearner", override_function, {
     testthatsomemore::package_stub("ltmle", "Estimate", Estimate_override, {
