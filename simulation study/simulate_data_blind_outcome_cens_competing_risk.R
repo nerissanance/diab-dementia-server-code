@@ -10,9 +10,6 @@ cc <- fread(paste0(here::here(),"/data/coefficients.txt"))
 
 #make a dataset with no censoring or death
 cc<-as.data.frame(cc)
-#cc <- cc %>% filter(!grepl("censor_",var), !grepl("event_death",var)) %>%  select(!starts_with("censor_"),!starts_with("event_death"))
-cc[grepl("event_death",cc$var),-c(1:2)] <- NA
-cc[grepl("censor_",cc$var),-c(1:2)] <-  NA
 
 
 
@@ -61,7 +58,7 @@ cc[cc$var=="event_dementia_10",colnames(cc)=="(Intercept)"] <-  cc[cc$var=="even
 #   }
 # }
 
-write.csv(cc, paste0(here::here(),"/data/coefficients_outcome_blind.txt"))
+write.csv(cc, paste0(here::here(),"/data/coefficients_outcome_blind_cens_competing_risks.txt"))
 
 
 

@@ -170,17 +170,17 @@ synthesizeDD.never <- function(coefficients, A_name = "glp1"){
 library(lava)
 library(data.table)
 library(tidyverse)
-cc <- fread("data/coefficients_outcome_blind.txt")
+cc <- fread(here::here("data/coefficients_outcome_blind.txt")) %>% subset(., select = -c(V1))
 
 gc()
 seed <- 3457347
-nsamp <- 17000
+#nsamp <- 17000
 
 #truth: 0.3600823
-#nsamp <- 100000
+nsamp <- 100000
 #RR=
 #nsamp <- 10000000
-#RR=0.392377
+#RR=
 
 
 
@@ -226,4 +226,32 @@ cRD
 cRR
 
 
-#save(cRD, cRR, file=paste0(here::here(),"/results/truth_blind.Rdata"))
+save(cRD, cRR, file=paste0(here::here(),"/results/truth_blind_T10.Rdata"))
+
+
+
+
+
+d.always <- sim(u.always, nsamp)
+(prop.always <-
+    1*(d.always$event_dementia_1 +
+         d.always$event_dementia_2 +
+         d.always$event_dementia_3  >0)  %>% table %>% prop.table)
+(prop.always10 <- d.always$event_dementia_10 %>% table %>% prop.table)
+
+
+(prop.never <-
+    1*(d.never$event_dementia_1 +
+         d.never$event_dementia_2 +
+         d.never$event_dementia_3  >0) %>% table %>% prop.table)
+(prop.never10 <- d.never$event_dementia_10 %>% table %>% prop.table)
+
+
+(cRD <-  prop.always[2] - prop.never[2])
+(cRR <- (prop.always[2])/prop.never[2])
+cRD
+cRR
+
+
+save(cRD, cRR, file=paste0(here::here(),"/results/truth_blind_T4.Rdata"))
+
