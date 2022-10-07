@@ -6,7 +6,9 @@ source(here::here("0_config.R"))
 source(paste0(here::here(),"/0_ltmle_Estimate_update.R"))
 source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
 
-
+library(parallel)
+library(doParallel)
+registerDoParallel(cores=64)
 
 rm(list=ls())
 gc()
@@ -18,7 +20,7 @@ i<-j<-1
 resdf_boot = NULL
 #for(i in 1:length(d_wide_list)){
 #temp rerun
-for(i in 132:length(d_wide_list)){
+for(i in 1:length(d_wide_list)){
 
   cat(i,"\n")
   d <- d_wide_list[[i]]
@@ -49,13 +51,13 @@ for(i in 132:length(d_wide_list)){
   gc()
   res_df$iteration <- i
   resdf_boot <- bind_rows(resdf_boot, res_df)
-  saveRDS(res_df, paste0(here::here(),"/data/bootstrap/sim_res_boot_null_T2_",i,".RDS"))
+  saveRDS(res_df, paste0(here::here(),"/data/bootstrap/sim_res_boot_null_no_cens_T2_",i,".RDS"))
 
 }
 
 
 
-saveRDS(resdf_boot, paste0(here::here(),"/data/sim_res_boot_null_T2.RDS"))
+saveRDS(resdf_boot, paste0(here::here(),"/data/sim_res_boot_null_no_cens_T2.RDS"))
 
 
 
