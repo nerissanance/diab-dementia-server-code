@@ -49,3 +49,4 @@ for(i in 1:n){
 }
 
 saveRDS(sim_list, paste0(here::here(),"/data/simulated_data_list_null_no_cens.RDS"))
+
