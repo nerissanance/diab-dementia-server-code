@@ -50,7 +50,6 @@ run_ltmle_glmnet <- function(d,
                              gbound = c(0.01, 1),
                              override_function=SuperLearner_override,
                              varmethod = "tmle", #variance method
-                             alt=FALSE,
                              label="",
                              id=NULL){
 
@@ -73,11 +72,11 @@ run_ltmle_glmnet <- function(d,
                               baseline_vars, N_time,
                               Avars=c("glp1_"),
                               Yvars=c("event_dementia_"),
-                              alt=alt)
+                              Cvars=c("censor_"))
   abar_spec = list(rep(1,N_time-1),rep(0,N_time-1))
 
   # #Drop the baseline events
-  spec_ltmle$data <- spec_ltmle$data %>% subset(., select = -c(event_death_0, censor_0, event_dementia_0))
+
   set.seed(12345)
   fit = NULL
 
@@ -189,6 +188,157 @@ run_ltmle_glmnet <- function(d,
 
 
 
+run_ltmle_glmnet_no_cens <- function(d,
+                             N_time = 11, #number of time points you want to look at
+                             SL.library = c("SL.glmnet"),
+                             resdf=NULL,
+                             Qint=F,
+                             gcomp=F,
+                             det.Q=T,
+                             gbound = c(0.01, 1),
+                             override_function=SuperLearner_override,
+                             varmethod = "tmle", #variance method
+                             label="",
+                             id=NULL){
+
+  warn = getOption("warn")
+  options(warn=-1)
+
+
+  if(!is.null(id)){
+    baseline_vars <- c(baseline_vars,"id")
+  }
+
+  #Use only first N time points
+  d <- d %>%
+    dplyr::select(!!(baseline_vars),matches(paste0("_(",paste0(0:(N_time-1),collapse="|"),")$")))
+
+
+  spec_ltmle <- spec_analysis_no_cens(data=d, c(long_covariates),
+                              baseline_vars, N_time,
+                              Avars=c("glp1_"),
+                              Yvars=c("event_dementia_"))
+  abar_spec = list(rep(1,N_time-1),rep(0,N_time-1))
+
+  # #Drop the baseline events
+  set.seed(12345)
+  fit = NULL
+
+
+  if(Qint){
+
+    if(N_time==11){
+      qform = c(
+        insulin_0="Q.kplus1 ~ 1",
+        event_dementia_1="Q.kplus1 ~ 1",
+        event_dementia_2="Q.kplus1 ~ 1",
+        event_dementia_3="Q.kplus1 ~ 1",
+        event_dementia_4="Q.kplus1 ~ 1",
+        event_dementia_5="Q.kplus1 ~ 1",
+        event_dementia_6="Q.kplus1 ~ 1",
+        event_dementia_7="Q.kplus1 ~ 1",
+        event_dementia_8="Q.kplus1 ~ 1",
+        event_dementia_9="Q.kplus1 ~ 1",
+        event_dementia_10="Q.kplus1 ~ 1"
+      )
+    }
+
+    if(N_time==2){
+      qform = c(
+        insulin_0="Q.kplus1 ~ 1",
+        event_dementia_1="Q.kplus1 ~ 1")
+    }
+  }else{
+    qform=NULL
+  }
+
+
+  if(det.Q){
+    det.q.fun = det.Q.function
+  }else{
+    det.q.fun = NULL
+  }
+
+  if(!is.null(id)){
+    id <- spec_ltmle$data[["id"]]
+  }
+
+
+  package_stub("SuperLearner", "SuperLearner", override_function, {
+    testthatsomemore::package_stub("ltmle", "Estimate", Estimate_override, {
+      try(fit <- ltmle(data=spec_ltmle$data,
+                       Anodes = spec_ltmle$Anodes,
+                       Cnodes = NULL,
+                       Lnodes = spec_ltmle$Lnodes,
+                       Ynodes = spec_ltmle$Ynodes,
+                       gbound=gbound,
+                       survivalOutcome = T,
+                       abar = abar_spec,
+                       gcomp=gcomp,
+                       Qform = qform,
+                       estimate.time=T,
+                       deterministic.Q.function = det.q.fun,
+                       SL.library = SL.library,
+                       variance.method = varmethod,
+                       id=id
+      ))
+    })})
+
+
+
+  if(!is.null(fit)){
+    res <- summary(fit)
+    res.iptw <- summary(fit, estimator="iptw")
+    res.RR <- as.data.frame(res$effect.measures$RR)
+    res.ate <- as.data.frame(res$effect.measures$ATE) %>% rename(ate.long.name=long.name,ate=estimate, ate.sd=std.dev , ate.pval=pvalue, ate.ci.lb=CI.2.5., ate.ci.ub=  CI.97.5., ate.log.std.err=log.std.err)
+
+    res.RR.iptw <- as.data.frame(res.iptw$effect.measures$RR) %>% rename(iptw.long.name=long.name, iptw.estimate=estimate, iptw.sd=std.dev , iptw.pval=pvalue, iptw.ci.lb=CI.2.5., iptw.ci.ub=  CI.97.5., iptw.log.std.err=log.std.err)
+    res.ate.iptw <- as.data.frame(res$effect.measures$ATE) %>% rename(iptw.ate.long.name=long.name, iptw.ate=estimate, iptw.ate.sd=std.dev , iptw.ate.pval=pvalue, iptw.ate.ci.lb=CI.2.5., iptw.ate.ci.ub=  CI.97.5., iptw.ate.log.std.err=log.std.err)
+
+    res <- cbind(res.RR, res.ate, res.RR.iptw, res.ate.iptw)
+    res$label <- label
+  }
+  if(!is.null(resdf)){
+    res <- bind_rows(resdf, res)
+  }
+
+  options(warn=warn)
+  return(res)
+}
+
+spec_analysis_no_cens <- function(data, long_covariates, baseline_vars, N_time, Avars, Yvars){
+
+  node_names <- spec_nodes(baseline_vars=(baseline_vars),
+                           longitudinal_vars=c(Avars,Yvars,long_covariates),
+                           num_time=0:(N_time-1))
+  node_names <- node_names[!(node_names %in% c(paste0(Yvars,0),paste0(Avars,0)))]
+  #Drop final timepoint
+  for(i in long_covariates){
+    node_names <- node_names[!(grepl(paste0(i,(N_time-1)),node_names))]
+  }
+
+  Lnode_names <- c(baseline_vars, expand.grid(long_covariates,0:(N_time-1)) %>% apply(1, function(row) paste0(row, collapse = "")))
+  Lnode_names <- gsub(" ","", Lnode_names)
+  #Drop final timepoint
+  Lnode_names <- Lnode_names[!(grepl(paste0("_",(N_time-1)),Lnode_names))]
+
+
+  #subset to analysis columns and arrange
+  d_ltmle <- data %>% dplyr::select(!!(node_names))
+  #colnames(d_ltmle)
+
+
+  return(list(
+    data=d_ltmle,
+    node_names=node_names,
+    Anodes = node_names[sort(grep(paste("^",Avars, collapse="|", sep=""), node_names))],
+    Cnodes = NULL,
+    Lnodes = Lnode_names,
+    Ynodes = node_names[sort(grep(paste("^",Yvars, collapse="|", sep=""), node_names))]
+  ))
+}
+
+
 run_ltmle_glmnet_unadj <- function(d,
                              N_time = 11, #number of time points you want to look at
                              SL.library = c("SL.glmnet"),
@@ -198,7 +348,6 @@ run_ltmle_glmnet_unadj <- function(d,
                              det.Q=T,
                              override_function=SuperLearner_override,
                              varmethod = "tmle", #variance method
-                             alt=FALSE,
                              label=""){
 
   warn = getOption("warn")
@@ -215,12 +364,11 @@ run_ltmle_glmnet_unadj <- function(d,
   spec_ltmle <- spec_analysis(data=d, c("event_death_"),
                               baseline_vars=NULL, N_time,
                               Avars=c("glp1_"),
-                              Yvars=c("event_dementia_"),
-                              alt=alt)
+                              Yvars=c("event_dementia_"))
   abar_spec = list(rep(1,N_time),rep(0,N_time))
 
   #Drop the baseline events
-  spec_ltmle$data <- spec_ltmle$data %>% subset(., select = -c(event_death_0, censor_0, event_dementia_0))
+
   spec_ltmle$Cnodes = spec_ltmle$Cnodes[spec_ltmle$Cnodes!="censor_0"]
   spec_ltmle$Lnodes = spec_ltmle$Lnodes[spec_ltmle$Lnodes!="event_death_0"]
   spec_ltmle$Ynodes = spec_ltmle$Ynodes[spec_ltmle$Ynodes!="event_dementia_0"]
@@ -320,7 +468,6 @@ run_ltmle_glmnet_interaction <- function(d,
                              det.Q=F,
                              override_function=SuperLearner_override,
                              varmethod = "tmle", #variance method
-                             alt=FALSE,
                              label=""){
 
   warn = getOption("warn")
@@ -357,13 +504,12 @@ run_ltmle_glmnet_interaction <- function(d,
   spec_ltmle <- spec_analysis(data=d, c(long_covariates, int_vars, "event_death_"),
                               baseline_vars, N_time,
                               Avars=c("glp1_"),
-                              Yvars=c("event_dementia_"),
-                              alt=alt)
+                              Yvars=c("event_dementia_"))
   abar_spec = list(rep(1,N_time),rep(0,N_time))
 
 
   #Drop the baseline events
-  spec_ltmle$data <- spec_ltmle$data %>% subset(., select = -c(event_death_0, censor_0, event_dementia_0))
+
   spec_ltmle$Cnodes = spec_ltmle$Cnodes[spec_ltmle$Cnodes!="censor_0"]
   spec_ltmle$Lnodes = spec_ltmle$Lnodes[spec_ltmle$Lnodes!="event_death_0"]
   spec_ltmle$Ynodes = spec_ltmle$Ynodes[spec_ltmle$Ynodes!="event_dementia_0"]
@@ -477,7 +623,7 @@ run_ltmle <- function(d,
   abar_spec = list(rep(1,N_time),rep(0,N_time))
 
   #Drop the baseline events
-  spec_ltmle$data <- spec_ltmle$data %>% subset(., select = -c(event_death_0, censor_0, event_dementia_0))
+
   spec_ltmle$Cnodes = spec_ltmle$Cnodes[spec_ltmle$Cnodes!="censor_0"]
   spec_ltmle$Lnodes = spec_ltmle$Lnodes[spec_ltmle$Lnodes!="event_death_0"]
   spec_ltmle$Ynodes = spec_ltmle$Ynodes[spec_ltmle$Ynodes!="event_dementia_0"]

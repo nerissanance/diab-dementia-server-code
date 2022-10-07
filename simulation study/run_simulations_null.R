@@ -12,6 +12,16 @@ gc()
 d_wide_list <- readRDS(file=here("data/null_simulated_data_list.RDS"))
 
 d_wide_list <- d_wide_list[1:200]
+d=d_wide_list[[1]]
+resdf=NULL
+Qint=F
+det.Q=FALSE
+varmethod = "tmle"
+N_time=2
+
+try(res <- run_ltmle_glmnet(d_wide_list[[1]], resdf=NULL, Qint=F, det.Q=FALSE, varmethod = "ic",N_time=2))
+
+
 gc()
 
 #10 year followup

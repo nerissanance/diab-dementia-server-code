@@ -308,37 +308,30 @@ spec_nodes <- function(baseline_vars, longitudinal_vars, num_time){
 }
 
 
+spec_analysis <- function(data, long_covariates, baseline_vars, N_time, Avars, Yvars, Cvars){
 
-spec_analysis <- function(data, long_covariates, baseline_vars, N_time, Avars=c("glp1_"), Yvars=c("event_dementia_"), alt=FALSE){
-
-  if(!alt){
-    node_names <- spec_nodes(baseline_vars=baseline_vars,
-                             longitudinal_vars=c(Avars,"censor_",Yvars, long_covariates),
-                             num_time=0:(N_time-1))
-  }else{
-    node_names <- spec_nodes(baseline_vars=baseline_vars,
-                             longitudinal_vars=c(Avars,"censor_",Yvars, long_covariates),
-                             num_time=0:(N_time-1))
-  }
-
+  node_names <- spec_nodes(baseline_vars=(baseline_vars),
+                           longitudinal_vars=c(Avars, Cvars,Yvars,long_covariates),
+                           num_time=0:(N_time-1))
+  node_names <- node_names[!(node_names %in% c(paste0(Yvars,0),paste0(Cvars,0),paste0(Avars,0),"event_death_0"))]
+  #Drop final timepoint
   for(i in long_covariates){
-    node_names <- node_names[!grepl(paste0(i, (N_time-1)), node_names)]
+    node_names <- node_names[!(grepl(paste0(i,(N_time-1)),node_names))]
   }
-  #Drop A_0
-  node_names <- node_names[node_names!=paste0(Avars,"0")]
 
   Lnode_names <- c(baseline_vars, expand.grid(long_covariates,0:(N_time-1)) %>% apply(1, function(row) paste0(row, collapse = "")))
   Lnode_names <- gsub(" ","", Lnode_names)
-  for(i in long_covariates){
-     Lnode_names <- Lnode_names[!grepl(paste0(i, (N_time-1)), Lnode_names)]
-  }
+  #Drop final timepoint
+  Lnode_names <- Lnode_names[!(grepl(paste0("_",(N_time-1)),Lnode_names))]
+  Lnode_names <- Lnode_names[!(Lnode_names %in% c("event_death_0"))]
+
 
   #subset to analysis columns and arrange
   d_ltmle <- data %>% dplyr::select(!!(node_names))
-  colnames(d_ltmle)
+  #colnames(d_ltmle)
 
   #clean censoring nodes to right format
-  Cnode_names = node_names[grep("^censor", node_names)]
+  Cnode_names = node_names[grep(paste0("^",Cvars), node_names)]
   for(i in Cnode_names){
     d_ltmle[[i]] <- BinaryToCensoring(is.censored=d_ltmle[[i]])
   }
@@ -354,6 +347,54 @@ spec_analysis <- function(data, long_covariates, baseline_vars, N_time, Avars=c(
     Ynodes = node_names[sort(grep(paste("^",Yvars, collapse="|", sep=""), node_names))]
   ))
 }
+
+
+#
+# spec_analysis_old <- function(data, long_covariates, baseline_vars, N_time, Avars=c("glp1_"), Yvars=c("event_dementia_"), alt=FALSE){
+#
+#   if(!alt){
+#     node_names <- spec_nodes(baseline_vars=baseline_vars,
+#                              longitudinal_vars=c(Avars,"censor_",Yvars, long_covariates),
+#                              num_time=0:(N_time-1))
+#   }else{
+#     node_names <- spec_nodes(baseline_vars=baseline_vars,
+#                              longitudinal_vars=c(Avars,"censor_",Yvars, long_covariates),
+#                              num_time=0:(N_time-1))
+#   }
+#
+#   for(i in long_covariates){
+#     node_names <- node_names[!grepl(paste0(i, (N_time-1)), node_names)]
+#   }
+#   #Drop A_0
+#   node_names <- node_names[node_names!=paste0(Avars,"0")]
+#
+#   Lnode_names <- c(baseline_vars, expand.grid(long_covariates,0:(N_time-1)) %>% apply(1, function(row) paste0(row, collapse = "")))
+#   Lnode_names <- gsub(" ","", Lnode_names)
+#   for(i in long_covariates){
+#      Lnode_names <- Lnode_names[!grepl(paste0(i, (N_time-1)), Lnode_names)]
+#   }
+#
+#   #subset to analysis columns and arrange
+#   d_ltmle <- data %>% dplyr::select(!!(node_names))
+#   colnames(d_ltmle)
+#
+#   #clean censoring nodes to right format
+#   Cnode_names = node_names[grep("^censor", node_names)]
+#   for(i in Cnode_names){
+#     d_ltmle[[i]] <- BinaryToCensoring(is.censored=d_ltmle[[i]])
+#   }
+#
+#
+#
+#   return(list(
+#     data=d_ltmle,
+#     node_names=node_names,
+#     Anodes = node_names[sort(grep(paste("^",Avars, collapse="|", sep=""), node_names))],
+#     Cnodes = Cnode_names,
+#     Lnodes = Lnode_names,
+#     Ynodes = node_names[sort(grep(paste("^",Yvars, collapse="|", sep=""), node_names))]
+#   ))
+# }
 
 SL.hal9001.flexible <- function(Y,
                                 X,

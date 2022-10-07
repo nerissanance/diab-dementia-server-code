@@ -19,6 +19,25 @@ d <- d %>% mutate(analysis = factor(analysis))
 levels(d$analysis) = files
 d$analysis <- gsub(".RDS","",d$analysis)
 
+#load bootstrap
+boot_iter_files <- dir(path=paste0(here::here(),"/data/bootstrap/"), pattern = "*.RDS")
+setwd(paste0(here::here(),"/data/bootstrap/"))
+boot_res <- boot_iter_files %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="boot_iter")
+
+#calc bootstrap CI's
+boot_CIs <- boot_res %>% group_by(boot_iter) %>%
+  summarise(
+    CI1=quantile(estimate,.025),
+    CI2=quantile(estimate,.975),
+    ate.CI1=quantile(estimate,.025),
+    ate.CI2=quantile(estimate,.975)
+)
+
+hist(boot_res$ate[boot_res$boot_iter==4])
+hist(log(boot_res$estimate[boot_res$boot_iter==4]))
+
+
+
 
 #--------------------------------
 # Set truth
