@@ -8,7 +8,7 @@ source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
 
 library(parallel)
 library(doParallel)
-registerDoParallel(cores=64)
+registerDoParallel(cores=25)
 
 rm(list=ls())
 gc()
@@ -20,7 +20,10 @@ i<-j<-1
 resdf_boot = NULL
 #for(i in 1:length(d_wide_list)){
 #temp rerun
-for(i in 1:length(d_wide_list)){
+
+int.start.time <- Sys.time()
+for(i in 1:200){
+#for(i in 1:length(d_wide_list)){
 
   cat(i,"\n")
   d <- d_wide_list[[i]]
@@ -28,7 +31,12 @@ for(i in 1:length(d_wide_list)){
 
 
   res_df <- NULL
-  res_df <- foreach(i = 1:length(d), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res_df <- foreach(j = 1:200, .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+
+    source(here::here("0_config.R"))
+    source(paste0(here::here(),"/0_ltmle_Estimate_update.R"))
+    source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
+
     set.seed(j)
     dboot <- d[sample(.N, nrow(d),replace=TRUE)]
 
@@ -49,7 +57,9 @@ for(i in 1:length(d_wide_list)){
   saveRDS(res_df, paste0(here::here(),"/data/bootstrap/sim_res_boot_outcome_blind_T4_",i,".RDS"))
 
 }
-
+int.end.time <- Sys.time()
+time1 <- difftime(int.end.time, int.start.time, units="mins")
+time1
 
 
 saveRDS(resdf_boot, paste0(here::here(),"/data/sim_res_boot_outcome_blind_T4.RDS"))

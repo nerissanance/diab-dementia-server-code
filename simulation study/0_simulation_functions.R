@@ -234,6 +234,13 @@ run_ltmle_glmnet_no_cens <- function(d,
       )
     }
 
+    if(N_time==4){
+      qform = c(
+        insulin_0="Q.kplus1 ~ 1",
+        event_dementia_1="Q.kplus1 ~ 1",
+        event_dementia_2="Q.kplus1 ~ 1",
+        event_dementia_3="Q.kplus1 ~ 1")
+    }
     if(N_time==2){
       qform = c(
         insulin_0="Q.kplus1 ~ 1",
