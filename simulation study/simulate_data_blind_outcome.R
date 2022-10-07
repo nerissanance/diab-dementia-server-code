@@ -10,12 +10,68 @@ cc <- fread(paste0(here::here(),"/data/coefficients.txt"))
 
 #make a dataset with no censoring or death
 cc<-as.data.frame(cc)
-cc <- cc %>% filter(!grepl("censor_",var), !grepl("event_death",var)) %>%  select(!starts_with("censor_"),!starts_with("event_death"))
+#cc <- cc %>% filter(!grepl("censor_",var), !grepl("event_death",var)) %>%  select(!starts_with("censor_"),!starts_with("event_death"))
+cc[grepl("event_death",cc$var),-c(1:2)] <- NA
+cc[grepl("censor_",cc$var),-c(1:2)] <-  NA
 
-#Remove Y-A association
-cc[grepl("event_dem",cc$var),grepl("glp1_",colnames(cc))] <- NA
+
+
+#Artificially set Y-A association
+cc[cc$var=="event_dementia_1",which(colnames(cc)=="glp1_1")] <- (-0.8)
+cc[cc$var=="event_dementia_2",colnames(cc)=="glp1_2"] <- (-0.8)
+cc[cc$var=="event_dementia_3",colnames(cc)=="glp1_3"] <- (-0.8)
+cc[cc$var=="event_dementia_4",colnames(cc)=="glp1_4"] <- (-0.8)
+cc[cc$var=="event_dementia_5",colnames(cc)=="glp1_5"] <- (-0.8)
+cc[cc$var=="event_dementia_6",colnames(cc)=="glp1_6"] <- (-0.8)
+cc[cc$var=="event_dementia_7",colnames(cc)=="glp1_7"] <- (-0.8)
+cc[cc$var=="event_dementia_8",colnames(cc)=="glp1_8"] <- (-0.8)
+cc[cc$var=="event_dementia_9",colnames(cc)=="glp1_9"] <- (-0.8)
+cc[cc$var=="event_dementia_10",colnames(cc)=="glp1_10"] <- (-0.8)
+
+#Make dementia slightly more common
+cc[cc$var=="event_dementia_1",colnames(cc)=="(Intercept)"] <- cc[cc$var=="event_dementia_1",colnames(cc)=="(Intercept)"] + 1
+cc[cc$var=="event_dementia_2",colnames(cc)=="(Intercept)"] <-  cc[cc$var=="event_dementia_2",colnames(cc)=="(Intercept)"] + 1
+cc[cc$var=="event_dementia_3",colnames(cc)=="(Intercept)"] <-  cc[cc$var=="event_dementia_3",colnames(cc)=="(Intercept)"] + 1
+cc[cc$var=="event_dementia_4",colnames(cc)=="(Intercept)"] <-  cc[cc$var=="event_dementia_4",colnames(cc)=="(Intercept)"] + 1
+cc[cc$var=="event_dementia_5",colnames(cc)=="(Intercept)"] <-  cc[cc$var=="event_dementia_5",colnames(cc)=="(Intercept)"] + 1
+cc[cc$var=="event_dementia_6",colnames(cc)=="(Intercept)"] <-  cc[cc$var=="event_dementia_6",colnames(cc)=="(Intercept)"] + 1
+cc[cc$var=="event_dementia_7",colnames(cc)=="(Intercept)"] <-  cc[cc$var=="event_dementia_7",colnames(cc)=="(Intercept)"] + 1
+cc[cc$var=="event_dementia_8",colnames(cc)=="(Intercept)"] <-  cc[cc$var=="event_dementia_8",colnames(cc)=="(Intercept)"] + 1
+cc[cc$var=="event_dementia_9",colnames(cc)=="(Intercept)"] <-  cc[cc$var=="event_dementia_9",colnames(cc)=="(Intercept)"] + 1
+cc[cc$var=="event_dementia_10",colnames(cc)=="(Intercept)"] <-  cc[cc$var=="event_dementia_10",colnames(cc)=="(Intercept)"] + 1
+
+
+# #update so there is an decaying relationship between past variable and each variable, so that the whole history is used
+# head(cc)
+# i=ncol(cc)-9
+# j=nrow(cc)
+# k=10
+# coef_decay=4
+# for(i in ncol(cc):9){
+#   for(k in 10:1){
+#   for(j in nrow(cc):20){
+#
+#     # colnames(cc)[i]
+#     # colnames(cc)[i+8]
+#     # cc[j,2]
+#       if(i+(8*k) < ncol(cc) & (j-i >= 11*k)){
+#         cc[j,i] <- cc[j,i+(8*k)]/(coef_decay*k)
+#       }
+#     }
+#   }
+# }
+
+write.csv(cc, paste0(here::here(),"/data/coefficients_outcome_blind.txt"))
+
+
 
 u <- synthesizeDD(cc)
+d <- sim(u,10000)
+head(d)
+table(d$glp1_2, d$event_dementia_2)
+table(d$glp1_3, d$event_dementia_3)
+table(d$glp1_8, d$event_dementia_8)
+
 
 set.seed(12345)
 sim_list <- NULL
