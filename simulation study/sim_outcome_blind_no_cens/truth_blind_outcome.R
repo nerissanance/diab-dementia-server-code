@@ -12,7 +12,15 @@
 ##
 ### Change Log:
 #----------------------------------------------------------------------
-##
+
+
+rm(list=ls())
+library(here)
+source(here::here("0_config.R"))
+source(paste0(here::here(),"/0_ltmle_Estimate_update.R"))
+source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
+
+
 ### Code:
 ##' Synthesizing longitudinal diabetes dementia followup data
 ##'
@@ -186,8 +194,13 @@ nsamp <- 1000000
 
 set.seed(seed)
 u.always <- synthesizeDD.always(cc)
-
 d.always <- sim(u.always, nsamp)
+
+set.seed(seed)
+u.never <- synthesizeDD.never(cc)
+d.never <- sim(u.never, nsamp)
+
+
 (prop.always <-
     1*(d.always$event_dementia_1 +
          d.always$event_dementia_2 +
@@ -201,10 +214,6 @@ d.always <- sim(u.always, nsamp)
          d.always$event_dementia_10 >0)  %>% table %>% prop.table)
 (prop.always10 <- d.always$event_dementia_10 %>% table %>% prop.table)
 
-set.seed(seed)
-u.never <- synthesizeDD.never(cc)
-
-d.never <- sim(u.never, nsamp)
 
 (prop.never <-
     1*(d.never$event_dementia_1 +
