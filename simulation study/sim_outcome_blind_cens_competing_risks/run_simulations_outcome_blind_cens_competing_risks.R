@@ -170,3 +170,24 @@ resdf_noDetQ_ic_T11 <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows'
 saveRDS(resdf_noDetQ_ic_T11, paste0(here::here(),"/sim_res/outcome_blind_cens_competing_risks_sim_res_noDetQ_ic_T11.RDS"))
 
 
+
+
+
+#primary
+int.start.time <- Sys.time()
+resdf_glm_noDetQ_tmle_T11 <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE, det.Q=FALSE, varmethod = "tmle",N_time=11, glm=T))
+  return(res)
+}
+saveRDS(resdf_glm_noDetQ_tmle_T11, paste0(here::here(),"/sim_res/outcome_blind_cens_competing_risks_sim_res_glm_noDetQ_tmle_T11.RDS"))
+
+int.start.time <- Sys.time()
+resdf_glm_noDetQ_ic_T11 <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet_no_cens(d_wide_list[[i]], resdf=NULL, Qint=FALSE, det.Q=FALSE, varmethod = "ic",N_time=11, glm=T))
+  return(res)
+}
+saveRDS(run_ltmle_glmnet, paste0(here::here(),"/sim_res/outcome_blind_cens_competing_risks_sim_res_glm_noDetQ_ic_T11.RDS"))
+
+

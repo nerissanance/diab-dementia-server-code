@@ -42,6 +42,7 @@ run_ltmle_glmnet <- function(d,
                              override_function=SuperLearner_override,
                              varmethod = "tmle", #variance method
                              label="",
+                             glm=FALSE,
                              id=NULL){
 
   warn = getOption("warn")
@@ -138,7 +139,26 @@ run_ltmle_glmnet <- function(d,
     id <- spec_ltmle$data[["id"]]
     }
 
+if(glm){
 
+      try(fit <- ltmle(data=spec_ltmle$data,
+                       Anodes = spec_ltmle$Anodes,
+                       Cnodes = spec_ltmle$Cnodes,
+                       Lnodes = spec_ltmle$Lnodes,
+                       Ynodes = spec_ltmle$Ynodes,
+                       gbound=gbound,
+                       survivalOutcome = T,
+                       abar = abar_spec,
+                       gcomp=gcomp,
+                       Qform = qform,
+                       estimate.time=F,
+                       deterministic.Q.function = det.q.fun,
+                       SL.library = "glm",
+                       variance.method = varmethod,
+                       id=id
+      ))
+
+  }else{
   package_stub("SuperLearner", "SuperLearner", override_function, {
     testthatsomemore::package_stub("ltmle", "Estimate", Estimate_override, {
       try(fit <- ltmle(data=spec_ltmle$data,
@@ -151,7 +171,7 @@ run_ltmle_glmnet <- function(d,
                        abar = abar_spec,
                        gcomp=gcomp,
                        Qform = qform,
-                       estimate.time=T,
+                       estimate.time=F,
                        deterministic.Q.function = det.q.fun,
                        SL.library = SL.library,
                        variance.method = varmethod,
@@ -159,6 +179,7 @@ run_ltmle_glmnet <- function(d,
       ))
     })})
 
+}
 
 
   if(!is.null(fit)){
@@ -196,6 +217,7 @@ run_ltmle_glmnet_no_cens <- function(d,
                              override_function=SuperLearner_override,
                              varmethod = "tmle", #variance method
                              label="",
+                             glm=FALSE,
                              id=NULL){
 
   warn = getOption("warn")
@@ -279,26 +301,45 @@ run_ltmle_glmnet_no_cens <- function(d,
     id <- spec_ltmle$data[["id"]]
   }
 
+  if(glm){
+    try(fit <- ltmle(data=spec_ltmle$data,
+                     Anodes = spec_ltmle$Anodes,
+                     Cnodes = NULL,
+                     Lnodes = spec_ltmle$Lnodes,
+                     Ynodes = spec_ltmle$Ynodes,
+                     gbound=gbound,
+                     survivalOutcome = T,
+                     abar = abar_spec,
+                     gcomp=gcomp,
+                     Qform = qform,
+                     estimate.time=F,
+                     deterministic.Q.function = det.q.fun,
+                     SL.library = "glm",
+                     variance.method = varmethod,
+                     id=id
+    ))
+  }else{
+    package_stub("SuperLearner", "SuperLearner", override_function, {
+      testthatsomemore::package_stub("ltmle", "Estimate", Estimate_override, {
+        try(fit <- ltmle(data=spec_ltmle$data,
+                         Anodes = spec_ltmle$Anodes,
+                         Cnodes = NULL,
+                         Lnodes = spec_ltmle$Lnodes,
+                         Ynodes = spec_ltmle$Ynodes,
+                         gbound=gbound,
+                         survivalOutcome = T,
+                         abar = abar_spec,
+                         gcomp=gcomp,
+                         Qform = qform,
+                         estimate.time=F,
+                         deterministic.Q.function = det.q.fun,
+                         SL.library = SL.library,
+                         variance.method = varmethod,
+                         id=id
+        ))
+      })})
 
-  package_stub("SuperLearner", "SuperLearner", override_function, {
-    testthatsomemore::package_stub("ltmle", "Estimate", Estimate_override, {
-      try(fit <- ltmle(data=spec_ltmle$data,
-                       Anodes = spec_ltmle$Anodes,
-                       Cnodes = NULL,
-                       Lnodes = spec_ltmle$Lnodes,
-                       Ynodes = spec_ltmle$Ynodes,
-                       gbound=gbound,
-                       survivalOutcome = T,
-                       abar = abar_spec,
-                       gcomp=gcomp,
-                       Qform = qform,
-                       estimate.time=T,
-                       deterministic.Q.function = det.q.fun,
-                       SL.library = SL.library,
-                       variance.method = varmethod,
-                       id=id
-      ))
-    })})
+  }
 
 
 
@@ -322,7 +363,7 @@ run_ltmle_glmnet_no_cens <- function(d,
   return(res)
 }
 
-spec_analysis_no_cens <- function(data, long_covariates, baseline_vars, N_time, Avars, Yvars){
+spec_analysis_no_cens <- function(data, long_covariates, baseline_vars, N_time, Avars, Yvars, glm=F){
 
   node_names <- spec_nodes(baseline_vars=(baseline_vars),
                            longitudinal_vars=c(Avars,Yvars,long_covariates),
