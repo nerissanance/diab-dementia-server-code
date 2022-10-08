@@ -126,6 +126,7 @@ knitr::kable(res_diff, digits =5)
 set.seed(123)
 ggplot(d, aes(y=analysis, x=estimate)) +
   geom_jitter(width=0, height=0.05, alpha=0.75) +
+  coord_cartesian(xlim=c(0.01, 4)) +
   geom_vline(xintercept = 1) +
   geom_vline(aes(xintercept = true.RR), linetype="dashed") +
   scale_x_continuous(trans = "log10")
