@@ -14,7 +14,7 @@ cc<-as.data.frame(cc)
 
 
 #Artificially set Y-A association
-cc[cc$var=="event_dementia_1",which(colnames(cc)=="glp1_1")] <- (-0.8)
+cc[cc$var=="event_dementia_1",colnames(cc)=="glp1_1"] <- (-0.8)
 cc[cc$var=="event_dementia_2",colnames(cc)=="glp1_2"] <- (-0.8)
 cc[cc$var=="event_dementia_3",colnames(cc)=="glp1_3"] <- (-0.8)
 cc[cc$var=="event_dementia_4",colnames(cc)=="glp1_4"] <- (-0.8)
@@ -36,6 +36,16 @@ cc[cc$var=="event_dementia_7",colnames(cc)=="(Intercept)"] <-  cc[cc$var=="event
 cc[cc$var=="event_dementia_8",colnames(cc)=="(Intercept)"] <-  cc[cc$var=="event_dementia_8",colnames(cc)=="(Intercept)"] + 1
 cc[cc$var=="event_dementia_9",colnames(cc)=="(Intercept)"] <-  cc[cc$var=="event_dementia_9",colnames(cc)=="(Intercept)"] + 1
 cc[cc$var=="event_dementia_10",colnames(cc)=="(Intercept)"] <-  cc[cc$var=="event_dementia_10",colnames(cc)=="(Intercept)"] + 1
+
+exp(cc[cc$var=="event_dementia_1",which(colnames(cc)=="glp1_1")])
+exp(cc[cc$var=="event_dementia_10",which(colnames(cc)=="glp1_10")])
+0.449329^10
+
+exp(cc[cc$var=="event_dementia_1",which(colnames(cc)=="glp1_1")])
+
+event_dementia_6 ~ age_base+sex+code5txt+quartile_income+ie_type+insulin_6+any.malignancy_6+chronic.pulmonary.disease_6+hypertension_6+myocardial.infarction_6+ischemic.heart.disease_6+heart.failure_6+renal.disease_6+glp1_6+sglt2_inhib_6                         binomial(logit)
+
+event_dementia_1 ~ age_base+sex+code5txt+quartile_income+ie_type+insulin_1+any.malignancy_1+chronic.pulmonary.disease_1+hypertension_1+myocardial.infarction_1+ischemic.heart.disease_1+heart.failure_1+renal.disease_1+glp1_1+sglt2_inhib_1
 
 
 # #update so there is an decaying relationship between past variable and each variable, so that the whole history is used
