@@ -188,6 +188,6 @@ resdf_glm_noDetQ_ic_T11 <- foreach(i = 1:length(d_wide_list), .combine = 'bind_r
   try(res <- run_ltmle_glmnet_no_cens(d_wide_list[[i]], resdf=NULL, Qint=FALSE, det.Q=FALSE, varmethod = "ic",N_time=11, glm=T))
   return(res)
 }
-saveRDS(run_ltmle_glmnet, paste0(here::here(),"/sim_res/outcome_blind_cens_competing_risks_sim_res_glm_noDetQ_ic_T11.RDS"))
+saveRDS(resdf_glm_noDetQ_ic_T11, paste0(here::here(),"/sim_res/outcome_blind_cens_competing_risks_sim_res_glm_noDetQ_ic_T11.RDS"))
 
 
