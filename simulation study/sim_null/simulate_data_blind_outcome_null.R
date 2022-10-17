@@ -12,8 +12,9 @@ cc <- fread(paste0(here::here(),"/data/coefficients.txt"))
 cc<-as.data.frame(cc)
 cc <- cc %>% filter(!grepl("censor_",var), !grepl("event_death",var)) %>%  select(!starts_with("censor_"),!starts_with("event_death"))
 
-#Remove Y-A association
-cc[grepl("event_dem",cc$var),grepl("glp1_",colnames(cc))] <- NA
+#Remove Y-A association and mediating associations through L
+cc[,grepl("glp1_",colnames(cc))] <- NA
+
 
 u <- synthesizeDD(cc)
 
