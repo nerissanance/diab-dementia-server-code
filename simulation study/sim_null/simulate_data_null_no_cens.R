@@ -1,9 +1,7 @@
 
 
 rm(list=ls())
-library(lava)
-library(tidyverse)
-library(data.table)
+source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
 source(paste0(here::here(),"/synthesizeDD.R"))
 
 cc <- fread(paste0(here::here(),"/data/coefficients.txt"))
@@ -12,8 +10,15 @@ cc <- fread(paste0(here::here(),"/data/coefficients.txt"))
 cc<-as.data.frame(cc)
 cc <- cc %>% filter(!grepl("censor_",var), !grepl("event_death",var)) %>%  select(!starts_with("censor_"),!starts_with("event_death"))
 
+
+#NOTE! NEED TO FIX so no association, and before generating, check the truth in the data
+
+
 #Remove Y-A association and mediating associations through L
-cc[,grepl("glp1_",!grepl("glp1_",colnames(cc)))] <- NA
+cc[!grepl("glp1_",cc$var),grepl("glp1_",colnames(cc))] <- NA
+#Check glp1 still predicts itself
+cc[grepl("glp1_",cc$var),grepl("glp1_",colnames(cc))]
+
 
 
 #make outcome more common
@@ -27,6 +32,12 @@ cc[cc$var=="event_dementia_7",colnames(cc)=="(Intercept)"] <-  cc[cc$var=="event
 cc[cc$var=="event_dementia_8",colnames(cc)=="(Intercept)"] <-  cc[cc$var=="event_dementia_8",colnames(cc)=="(Intercept)"] + 1
 cc[cc$var=="event_dementia_9",colnames(cc)=="(Intercept)"] <-  cc[cc$var=="event_dementia_9",colnames(cc)=="(Intercept)"] + 1
 cc[cc$var=="event_dementia_10",colnames(cc)=="(Intercept)"] <-  cc[cc$var=="event_dementia_10",colnames(cc)=="(Intercept)"] + 1
+
+
+#double check truth
+
+#calculate truth
+sim_truth <- calc_sim_truth(cc)
 
 
 u <- synthesizeDD(cc)

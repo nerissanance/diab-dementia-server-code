@@ -8,7 +8,7 @@ source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
 
 library(parallel)
 library(doParallel)
-registerDoParallel(cores=25)
+registerDoParallel(cores=50)
 
 rm(list=ls())
 gc()

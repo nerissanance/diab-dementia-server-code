@@ -1,13 +1,14 @@
 
 
 rm(list=ls())
-library(lava)
-library(data.table)
+source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
 source(paste0(here::here(),"/synthesizeDD.R"))
-library(tidyverse)
 
 cc <- fread(paste0(here::here(),"/data/coefficients_outcome_blind.txt")) %>% subset(., select= -c(V1))
 u <- synthesizeDD(cc)
+
+
+
 
 set.seed(12345)
 sim_list <- NULL

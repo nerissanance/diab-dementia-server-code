@@ -20,7 +20,9 @@ library(parallel)
 library(doParallel)
 registerDoParallel(cores=50)
 
-
+d<-d_wide_list[[1]]
+head(d)
+table(d$glp1_10, d$event_dementia_10)
 
 i<-j<-1
 resdf_boot = NULL
