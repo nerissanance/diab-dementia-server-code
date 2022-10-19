@@ -1,0 +1,137 @@
+---
+title: "Diabetes-dementia updated simulation results"
+author: "Andrew Mertens"
+date: "2022-10-19"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+source(here::here("0_config.R"))
+source(paste0(here::here(),"/0_ltmle_Estimate_update.R"))
+try(source(paste0(here::here(),"/simulation study/0_simulation_functions.R")))
+load(paste0(here::here(),"/simulation study/sim_performance_results/T4_null_sim_res.Rdata"))
+load(paste0(here::here(),"/simulation study/sim_performance_results/T4_outcome_blind_sim_res.Rdata"))
+load(paste0(here::here(),"/simulation study/sim_performance_results/T10_sim_res.Rdata"))
+load(paste0(here::here(),"/results/simulation_results_old.Rdata"))
+
+library(knitr)
+```
+
+## Null outcome- 1.5 year followup 
+
+### Relative risk performance
+
+```{r, echo=FALSE}
+res <- perf_tab_RR_null_T4 %>% arrange(coverage)
+knitr::kable(res, digits =3)
+
+
+```
+
+### Risk difference performance 
+
+```{r, echo=FALSE}
+res_diff <- perf_tab_diff_null_T4 %>% arrange(coverage)
+knitr::kable(res_diff, digits =5)
+```
+
+### Notes
+
+True RR=1, true RD=0
+Bootstrap with clustered ID's in CV procedures
+
+### Distribution of RR point estimates
+
+```{r,echo=FALSE}
+res_diff <- perf_tab_diff_null_T4 %>% arrange(coverage)
+set.seed(123)
+ggplot(d_T4_null, aes(y=analysis, x=estimate)) +
+  geom_jitter(width=0, height=0.05, alpha=0.75) +
+  coord_cartesian(xlim=c(0.4, 2)) +
+  geom_vline(xintercept = 1) +
+  geom_vline(aes(xintercept = true.RR), linetype="dashed") +
+  scale_x_continuous(trans = "log10")
+
+```
+
+
+
+## Blind outcome- 1.5 year followup 
+
+True RR:
+True RD: 
+
+### Relative risk performance
+
+```{r, echo=FALSE}
+res <- perf_tab_RR_outcome_blind_T4 %>% arrange(coverage)
+knitr::kable(res, digits =3)
+
+
+```
+
+### Risk difference performance 
+
+```{r, echo=FALSE}
+res_diff <- perf_tab_diff_outcome_blind_T4 %>% arrange(coverage)
+knitr::kable(res_diff, digits =5)
+```
+
+### Notes
+
+
+
+
+## Blind outcome- 5 year followup 
+
+True RR:
+True RD: 
+
+### Relative risk performance
+
+```{r, echo=FALSE}
+res <- perf_tab_RR_outcome_blind_T11 %>% arrange(coverage)
+knitr::kable(res, digits =3)
+
+
+```
+
+### Risk difference performance 
+
+```{r, echo=FALSE}
+res_diff <- perf_tab_diff_outcome_blind_T11 %>% arrange(coverage)
+knitr::kable(res_diff, digits =5)
+```
+
+### Notes
+
+
+
+
+## Old results
+
+True RR:
+True RD: 
+
+
+### Relative risk performance
+
+```{r, echo=FALSE}
+res <- perf_tab_RR_old %>% arrange(coverage)
+knitr::kable(res, digits =3)
+
+
+```
+
+<!-- ### Risk difference performance  -->
+
+<!-- ```{r, echo=FALSE} -->
+<!-- res_diff <- perf_tab_diff_outcome_blind_T11 %>% arrange(coverage) -->
+<!-- knitr::kable(res_diff, digits =5) -->
+<!-- ``` -->
+
+
+### Notes
+

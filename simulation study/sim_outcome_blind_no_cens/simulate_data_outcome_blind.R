@@ -7,7 +7,8 @@ source(paste0(here::here(),"/synthesizeDD.R"))
 cc <- fread(paste0(here::here(),"/data/coefficients_outcome_blind.txt")) %>% subset(., select= -c(V1))
 u <- synthesizeDD(cc)
 
-
+#calculate truth
+sim_truth <- calc_sim_truth(cc)
 
 
 set.seed(12345)

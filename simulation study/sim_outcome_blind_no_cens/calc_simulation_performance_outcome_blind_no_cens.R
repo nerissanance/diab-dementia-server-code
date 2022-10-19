@@ -17,13 +17,13 @@ files <- files[grepl("_T11",files)]
 
 setwd(paste0(here::here(),"/sim_res/"))
 d <- files %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="analysis")
-factor(d$analysis)
 d <- d %>% mutate(analysis = factor(analysis))
 levels(d$analysis) = files[as.numeric(levels(d$analysis))]
 d$analysis <- gsub(".RDS","",d$analysis)
 
 #load bootstrap
 boot_iter_files <- dir(path=paste0(here::here(),"/data/bootstrap/"), pattern = "*.RDS")
+boot_iter_files <- boot_iter_files[grepl("_T11",boot_iter_files)]
 setwd(paste0(here::here(),"/data/bootstrap/"))
 boot_res <- boot_iter_files %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="boot_iter")
 
@@ -50,12 +50,18 @@ load(paste0(here::here(),"/results/truth_blind_T10.Rdata"))
 d$true.RR <- cRR
 d$true.RD <- cRD
 
+#Truth - manually calculated from SEM
+d$true.RR <- 0.4493685
+#d$true.RD <- (-0.000149903)
+
+#temp
+#d$true.RD <- (-0.075)
+
 #--------------------------------
 # Calc performance
 #--------------------------------
 
-#temp drop extreme outliers
-summary(d$estimate)
+d_T10 <- d
 
 
 perf_tab_RR <- d %>% group_by(analysis) %>%
@@ -102,7 +108,29 @@ perf_tab_diff <- d %>% filter(!is.na(ate)) %>%
   ) %>%
   distinct()
 
+#calculate bootstrap performance
+perf_tab_RR_boot <- data.frame(
+  analysis = "Bootstrap - clustered ID",
+  coverage = mean(boot_CIs$CI1 <= d$true.RR[1] &  boot_CIs$CI2 >= d$true.RR[1])*100,
+  mean_ci_width=mean(log(boot_CIs$CI2)-log(boot_CIs$CI1)),
+  power=mean((boot_CIs$CI1 > 0 & boot_CIs$CI2>0)|(boot_CIs$CI1 < 0 & boot_CIs$CI2<0))*100
+  )
 
+perf_tab_diff_boot <- data.frame(
+  analysis = "Bootstrap - clustered ID",
+  coverage = mean(boot_CIs$ate.CI1 <= d$true.RR[1] &  boot_CIs$ate.CI2 >= d$true.RR[1])*100,
+  mean_ci_width=mean((boot_CIs$ate.CI2)-(boot_CIs$ate.CI1)),
+  power=mean((boot_CIs$ate.CI1 > 0 & boot_CIs$ate.CI2>0)|(boot_CIs$ate.CI1 < 0 & boot_CIs$ate.CI2<0))*100
+)
+
+perf_tab_RR <- bind_rows(perf_tab_RR, perf_tab_RR_boot)
+perf_tab_diff <- bind_rows(perf_tab_diff, perf_tab_diff_boot)
+
+
+#--------------------------------
+# Save data
+#--------------------------------
+save(d_T10, perf_tab_RR, perf_tab_diff, file = paste0(here::here(),"/simulation study/sim_performance_results/T10_sim_res.Rdata"))
 
 res <- perf_tab_RR %>% arrange(mse)
 knitr::kable(res, digits =3)
@@ -110,10 +138,13 @@ knitr::kable(res, digits =3)
 res_diff <- perf_tab_diff %>% arrange(mse)
 knitr::kable(res_diff, digits =5)
 
+
 #--------------------------------
-# Save data
+# Make data for CI plot
 #--------------------------------
-#saveRDS(sim_df, file=paste0(here::here(),"/results/compiled_simulation_results_null_no_cens.rds"))
+
+unique(d$analysis)
+
 
 
 
@@ -125,7 +156,7 @@ knitr::kable(res_diff, digits =5)
 set.seed(123)
 ggplot(d, aes(y=analysis, x=estimate)) +
   geom_jitter(width=0, height=0.05, alpha=0.75) +
-  coord_cartesian(xlim=c(0.01, 4)) +
+  coord_cartesian(xlim=c(0.1, 2)) +
   geom_vline(xintercept = 1) +
   geom_vline(aes(xintercept = true.RR), linetype="dashed") +
   scale_x_continuous(trans = "log10")

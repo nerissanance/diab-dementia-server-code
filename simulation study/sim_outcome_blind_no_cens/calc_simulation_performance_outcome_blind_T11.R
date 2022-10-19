@@ -6,14 +6,19 @@ source(here::here("0_config.R"))
 source(paste0(here::here(),"/0_ltmle_Estimate_update.R"))
 source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
 
+
+#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+# update from here and add bootstrap
+#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
 #--------------------------------
 # Load simulation results
 #--------------------------------
 
 
 files <- dir(path=paste0(here::here(),"/sim_res/"), pattern = "*.RDS")
-files <- files[grepl("outcome_blind",files)]
-files <- files[grepl("_T4",files)]
+files <- files[grepl("outcome_blind_",files)]
+files <- files[grepl("_T11",files)]
 
 setwd(paste0(here::here(),"/sim_res/"))
 d <- files %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="analysis")
@@ -23,12 +28,17 @@ d$analysis <- gsub(".RDS","",d$analysis)
 
 #load bootstrap
 boot_iter_files <- dir(path=paste0(here::here(),"/data/bootstrap/"), pattern = "*.RDS")
-boot_iter_files <- boot_iter_files[grepl("blind_cens_competing_risks_T4",boot_iter_files)]
+boot_iter_files <- boot_iter_files[grepl("_T11",boot_iter_files)]
+boot_iter_files <- boot_iter_files[!grepl("_null",boot_iter_files)]
+boot_iter_files <- boot_iter_files[!grepl("_subsampled",boot_iter_files)]
+boot_iter_files <- boot_iter_files[!grepl("_outcome_blind",boot_iter_files)]
+length(boot_iter_files)
+
 setwd(paste0(here::here(),"/data/bootstrap/"))
 boot_res <- boot_iter_files %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="boot_iter")
 
 #calc bootstrap CI's
-boot_CIs <- boot_res %>% group_by(iteration) %>%
+boot_CIs <- boot_res %>% group_by(boot_iter) %>%
   summarise(
     CI1=quantile(estimate,.025),
     CI2=quantile(estimate,.975),
@@ -37,29 +47,31 @@ boot_CIs <- boot_res %>% group_by(iteration) %>%
 )
 boot_CIs
 
-hist(boot_res$ate[boot_res$iteration==4])
-hist(log(boot_res$estimate[boot_res$iteration==4]))
+hist(boot_res$ate[boot_res$boot_iter==4])
+hist(log(boot_res$estimate[boot_res$boot_iter==4]))
 
 
 #--------------------------------
 # Set truth
 #--------------------------------
 
-load(paste0(here::here(),"/results/truth_blind_T4.Rdata"))
+load(paste0(here::here(),"/results/truth_blind_T10.Rdata"))
 
-d$true.RR <- cRR3
-d$true.RD <- cRD3
+d$true.RR <- cRR
+d$true.RD <- cRD
 
-# #Truth - manually calculated from SEM
-#
-# #temp
-# d$true.RD <- (-0.075)
+#Truth - manually calculated from SEM
+#d$true.RR <- 0.4493685
+#d$true.RD <- (-0.000149903)
+
+#temp
+#d$true.RD <- (-0.075)
 
 #--------------------------------
 # Calc performance
 #--------------------------------
 
-d_T4_outcome_blind <- d
+d_T10 <- d
 
 
 perf_tab_RR <- d %>% group_by(analysis) %>%
@@ -110,30 +122,29 @@ perf_tab_diff <- d %>% filter(!is.na(ate)) %>%
 perf_tab_RR_boot <- data.frame(
   analysis = "Bootstrap - clustered ID",
   coverage = mean(boot_CIs$CI1 <= d$true.RR[1] &  boot_CIs$CI2 >= d$true.RR[1])*100,
-  mean_ci_width_logRR=mean(log(boot_CIs$CI2)-log(boot_CIs$CI1)),
-  power=mean((boot_CIs$CI1 > 0 & boot_CIs$CI2>0)|(boot_CIs$CI1 < 0 & boot_CIs$CI2<0))*100
-  )
+  mean_ci_width=mean(log(boot_CIs$CI2)-log(boot_CIs$CI1)),
+  power=mean((boot_CIs$CI1 > 1 & boot_CIs$CI2>1)|(boot_CIs$CI1 < 1 & boot_CIs$CI2<1))*100
+)
 
 perf_tab_diff_boot <- data.frame(
   analysis = "Bootstrap - clustered ID",
-  coverage = mean(boot_CIs$ate.CI1 <= d$true.RR[1] &  boot_CIs$ate.CI2 >= d$true.RR[1])*100,
+  coverage = mean(boot_CIs$ate.CI1 <= d$true.RD[1] &  boot_CIs$ate.CI2 >= d$true.RD[1])*100,
   mean_ci_width=mean((boot_CIs$ate.CI2)-(boot_CIs$ate.CI1)),
   power=mean((boot_CIs$ate.CI1 > 0 & boot_CIs$ate.CI2>0)|(boot_CIs$ate.CI1 < 0 & boot_CIs$ate.CI2<0))*100
 )
-
-perf_tab_RR_outcome_blind_T4 <- bind_rows(perf_tab_RR, perf_tab_RR_boot)
-perf_tab_diff_outcome_blind_T4 <- bind_rows(perf_tab_diff, perf_tab_diff_boot)
+perf_tab_RR_outcome_blind_T11 <- bind_rows(perf_tab_RR, perf_tab_RR_boot)
+perf_tab_diff_outcome_blind_T11 <- bind_rows(perf_tab_diff, perf_tab_diff_boot)
 
 
 #--------------------------------
 # Save data
 #--------------------------------
-save(d_T4_outcome_blind, perf_tab_RR_outcome_blind_T4, perf_tab_diff_outcome_blind_T4, file = paste0(here::here(),"/simulation study/sim_performance_results/T4_outcome_blind_sim_res.Rdata"))
+save(d_T10, perf_tab_RR_outcome_blind_T11, perf_tab_diff_outcome_blind_T11, file = paste0(here::here(),"/simulation study/sim_performance_results/T10_sim_res.Rdata"))
 
-res <- perf_tab_RR %>% arrange(coverage)
+res <- perf_tab_RR %>% arrange(mse)
 knitr::kable(res, digits =3)
 
-res_diff <- perf_tab_diff %>% arrange(coverage)
+res_diff <- perf_tab_diff %>% arrange(mse)
 knitr::kable(res_diff, digits =5)
 
 
@@ -142,25 +153,6 @@ knitr::kable(res_diff, digits =5)
 #--------------------------------
 
 unique(d$analysis)
-d2 <- d %>% filter(analysis %in% c("outcome_blind_cens_competing_risks_sim_res_noDetQ_tmle_T4","outcome_blind_cens_competing_risks_sim_res_noDetQ_ic_T4")) %>%
-  rename(CI1=CI.2.5., CI2=CI.97.5., ate.CI1=ate.ci.lb,  ate.CI2=ate.ci.ub) %>%
-  select(analysis, CI1,CI2, ate.CI1,  ate.CI2, true.RR) %>%
-  group_by(analysis) %>% mutate(iteration =row_number())
-
-boot_CIs <- boot_CIs %>% mutate(analysis="bootstrap - clustered ID")
-
-d2 <- bind_rows(d2, boot_CIs) %>%
-  arrange(iteration) %>%
-  group_by(analysis) %>% slice(1:20)
-
-d2 <- d2 %>% mutate(analysis=gsub("outcome_blind_cens_competing_risks_sim_res_noDetQ_","",analysis))
-
-ggplot(d2, aes(x=iteration, group=analysis, color=analysis)) +
-  geom_linerange(aes(ymin=CI1, ymax=CI2), position = position_dodge(0.5)) +
-  geom_hline(aes(yintercept = true.RR), linetype="dashed") +
-  geom_hline(yintercept = 1) +
-  scale_y_continuous(trans = "log10") +
-  coord_flip()
 
 
 
