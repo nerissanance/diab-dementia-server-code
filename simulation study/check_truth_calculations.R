@@ -232,3 +232,11 @@ CI_A1-CI_A0
 
 
 
+CI_A1_T4 <- 1-(Y0_a1_t1*Y0_a1_t2*Y0_a1_t3)
+CI_A0_T4  <-1-(Y0_a0_t1*Y0_a0_t2*Y0_a0_t3)
+
+CI_A1_T4 /CI_A0_T4
+CI_A1_T4 -CI_A0_T4
+
+
+

@@ -5,6 +5,7 @@ rm(list=ls())
 source(here::here("0_config.R"))
 source(paste0(here::here(),"/0_ltmle_Estimate_update.R"))
 source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
+source(paste0(here::here(),"/simulation study/0_simulation_cleaning_functions.R"))
 
 
 #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -37,6 +38,16 @@ length(boot_iter_files)
 setwd(paste0(here::here(),"/data/bootstrap/"))
 boot_res <- boot_iter_files %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="boot_iter")
 
+
+#XXXXXX
+load(paste0(here::here(),"/results/truth_blind_T10.Rdata"))
+sim_res <- calc_sim_performance(files, boot_iter_files, cRR, cRD)
+d <- calc_sim_performance(files, boot_iter_files, cRR, cRD)
+
+colnames(d$perf_tab_RR)
+
+
+
 #calc bootstrap CI's
 boot_CIs <- boot_res %>% group_by(boot_iter) %>%
   summarise(
@@ -55,13 +66,12 @@ hist(log(boot_res$estimate[boot_res$boot_iter==4]))
 # Set truth
 #--------------------------------
 
-load(paste0(here::here(),"/results/truth_blind_T10.Rdata"))
 
 d$true.RR <- cRR
 d$true.RD <- cRD
 
 #Truth - manually calculated from SEM
-#d$true.RR <- 0.4493685
+d$true.RR <- 0.4493685
 #d$true.RD <- (-0.000149903)
 
 #temp

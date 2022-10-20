@@ -27,6 +27,13 @@ boot_iter_files <- boot_iter_files[grepl("blind_cens_competing_risks_T4",boot_it
 setwd(paste0(here::here(),"/data/bootstrap/"))
 boot_res <- boot_iter_files %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="boot_iter")
 
+#load bootstrap - no DetQ
+boot_iter_files <- dir(path=paste0(here::here(),"/data/bootstrap/"), pattern = "*.RDS")
+boot_iter_files <- boot_iter_files[grepl("_noDetQ_T4",boot_iter_files)]
+setwd(paste0(here::here(),"/data/bootstrap/"))
+boot_res_noDetQ <- boot_iter_files %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="boot_iter")
+
+
 #calc bootstrap CI's
 boot_CIs <- boot_res %>% group_by(iteration) %>%
   summarise(
@@ -40,6 +47,16 @@ boot_CIs
 hist(boot_res$ate[boot_res$iteration==4])
 hist(log(boot_res$estimate[boot_res$iteration==4]))
 
+boot_CIs_noDetQ <- boot_res_noDetQ %>% group_by(iteration) %>%
+  summarise(
+    CI1=quantile(estimate,.025),
+    CI2=quantile(estimate,.975),
+    ate.CI1=quantile(ate,.025),
+    ate.CI2=quantile(ate,.975)
+  )
+boot_CIs_noDetQ
+
+
 
 #--------------------------------
 # Set truth
@@ -49,6 +66,8 @@ load(paste0(here::here(),"/results/truth_blind_T4.Rdata"))
 
 d$true.RR <- cRR3
 d$true.RD <- cRD3
+
+
 
 # #Truth - manually calculated from SEM
 #
@@ -121,8 +140,23 @@ perf_tab_diff_boot <- data.frame(
   power=mean((boot_CIs$ate.CI1 > 0 & boot_CIs$ate.CI2>0)|(boot_CIs$ate.CI1 < 0 & boot_CIs$ate.CI2<0))*100
 )
 
-perf_tab_RR_outcome_blind_T4 <- bind_rows(perf_tab_RR, perf_tab_RR_boot)
-perf_tab_diff_outcome_blind_T4 <- bind_rows(perf_tab_diff, perf_tab_diff_boot)
+perf_tab_RR_boot_noDetQ <- data.frame(
+  analysis = "Bootstrap - clustered ID, no DetQ",
+  coverage = mean(boot_CIs_noDetQ$CI1 <= d$true.RR[1] &  boot_CIs_noDetQ$CI2 >= d$true.RR[1])*100,
+  mean_ci_width_logRR=mean(log(boot_CIs_noDetQ$CI2)-log(boot_CIs_noDetQ$CI1)),
+  power=mean((boot_CIs_noDetQ$CI1 > 0 & boot_CIs_noDetQ$CI2>0)|(boot_CIs_noDetQ$CI1 < 0 & boot_CIs_noDetQ$CI2<0))*100
+)
+
+perf_tab_diff_boot_noDetQ <- data.frame(
+  analysis = "Bootstrap - clustered ID, no DetQ",
+  coverage = mean(boot_CIs_noDetQ$ate.CI1 <= d$true.RR[1] &  boot_CIs_noDetQ$ate.CI2 >= d$true.RR[1])*100,
+  mean_ci_width=mean((boot_CIs_noDetQ$ate.CI2)-(boot_CIs_noDetQ$ate.CI1)),
+  power=mean((boot_CIs_noDetQ$ate.CI1 > 0 & boot_CIs_noDetQ$ate.CI2>0)|(boot_CIs_noDetQ$ate.CI1 < 0 & boot_CIs_noDetQ$ate.CI2<0))*100
+)
+
+perf_tab_RR_outcome_blind_T4 <- bind_rows(perf_tab_RR, perf_tab_RR_boot, perf_tab_RR_boot_noDetQ)
+perf_tab_diff_outcome_blind_T4 <- bind_rows(perf_tab_diff, perf_tab_diff_boot, perf_tab_diff_boot_noDetQ)
+
 
 
 #--------------------------------

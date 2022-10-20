@@ -11,10 +11,16 @@ knitr::opts_chunk$set(echo = TRUE)
 source(here::here("0_config.R"))
 source(paste0(here::here(),"/0_ltmle_Estimate_update.R"))
 try(source(paste0(here::here(),"/simulation study/0_simulation_functions.R")))
+
 load(paste0(here::here(),"/simulation study/sim_performance_results/T4_null_sim_res.Rdata"))
 load(paste0(here::here(),"/simulation study/sim_performance_results/T4_outcome_blind_sim_res.Rdata"))
 load(paste0(here::here(),"/simulation study/sim_performance_results/T10_sim_res.Rdata"))
+
+load(paste0(here::here(),"/results/sim_performance_results.Rdata"))
 load(paste0(here::here(),"/results/simulation_results_old.Rdata"))
+
+save(sim_res_null_T4, sim_res_null_T11, sim_res_ob_T4, sim_res_ob_T11, file=paste0(here::here(),"/results/sim_performance_results.Rdata"))
+
 
 library(knitr)
 ```
@@ -24,7 +30,7 @@ library(knitr)
 ### Relative risk performance
 
 ```{r, echo=FALSE}
-res <- perf_tab_RR_null_T4 %>% arrange(coverage)
+res <- sim_res_null_T4$perf_tab_RR %>% arrange(coverage)
 knitr::kable(res, digits =3)
 
 
@@ -32,8 +38,12 @@ knitr::kable(res, digits =3)
 
 ### Risk difference performance 
 
+
+### Risk difference performance
+
+
 ```{r, echo=FALSE}
-res_diff <- perf_tab_diff_null_T4 %>% arrange(coverage)
+res_diff <- sim_res_null_T4$perf_tab_diff %>% arrange(coverage)
 knitr::kable(res_diff, digits =5)
 ```
 
@@ -45,7 +55,6 @@ Bootstrap with clustered ID's in CV procedures
 ### Distribution of RR point estimates
 
 ```{r,echo=FALSE}
-res_diff <- perf_tab_diff_null_T4 %>% arrange(coverage)
 set.seed(123)
 ggplot(d_T4_null, aes(y=analysis, x=estimate)) +
   geom_jitter(width=0, height=0.05, alpha=0.75) +
@@ -60,13 +69,12 @@ ggplot(d_T4_null, aes(y=analysis, x=estimate)) +
 
 ## Blind outcome- 1.5 year followup 
 
-True RR:
-True RD: 
+
 
 ### Relative risk performance
 
 ```{r, echo=FALSE}
-res <- perf_tab_RR_outcome_blind_T4 %>% arrange(coverage)
+res <- sim_res_ob_T4$perf_tab_RR %>% arrange(coverage)
 knitr::kable(res, digits =3)
 
 
@@ -74,52 +82,44 @@ knitr::kable(res, digits =3)
 
 ### Risk difference performance 
 
-```{r, echo=FALSE}
-res_diff <- perf_tab_diff_outcome_blind_T4 %>% arrange(coverage)
-knitr::kable(res_diff, digits =5)
-```
+<!-- # ```{r, echo=FALSE} -->
+<!-- # res_diff <- sim_res_ob_T4$perf_tab_diff -->
+<!-- # knitr::kable(res_diff, digits =5) -->
+<!-- # ``` -->
 
-### Notes
 
 
 
 
 ## Blind outcome- 5 year followup 
 
-True RR:
-True RD: 
-
 ### Relative risk performance
 
 ```{r, echo=FALSE}
-res <- perf_tab_RR_outcome_blind_T11 %>% arrange(coverage)
+res <- sim_res_ob_T11$perf_tab_RR %>% arrange(coverage)
 knitr::kable(res, digits =3)
 
 
 ```
 
-### Risk difference performance 
+<!-- ### Risk difference performance  -->
 
-```{r, echo=FALSE}
-res_diff <- perf_tab_diff_outcome_blind_T11 %>% arrange(coverage)
-knitr::kable(res_diff, digits =5)
-```
+<!-- ```{r, echo=FALSE} -->
+<!-- # res_diff <- perf_tab_diff_outcome_blind_T11 %>% arrange(coverage) -->
+<!-- # knitr::kable(res_diff, digits =5) -->
+<!-- ``` -->
 
-### Notes
 
 
 
 
 ## Old results
 
-True RR:
-True RD: 
-
 
 ### Relative risk performance
 
 ```{r, echo=FALSE}
-res <- perf_tab_RR_old %>% arrange(coverage)
+res <- perf_tab_RR_old %>% filter(!grepl("common",analysis), analysis!="LASSO no DetQ tmle") %>% arrange(coverage)
 knitr::kable(res, digits =3)
 
 
@@ -133,5 +133,5 @@ knitr::kable(res, digits =3)
 <!-- ``` -->
 
 
-### Notes
+<!-- ### Notes -->
 
