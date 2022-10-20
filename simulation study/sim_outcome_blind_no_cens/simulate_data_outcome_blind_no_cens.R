@@ -8,10 +8,9 @@ cc <- fread(paste0(here::here(),"/data/coefficients.txt"))
 
 #make a dataset with no censoring or death
 cc<-as.data.frame(cc)
-#cc <- cc %>% filter(!grepl("censor_",var), !grepl("event_death",var)) %>%  select(!starts_with("censor_"),!starts_with("event_death"))
-cc[grepl("event_death",cc$var),-c(1:2)] <- NA
-cc[grepl("censor_",cc$var),-c(1:2)] <-  NA
-
+cc <- cc %>% filter(!grepl("censor_",var), !grepl("event_death",var)) %>%  select(!starts_with("censor_"),!starts_with("event_death"))
+# cc[grepl("event_death",cc$var),-c(1:2)] <- 0
+# cc[grepl("censor_",cc$var),-c(1:2)] <-  0
 
 
 #Artificially set Y-A association
@@ -56,6 +55,7 @@ save(cRD3, cRR3, file=paste0(here::here(),"/results/truth_blind_T4.Rdata"))
 
 
 #simulate data
+u <- synthesizeDD(cc)
 
 set.seed(12345)
 sim_list <- NULL
@@ -81,5 +81,5 @@ for(i in 1:n){
   gc()
 }
 
-saveRDS(sim_list, paste0(here::here(),"/data/simulated_data_list_null_no_cens.RDS"))
+saveRDS(sim_list, paste0(here::here(),"/data/simulated_data_list_outcome_blind_no_cens.RDS"))
 

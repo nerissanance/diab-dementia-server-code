@@ -8,7 +8,7 @@ source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
 
 library(parallel)
 library(doParallel)
-registerDoParallel(cores=25)
+registerDoParallel(cores=50)
 
 rm(list=ls())
 gc()
@@ -21,7 +21,7 @@ resdf_boot = NULL
 #for(i in 1:length(d_wide_list)){
 #temp rerun
 int.start.time <- Sys.time()
-for(i in 1:200){
+for(i in 22:200){
 #for(i in 1:length(d_wide_list)){
 
   cat(i,"\n")
@@ -38,11 +38,6 @@ for(i in 1:200){
 
     set.seed(j)
     dboot <- d[sample(.N, nrow(d),replace=TRUE)]
-
-    # #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-    # #run this code to drop ties, or use the ID argument to CV by ID
-    # dboot <- dboot %>% distinct()
-    # #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
     res <- NULL
     try(res <- run_ltmle_glmnet(dboot, N_time = 4, resdf=NULL, Qint=FALSE, det.Q=TRUE, varmethod = "ic", id=dboot$id), silent=TRUE)

@@ -10,61 +10,61 @@ library(doParallel)
 registerDoParallel(cores=64)
 
 gc()
-d_wide_list <- readRDS(file=here("data/simulated_data_list_outcome_blind.RDS"))
+d_wide_list <- readRDS(file=here("data/simulated_data_list_outcome_blind_no_cens.RDS"))
 d_wide_list <- d_wide_list[1:200]
 gc()
 
 # try(res <- run_ltmle_glmnet_no_cens(d_wide_list[[1]], resdf=NULL, Qint=F, det.Q=FALSE, varmethod = "ic",N_time=2))
 # res
 
-#Ntime
-Ntime=2
-
-#primary
-int.start.time <- Sys.time()
-resdf_noDetQ_Qint_tmle <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
-  res <- NULL
-  try(res <- run_ltmle_glmnet_no_cens(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, varmethod = "tmle",N_time=2))
-  return(res)
-}
-int.end.time <- Sys.time()
-difftime(int.end.time, int.start.time, units="mins")
-
-saveRDS(resdf_noDetQ_Qint_tmle, paste0(here::here(),"/sim_res/outcome_blind_no_cens_sim_res_noDetQ_Qint_tmle_T2.RDS"))
-
-
-int.start.time <- Sys.time()
-resdf_noDetQ_tmle <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
-  res <- NULL
-  try(res <- run_ltmle_glmnet_no_cens(d_wide_list[[i]], resdf=NULL, Qint=FALSE, det.Q=FALSE, varmethod = "tmle",N_time=2))
-  return(res)
-}
-int.end.time <- Sys.time()
-difftime(int.end.time, int.start.time, units="mins")
-
-saveRDS(resdf_noDetQ_tmle, paste0(here::here(),"/sim_res/outcome_blind_no_cens_sim_res_noDetQ_tmle_T2.RDS"))
-
-
-
-resdf_noDetQ_Qint_ic <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
-  res <- NULL
-  try(res <- run_ltmle_glmnet_no_cens(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, varmethod = "ic",N_time=2))
-  return(res)
-}
-saveRDS(resdf_noDetQ_Qint_ic, paste0(here::here(),"/sim_res/outcome_blind_no_cens_sim_res_noDetQ_Qint_ic_T2.RDS"))
-
-
-int.start.time <- Sys.time()
-resdf_ic <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
-  res <- NULL
-  try(res <- run_ltmle_glmnet_no_cens(d_wide_list[[i]], resdf=NULL, Qint=FALSE, det.Q=FALSE, varmethod = "ic",N_time=2))
-  return(res)
-}
-int.end.time <- Sys.time()
-difftime(int.end.time, int.start.time, units="mins")
-
-saveRDS(resdf_ic, paste0(here::here(),"/sim_res/outcome_blind_no_cens_sim_res_noDetQ_ic_T2.RDS"))
-
+# #Ntime
+# Ntime=2
+#
+# #primary
+# int.start.time <- Sys.time()
+# resdf_noDetQ_Qint_tmle <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+#   res <- NULL
+#   try(res <- run_ltmle_glmnet_no_cens(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, varmethod = "tmle",N_time=2))
+#   return(res)
+# }
+# int.end.time <- Sys.time()
+# difftime(int.end.time, int.start.time, units="mins")
+#
+# saveRDS(resdf_noDetQ_Qint_tmle, paste0(here::here(),"/sim_res/outcome_blind_no_cens_sim_res_noDetQ_Qint_tmle_T2.RDS"))
+#
+#
+# int.start.time <- Sys.time()
+# resdf_noDetQ_tmle <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+#   res <- NULL
+#   try(res <- run_ltmle_glmnet_no_cens(d_wide_list[[i]], resdf=NULL, Qint=FALSE, det.Q=FALSE, varmethod = "tmle",N_time=2))
+#   return(res)
+# }
+# int.end.time <- Sys.time()
+# difftime(int.end.time, int.start.time, units="mins")
+#
+# saveRDS(resdf_noDetQ_tmle, paste0(here::here(),"/sim_res/outcome_blind_no_cens_sim_res_noDetQ_tmle_T2.RDS"))
+#
+#
+#
+# resdf_noDetQ_Qint_ic <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+#   res <- NULL
+#   try(res <- run_ltmle_glmnet_no_cens(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, varmethod = "ic",N_time=2))
+#   return(res)
+# }
+# saveRDS(resdf_noDetQ_Qint_ic, paste0(here::here(),"/sim_res/outcome_blind_no_cens_sim_res_noDetQ_Qint_ic_T2.RDS"))
+#
+#
+# int.start.time <- Sys.time()
+# resdf_ic <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+#   res <- NULL
+#   try(res <- run_ltmle_glmnet_no_cens(d_wide_list[[i]], resdf=NULL, Qint=FALSE, det.Q=FALSE, varmethod = "ic",N_time=2))
+#   return(res)
+# }
+# int.end.time <- Sys.time()
+# difftime(int.end.time, int.start.time, units="mins")
+#
+# saveRDS(resdf_ic, paste0(here::here(),"/sim_res/outcome_blind_no_cens_sim_res_noDetQ_ic_T2.RDS"))
+#
 
 
 #Ntime
