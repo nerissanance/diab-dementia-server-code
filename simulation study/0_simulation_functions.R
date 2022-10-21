@@ -220,8 +220,8 @@ synthesizeDD.never <- function(coefficients, A_name = "glp1"){
 
 clean_sim_data <- function(d, N_time){
 
-  d <- as.data.frame(sapply(d, as.numeric))
-  d[is.na(d)] <- 0 #Missingness due to censoring should be coded 0 as long as censoring variable is equal to 1.
+  #d <- as.data.frame(sapply(d, as.numeric))
+  #d[is.na(d)] <- 0 #Missingness due to censoring should be coded 0 as long as censoring variable is equal to 1.
   d<- data.table(d)
 
   for(i in 1:(N_time+1)){

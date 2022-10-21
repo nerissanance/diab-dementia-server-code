@@ -64,3 +64,38 @@ time1
 saveRDS(resdf_boot, paste0(here::here(),"/data/sim_res_boot_no_ties_outcome_blind_cens_competing_risks_T4.RDS"))
 
 
+
+#--------------------------------------------------------------
+#Post-hoc: get N's for each dataset
+#--------------------------------------------------------------
+i <- j <- 1
+resdf_boot_Ns <- NULL
+
+
+for(i in 1:200){
+  #for(i in 1:length(d_wide_list)){
+
+  cat(i,"\n")
+  d <- d_wide_list[[i]]
+  d$id <- 1:nrow(d)
+
+  temp_df <- data.frame(dataset_num=rep(i,200), boot_iter=1:200, dataset_N=rep(NA,200))
+
+  for(j in 1:200){
+
+    set.seed(j)
+    dboot <- d[sample(.N, nrow(d),replace=TRUE)]
+    #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    #run this code to drop ties
+    dboot <- dboot %>% group_by(id) %>% slice(1) %>% ungroup()
+    #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    temp_df$dataset_N[j] <- nrow(dboot)
+
+  }
+  resdf_boot_Ns<- bind_rows(resdf_boot_Ns, temp_df)
+
+  gc()
+}
+
+
+saveRDS(resdf_boot_Ns, paste0(here::here(),"/data/sim_res_boot_no_ties_outcome_blind_cens_competing_risks_T4_Ns.RDS"))
