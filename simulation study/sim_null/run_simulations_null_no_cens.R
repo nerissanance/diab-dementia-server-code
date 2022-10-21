@@ -78,6 +78,21 @@ difftime(int.end.time, int.start.time, units="mins")
 saveRDS(resdf_ic_T4, paste0(here::here(),"/sim_res/null_no_cens_sim_res_ic_T4.RDS"))
 
 #GLM
+resdf_glm_noDetQ_ic_T4 <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet_no_cens(d_wide_list[[i]], Qint=FALSE, det.Q=FALSE, varmethod = "ic",N_time=4, glm=TRUE))
+  return(res)
+}
+saveRDS(resdf_glm_noDetQ_ic_T4, paste0(here::here(),"/sim_res/null_glm_no_cens_sim_res_noDetQ_ic_T4.RDS"))
+
+resdf_glm_ic_T4 <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet_no_cens(d_wide_list[[i]], Qint=FALSE, det.Q=TRUE, varmethod = "ic",N_time=4, glm=TRUE))
+  return(res)
+}
+saveRDS(resdf_glm_ic_T4, paste0(here::here(),"/sim_res/null_glm_no_cens_sim_res_ic_T4.RDS"))
+
+
 resdf_glm_noDetQ_tmle_T4 <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
   res <- NULL
   try(res <- run_ltmle_glmnet_no_cens(d_wide_list[[i]], Qint=FALSE, det.Q=FALSE, varmethod = "tmle",N_time=4, glm=TRUE))
@@ -85,6 +100,14 @@ resdf_glm_noDetQ_tmle_T4 <- foreach(i = 1:length(d_wide_list), .combine = 'bind_
 }
 
 saveRDS(resdf_glm_noDetQ_tmle_T4, paste0(here::here(),"/sim_res/null_glm_no_cens_sim_res_noDetQ_tmle_T4.RDS"))
+
+resdf_glm_Qint_noDetQ_tmle_T4 <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet_no_cens(d_wide_list[[i]], Qint=TRUE, det.Q=FALSE, varmethod = "tmle",N_time=4, glm=TRUE))
+  return(res)
+}
+
+saveRDS(resdf_glm_Qint_noDetQ_tmle_T4, paste0(here::here(),"/sim_res/null_glm_Qint_no_cens_sim_res_noDetQ_tmle_T4.RDS"))
 
 
 #SL.mean
