@@ -106,7 +106,7 @@ calc_sim_performance <- function(files, boot_iter_files=NULL, trueRR, trueRD){
           ate.CI1=quantile(ate,.025),
           ate.CI2=quantile(ate,.975)
         )
-      boot_CIs$analysis = "Bootstrap"
+      boot_CIs$analysis = "bootstrap"
 
       #calculate bootstrap performance
       perf_tab_RR_boot <- data.frame(
@@ -168,7 +168,7 @@ clean_sim_results <- function(d){
   d$Qint <- ifelse(grepl("Qint_",d$analysis),"Yes","No")
   d$analysis <- gsub("Qint_","",d$analysis)
   #DetQ
-  d$DetQ <- ifelse(grepl("noDetQ_",d$analysis),"Yes","No")
+  d$DetQ <- ifelse(grepl("noDetQ_",d$analysis),"No","Yes")
   d$analysis <- gsub("noDetQ_","",d$analysis)
   #null_no_cens_sim_res_noDetQ_Qint_tmle_T4
 
@@ -186,7 +186,7 @@ clean_sim_results <- function(d){
   #d <- d %>% select(analysis)
 
   d <- d %>% select(simulated_data, estimator, variance_estimator, Qint,DetQ,
-                    censoring_in_data,  bias,variance,mse,bias_se_ratio,
+                    censoring_in_data,bias,variance,mse,bias_se_ratio,
                     coverage,         o.coverage,       mean_ci_width,
                     power, filenames) %>%
     arrange(coverage)

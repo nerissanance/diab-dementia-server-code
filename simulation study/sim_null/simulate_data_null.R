@@ -10,6 +10,7 @@ cc <- as.data.frame(cc)
 
 #Remove Y-A association and mediating associations through L
 cc[!grepl("glp1_",cc$var),grepl("glp1_",colnames(cc))] <- NA
+
 #Check glp1 still predicts itself
 cc[grepl("glp1_",cc$var),grepl("glp1_",colnames(cc))]
 

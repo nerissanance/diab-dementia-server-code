@@ -28,6 +28,7 @@ length(boot_iter_files)
 
 sim_res_null_T4 <- calc_sim_performance(files, boot_iter_files, 1, 0)
 tab<-sim_res_null_T4$perf_tab_RR
+tab
 
 #---------------------------------------------------------
 # Null, T11

@@ -3,6 +3,9 @@ title: "Diabetes-dementia updated simulation results"
 author: "Andrew Mertens"
 date: "2022-10-19"
 output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ```{r setup, include=FALSE}
@@ -12,9 +15,9 @@ source(here::here("0_config.R"))
 source(paste0(here::here(),"/0_ltmle_Estimate_update.R"))
 try(source(paste0(here::here(),"/simulation study/0_simulation_functions.R")))
 
-load(paste0(here::here(),"/simulation study/sim_performance_results/T4_null_sim_res.Rdata"))
-load(paste0(here::here(),"/simulation study/sim_performance_results/T4_outcome_blind_sim_res.Rdata"))
-load(paste0(here::here(),"/simulation study/sim_performance_results/T10_sim_res.Rdata"))
+# load(paste0(here::here(),"/simulation study/sim_performance_results/T4_null_sim_res.Rdata"))
+# load(paste0(here::here(),"/simulation study/sim_performance_results/T4_outcome_blind_sim_res.Rdata"))
+# load(paste0(here::here(),"/simulation study/sim_performance_results/T10_sim_res.Rdata"))
 
 load(paste0(here::here(),"/results/sim_performance_results.Rdata"))
 load(paste0(here::here(),"/results/simulation_results_old.Rdata"))
@@ -25,113 +28,177 @@ save(sim_res_null_T4, sim_res_null_T11, sim_res_ob_T4, sim_res_ob_T11, file=past
 library(knitr)
 ```
 
-## Null outcome- 1.5 year followup 
+## Scenario 1: Null association- 1.5 year followup, no censoring or competing risks
+
+True RR: 1
+
+True RD: 0
 
 ### Relative risk performance
 
 ```{r, echo=FALSE}
-res <- sim_res_null_T4$perf_tab_RR %>% arrange(coverage)
+res <- sim_res_null_T4$perf_tab_RR %>% arrange(coverage) %>% filter(grepl("no_cens",filenames)) %>% subset(., select=-c(simulated_data, filenames, censoring_in_data))
 knitr::kable(res, digits =3)
-
 
 ```
 
-### Risk difference performance 
-
-
 ### Risk difference performance
 
-
 ```{r, echo=FALSE}
-res_diff <- sim_res_null_T4$perf_tab_diff %>% arrange(coverage)
+res_diff <- sim_res_null_T4$perf_tab_diff %>% arrange(coverage)  %>% arrange(coverage) %>% filter(grepl("no_cens",filenames)) %>% subset(., select=-c(simulated_data, filenames, censoring_in_data))
 knitr::kable(res_diff, digits =5)
 ```
 
 ### Notes
 
-True RR=1, true RD=0
-Bootstrap with clustered ID's in CV procedures
+  *  True RR: 1
+  *  True RD: 0
+  *  Dementia prevalence: 13.5%
+  *  GLM performs better than LASSO
+  *  IC still anti-conservative
+  *  Intercept-only Q prediction doesn't improve prediction
+  *  Better performance estimating RR compared to RD 
 
-### Distribution of RR point estimates
-
-```{r,echo=FALSE}
-set.seed(123)
-ggplot(d_T4_null, aes(y=analysis, x=estimate)) +
-  geom_jitter(width=0, height=0.05, alpha=0.75) +
-  coord_cartesian(xlim=c(0.4, 2)) +
-  geom_vline(xintercept = 1) +
-  geom_vline(aes(xintercept = true.RR), linetype="dashed") +
-  scale_x_continuous(trans = "log10")
-
-```
-
-
-
-## Blind outcome- 1.5 year followup 
+## Scenario 2: Null association- 1.5 year followup, censoring and competing risks
 
 
 
 ### Relative risk performance
 
 ```{r, echo=FALSE}
-res <- sim_res_ob_T4$perf_tab_RR %>% arrange(coverage)
+res <- sim_res_null_T4$perf_tab_RR %>% arrange(coverage) %>% filter(!grepl("no_cens",filenames)) %>% subset(., select=-c(simulated_data, filenames, censoring_in_data))
 knitr::kable(res, digits =3)
-
 
 ```
 
-### Risk difference performance 
-
-<!-- # ```{r, echo=FALSE} -->
-<!-- # res_diff <- sim_res_ob_T4$perf_tab_diff -->
-<!-- # knitr::kable(res_diff, digits =5) -->
-<!-- # ``` -->
-
-
-
-
-
-## Blind outcome- 5 year followup 
-
-### Relative risk performance
+### Risk difference performance
 
 ```{r, echo=FALSE}
-res <- sim_res_ob_T11$perf_tab_RR %>% arrange(coverage)
-knitr::kable(res, digits =3)
-
-
+res_diff <- sim_res_null_T4$perf_tab_diff %>% arrange(coverage)  %>% arrange(coverage) %>% filter(!grepl("no_cens",filenames)) %>% subset(., select=-c(simulated_data, filenames, censoring_in_data))
+knitr::kable(res_diff, digits =5)
 ```
 
-<!-- ### Risk difference performance  -->
+### Notes
 
-<!-- ```{r, echo=FALSE} -->
-<!-- # res_diff <- perf_tab_diff_outcome_blind_T11 %>% arrange(coverage) -->
-<!-- # knitr::kable(res_diff, digits =5) -->
+
+  *  Higher bias and variance with censoring and competing risks
+  *  Bootstrap coverage in between IC and TMLE variance estimators
+  *  Bootstrap with clustered ID's in CV procedures (also with Deterministic Q)
+  *  Deterministic Q increases performance
+
+<!-- ### Distribution of RR point estimates -->
+
+<!-- ```{r,echo=FALSE} -->
+<!-- set.seed(123) -->
+<!-- ggplot(d_T4_null, aes(y=analysis, x=estimate)) + -->
+<!--   geom_jitter(width=0, height=0.05, alpha=0.75) + -->
+<!--   coord_cartesian(xlim=c(0.4, 2)) + -->
+<!--   geom_vline(xintercept = 1) + -->
+<!--   geom_vline(aes(xintercept = true.RR), linetype="dashed") + -->
+<!--   scale_x_continuous(trans = "log10") -->
+
 <!-- ``` -->
 
+## Scenario 3: Simulated outcome- 1.5 year followup
+
+### Relative risk performance - uncensored data
+
+```{r, echo=FALSE} 
+
+ res <- sim_res_ob_T4$perf_tab_RR %>% arrange(coverage) %>% filter(grepl("no_cens",filenames)) %>% subset(., select=-c(simulated_data, filenames, censoring_in_data))
+
+ knitr::kable(res, digits =3) 
+
+``` 
+
+### Relative risk performance - censoring and competing risks
 
 
+```{r, echo=FALSE} 
+
+ res <- sim_res_ob_T4$perf_tab_RR %>% arrange(coverage) %>% filter(!grepl("no_cens",filenames)) %>% subset(., select=-c(simulated_data, filenames, censoring_in_data))
+
+ knitr::kable(res, digits =3) 
+
+``` 
+
+  *  True RR: 0.43
+  
+  
+## Scenario 4: Simulated outcome- 5 year followup
+
+### Relative risk performance 
+
+```{r, echo=FALSE} 
+
+ res <- sim_res_ob_T11$perf_tab_RR %>% arrange(coverage) %>% filter(!grepl("no_cens",filenames)) %>% subset(., select=-c(simulated_data, filenames))
+
+ knitr::kable(res, digits =3) 
+
+``` 
 
 
-## Old results
+  *  True RR: 0.43
 
+## Scenario 4: Old simulated data 
 
 ### Relative risk performance
 
 ```{r, echo=FALSE}
+
+#unique(perf_tab_RR_old$analysis)
+#res <- perf_tab_RR_old %>% filter(analysis %in% c("LASSO no DetQ tmle updated estimator","LASSO no DetQ IC updated estimator","Bootstrap - clustered ID" )) %>% arrange(coverage) %>% subset(., select=-c( analysis))
 res <- perf_tab_RR_old %>% filter(!grepl("common",analysis), analysis!="LASSO no DetQ tmle") %>% arrange(coverage)
+
 knitr::kable(res, digits =3)
 
-
 ```
+
+
+<!-- ### Risk difference performance   -->
+
+<!-- ```{r, echo=FALSE}  -->
+<!--  res_diff <- sim_res_ob_T4$perf_tab_diff   -->
+<!--  knitr::kable(res_diff, digits =5)   -->
+<!-- ```   -->
+
+<!-- ## Blind outcome- 5 year followup  -->
+
+<!-- ### Relative risk performance -->
+
+<!-- ```{r, echo=FALSE} -->
+
+<!-- res <- sim_res_ob_T11$perf_tab_RR %>% arrange(coverage) -->
+
+<!-- knitr::kable(res, digits =3) -->
+
+<!-- ``` -->
+
+<!-- <!-- ### Risk difference performance  -->
+
+--\>
+
+<!-- <!-- ```{r, echo=FALSE} -->
+
+--\>
+<!-- <!-- # res_diff <- perf_tab_diff_outcome_blind_T11 %>% arrange(coverage) -->
+--\> <!-- <!-- # knitr::kable(res_diff, digits =5) --> --\>
+<!-- <!-- ``` --> --\>
+
+<!-- ## Old results -->
+
+
+
+<!-- ``` -->
 
 <!-- ### Risk difference performance  -->
 
 <!-- ```{r, echo=FALSE} -->
-<!-- res_diff <- perf_tab_diff_outcome_blind_T11 %>% arrange(coverage) -->
-<!-- knitr::kable(res_diff, digits =5) -->
-<!-- ``` -->
 
+<!-- res_diff <- perf_tab_diff_outcome_blind_T11 %>% arrange(coverage) -->
+
+<!-- knitr::kable(res_diff, digits =5) -->
+
+<!-- ``` -->
 
 <!-- ### Notes -->
-
