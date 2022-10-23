@@ -38,7 +38,7 @@ for(i in 1:length(d_wide_list)){
     dboot <- dboot %>% group_by(id) %>% slice(1) %>% ungroup()
 
     res <- NULL
-    try(res <- run_ltmle_simple(d_wide_list[[i]],  varmethod = "ic", SL.library = c("SL.glmnet")), silent=TRUE)
+    try(res <- run_ltmle_simple(dboot,  varmethod = "ic", SL.library = c("SL.glmnet")), silent=TRUE)
     if(!is.null(res)){res$N<-nrow(dboot)}
     return(res)
   }

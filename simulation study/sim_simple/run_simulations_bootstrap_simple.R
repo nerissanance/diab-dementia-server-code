@@ -37,7 +37,7 @@ for(i in 1:length(d_wide_list)){
     dboot <- d[sample(.N, nrow(d),replace=TRUE)]
 
     res <- NULL
-    try(res <- run_ltmle_simple(d_wide_list[[i]],  varmethod = "ic", SL.library = c("SL.glmnet"), id=dboot$id), silent=TRUE)
+    try(res <- run_ltmle_simple(dboot,  varmethod = "ic", SL.library = c("SL.glmnet"), id=dboot$id), silent=TRUE)
     if(!is.null(res)){res$N<-nrow(dboot)}
     return(res)
   }
