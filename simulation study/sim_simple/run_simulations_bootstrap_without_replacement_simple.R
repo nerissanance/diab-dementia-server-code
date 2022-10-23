@@ -35,7 +35,7 @@ for(i in 1:length(d_wide_list)){
     set.seed(j)
     d <- data.table(d)
     dboot <- d[sample(.N, nrow(d),replace=TRUE)]
-    dboot <- dboot %>% group_by(id) %>% slice(1) %>% ungroup()
+    dboot <- dboot %>% group_by(id) %>% slice(1) %>% ungroup() %>% select(id, L1, A1, Y2, L2, A2, Y3)
 
     res <- NULL
     try(res <- run_ltmle_simple(dboot,  varmethod = "ic", SL.library = c("SL.glmnet")), silent=TRUE)
@@ -46,13 +46,11 @@ for(i in 1:length(d_wide_list)){
 
   gc()
   res_df$iteration <- i
-  resdf_boot <- bind_rows(resdf_boot, res_df)
-  saveRDS(res_df, paste0(here::here(),"/data/bootstrap/simple_sim/sim_res_boot_without_replacement_simple",i,".RDS"))
+  saveRDS(res_df, paste0(here::here(),"/data/sim_simple/bootstrap/sim_res_boot_without_replacement_simple",i,".RDS"))
 
 }
 
 
 
-saveRDS(resdf_boot, paste0(here::here(),"/data/sim_res_boot_without_replacement_simple.RDS"))
 
 

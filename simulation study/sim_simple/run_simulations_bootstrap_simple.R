@@ -45,13 +45,11 @@ for(i in 1:length(d_wide_list)){
 
   gc()
   res_df$iteration <- i
-  resdf_boot <- bind_rows(resdf_boot, res_df)
-  saveRDS(res_df, paste0(here::here(),"/data/simple_sim/bootstrap/sim_res_boot_CV_simple",i,".RDS"))
+  saveRDS(res_df, paste0(here::here(),"/data/sim_simple/bootstrap/sim_res_boot_CV_simple",i,".RDS"))
 
 }
 
 
 
-saveRDS(resdf_boot, paste0(here::here(),"/data/sim_res_boot_CV_simple.RDS"))
 
 
