@@ -4,6 +4,7 @@ rm(list=ls())
 library(lava)
 library(tidyverse)
 library(data.table)
+source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
 source(paste0(here::here(),"/synthesizeDD.R"))
 
 cc <- fread(paste0(here::here(),"/data/coefficients.txt"))
@@ -191,6 +192,9 @@ logit2prob <- function(logit){
   prob <- odds / (1 + odds)
   return(prob)
 }
+
+sim_truth <- calc_sim_truth(cc)
+
 
 #need to account for cumulative survival
 cc <- as.data.frame(cc)

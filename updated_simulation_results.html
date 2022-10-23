@@ -371,36 +371,34 @@ results</h1>
 </div>
 
 
-<div id="null-outcome--1.5-year-followup" class="section level2">
-<h2>Null outcome- 1.5 year followup</h2>
+<div id="scenario-1-null-association--1.5-year-followup-no-censoring-or-competing-risks" class="section level2">
+<h2>Scenario 1: Null association- 1.5 year followup, no censoring or
+competing risks</h2>
+<p>True RR: 1</p>
+<p>True RD: 0</p>
 <div id="relative-risk-performance" class="section level3">
 <h3>Relative risk performance</h3>
-<table>
+<table style="width:100%;">
 <colgroup>
+<col width="8%" />
+<col width="16%" />
+<col width="4%" />
+<col width="4%" />
+<col width="6%" />
 <col width="7%" />
 <col width="5%" />
-<col width="9%" />
-<col width="2%" />
-<col width="2%" />
 <col width="12%" />
-<col width="3%" />
-<col width="4%" />
-<col width="3%" />
 <col width="7%" />
-<col width="4%" />
+<col width="9%" />
+<col width="12%" />
 <col width="5%" />
-<col width="7%" />
-<col width="3%" />
-<col width="20%" />
 </colgroup>
 <thead>
 <tr class="header">
-<th align="left">simulated_data</th>
 <th align="left">estimator</th>
 <th align="left">variance_estimator</th>
 <th align="left">Qint</th>
 <th align="left">DetQ</th>
-<th align="left">censoring_in_data</th>
 <th align="right">bias</th>
 <th align="right">variance</th>
 <th align="right">mse</th>
@@ -409,68 +407,14 @@ results</h1>
 <th align="right">o.coverage</th>
 <th align="right">mean_ci_width</th>
 <th align="right">power</th>
-<th align="left">filenames</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">Null</td>
 <td align="left">LASSO</td>
 <td align="left">ic</td>
+<td align="left">Yes</td>
 <td align="left">No</td>
-<td align="left">Yes</td>
-<td align="left">Censored+Competing risks</td>
-<td align="right">-0.206</td>
-<td align="right">0.036</td>
-<td align="right">0.079</td>
-<td align="right">-1.081</td>
-<td align="right">69.0</td>
-<td align="right">80.0</td>
-<td align="right">0.583</td>
-<td align="right">31.0</td>
-<td align="left">null_sim_res_noDetQ_ic_T4</td>
-</tr>
-<tr class="even">
-<td align="left">Null</td>
-<td align="left">LASSO</td>
-<td align="left">ic</td>
-<td align="left">Yes</td>
-<td align="left">Yes</td>
-<td align="left">Censored+Competing risks</td>
-<td align="right">-0.206</td>
-<td align="right">0.036</td>
-<td align="right">0.079</td>
-<td align="right">-1.081</td>
-<td align="right">69.0</td>
-<td align="right">80.0</td>
-<td align="right">0.583</td>
-<td align="right">31.0</td>
-<td align="left">null_sim_res_noDetQ_Qint_ic_T4</td>
-</tr>
-<tr class="odd">
-<td align="left">Null</td>
-<td align="left">LASSO</td>
-<td align="left">tmle</td>
-<td align="left">Yes</td>
-<td align="left">Yes</td>
-<td align="left">Censored+Competing risks</td>
-<td align="right">-0.206</td>
-<td align="right">0.036</td>
-<td align="right">0.079</td>
-<td align="right">-1.081</td>
-<td align="right">71.0</td>
-<td align="right">80.0</td>
-<td align="right">0.605</td>
-<td align="right">29.0</td>
-<td align="left">null_sim_res_noDetQ_Qint_tmle_T4</td>
-</tr>
-<tr class="even">
-<td align="left">Null</td>
-<td align="left">LASSO</td>
-<td align="left">ic</td>
-<td align="left">Yes</td>
-<td align="left">Yes</td>
-<td align="left">Uncensored</td>
 <td align="right">-0.135</td>
 <td align="right">0.015</td>
 <td align="right">0.033</td>
@@ -479,15 +423,12 @@ results</h1>
 <td align="right">80.5</td>
 <td align="right">0.473</td>
 <td align="right">19.5</td>
-<td align="left">null_no_cens_sim_res_noDetQ_Qint_ic_T4</td>
 </tr>
-<tr class="odd">
-<td align="left">Null</td>
+<tr class="even">
 <td align="left">LASSO</td>
 <td align="left">tmle</td>
 <td align="left">Yes</td>
-<td align="left">Yes</td>
-<td align="left">Uncensored</td>
+<td align="left">No</td>
 <td align="right">-0.135</td>
 <td align="right">0.015</td>
 <td align="right">0.033</td>
@@ -496,32 +437,26 @@ results</h1>
 <td align="right">80.5</td>
 <td align="right">0.475</td>
 <td align="right">19.5</td>
-<td align="left">null_no_cens_sim_res_noDetQ_Qint_tmle_T4</td>
-</tr>
-<tr class="even">
-<td align="left">Null</td>
-<td align="left">LASSO</td>
-<td align="left">ic</td>
-<td align="left">No</td>
-<td align="left">No</td>
-<td align="left">Censored+Competing risks</td>
-<td align="right">-0.079</td>
-<td align="right">0.036</td>
-<td align="right">0.042</td>
-<td align="right">-0.421</td>
-<td align="right">86.0</td>
-<td align="right">93.5</td>
-<td align="right">0.572</td>
-<td align="right">14.0</td>
-<td align="left">null_sim_res_ic_T4</td>
 </tr>
 <tr class="odd">
-<td align="left">Null</td>
+<td align="left">GLM</td>
+<td align="left">tmle</td>
+<td align="left">Yes</td>
+<td align="left">No</td>
+<td align="right">-0.125</td>
+<td align="right">0.015</td>
+<td align="right">0.031</td>
+<td align="right">-1.015</td>
+<td align="right">83.5</td>
+<td align="right">81.5</td>
+<td align="right">0.481</td>
+<td align="right">16.5</td>
+</tr>
+<tr class="even">
 <td align="left">LASSO</td>
 <td align="left">ic</td>
 <td align="left">No</td>
-<td align="left">Yes</td>
-<td align="left">Uncensored</td>
+<td align="left">No</td>
 <td align="right">-0.076</td>
 <td align="right">0.015</td>
 <td align="right">0.021</td>
@@ -530,32 +465,26 @@ results</h1>
 <td align="right">90.0</td>
 <td align="right">0.441</td>
 <td align="right">10.5</td>
-<td align="left">null_no_cens_sim_res_noDetQ_ic_T4</td>
-</tr>
-<tr class="even">
-<td align="left">Null</td>
-<td align="left">LASSO</td>
-<td align="left">NA</td>
-<td align="left">No</td>
-<td align="left">No</td>
-<td align="left">Censored+Competing risks</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">89.5</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">10.5</td>
-<td align="left">NA</td>
 </tr>
 <tr class="odd">
-<td align="left">Null</td>
+<td align="left">GLM</td>
+<td align="left">ic</td>
+<td align="left">No</td>
+<td align="left">No</td>
+<td align="right">-0.048</td>
+<td align="right">0.015</td>
+<td align="right">0.017</td>
+<td align="right">-0.396</td>
+<td align="right">91.5</td>
+<td align="right">93.0</td>
+<td align="right">0.433</td>
+<td align="right">8.5</td>
+</tr>
+<tr class="even">
 <td align="left">LASSO</td>
 <td align="left">tmle</td>
 <td align="left">No</td>
-<td align="left">Yes</td>
-<td align="left">Uncensored</td>
+<td align="left">No</td>
 <td align="right">-0.076</td>
 <td align="right">0.015</td>
 <td align="right">0.021</td>
@@ -564,59 +493,47 @@ results</h1>
 <td align="right">90.0</td>
 <td align="right">0.486</td>
 <td align="right">7.0</td>
-<td align="left">null_no_cens_sim_res_noDetQ_tmle_T4</td>
 </tr>
-<tr class="even">
-<td align="left">Null</td>
-<td align="left">LASSO</td>
+<tr class="odd">
+<td align="left">GLM</td>
 <td align="left">tmle</td>
 <td align="left">No</td>
-<td align="left">Yes</td>
-<td align="left">Censored+Competing risks</td>
-<td align="right">-0.098</td>
-<td align="right">0.039</td>
-<td align="right">0.049</td>
-<td align="right">-0.497</td>
+<td align="left">No</td>
+<td align="right">-0.048</td>
+<td align="right">0.015</td>
+<td align="right">0.017</td>
+<td align="right">-0.396</td>
+<td align="right">94.5</td>
 <td align="right">93.0</td>
-<td align="right">91.5</td>
-<td align="right">0.686</td>
-<td align="right">7.0</td>
-<td align="left">null_sim_res_noDetQ_tmle_T4</td>
+<td align="right">0.469</td>
+<td align="right">5.5</td>
 </tr>
 </tbody>
 </table>
 </div>
 <div id="risk-difference-performance" class="section level3">
 <h3>Risk difference performance</h3>
-</div>
-<div id="risk-difference-performance-1" class="section level3">
-<h3>Risk difference performance</h3>
 <table>
 <colgroup>
+<col width="8%" />
+<col width="16%" />
+<col width="4%" />
+<col width="4%" />
+<col width="7%" />
 <col width="7%" />
 <col width="5%" />
+<col width="11%" />
+<col width="7%" />
 <col width="9%" />
-<col width="2%" />
-<col width="2%" />
-<col width="12%" />
-<col width="4%" />
-<col width="4%" />
-<col width="3%" />
-<col width="7%" />
-<col width="4%" />
+<col width="11%" />
 <col width="5%" />
-<col width="7%" />
-<col width="3%" />
-<col width="20%" />
 </colgroup>
 <thead>
 <tr class="header">
-<th align="left">simulated_data</th>
 <th align="left">estimator</th>
 <th align="left">variance_estimator</th>
 <th align="left">Qint</th>
 <th align="left">DetQ</th>
-<th align="left">censoring_in_data</th>
 <th align="right">bias</th>
 <th align="right">variance</th>
 <th align="right">mse</th>
@@ -625,68 +542,14 @@ results</h1>
 <th align="right">o.coverage</th>
 <th align="right">mean_ci_width</th>
 <th align="right">power</th>
-<th align="left">filenames</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">Null</td>
 <td align="left">LASSO</td>
 <td align="left">ic</td>
+<td align="left">Yes</td>
 <td align="left">No</td>
-<td align="left">Yes</td>
-<td align="left">Censored+Competing risks</td>
-<td align="right">-0.00336</td>
-<td align="right">1e-05</td>
-<td align="right">2e-05</td>
-<td align="right">-1.10400</td>
-<td align="right">63.5</td>
-<td align="right">79.0</td>
-<td align="right">0.00941</td>
-<td align="right">36.5</td>
-<td align="left">null_sim_res_noDetQ_ic_T4</td>
-</tr>
-<tr class="even">
-<td align="left">Null</td>
-<td align="left">LASSO</td>
-<td align="left">ic</td>
-<td align="left">Yes</td>
-<td align="left">Yes</td>
-<td align="left">Censored+Competing risks</td>
-<td align="right">-0.00336</td>
-<td align="right">1e-05</td>
-<td align="right">2e-05</td>
-<td align="right">-1.10400</td>
-<td align="right">63.5</td>
-<td align="right">79.0</td>
-<td align="right">0.00941</td>
-<td align="right">36.5</td>
-<td align="left">null_sim_res_noDetQ_Qint_ic_T4</td>
-</tr>
-<tr class="odd">
-<td align="left">Null</td>
-<td align="left">LASSO</td>
-<td align="left">tmle</td>
-<td align="left">Yes</td>
-<td align="left">Yes</td>
-<td align="left">Censored+Competing risks</td>
-<td align="right">-0.00336</td>
-<td align="right">1e-05</td>
-<td align="right">2e-05</td>
-<td align="right">-1.10400</td>
-<td align="right">65.0</td>
-<td align="right">79.0</td>
-<td align="right">0.00967</td>
-<td align="right">35.0</td>
-<td align="left">null_sim_res_noDetQ_Qint_tmle_T4</td>
-</tr>
-<tr class="even">
-<td align="left">Null</td>
-<td align="left">LASSO</td>
-<td align="left">ic</td>
-<td align="left">Yes</td>
-<td align="left">Yes</td>
-<td align="left">Uncensored</td>
 <td align="right">-0.00283</td>
 <td align="right">1e-05</td>
 <td align="right">1e-05</td>
@@ -695,15 +558,12 @@ results</h1>
 <td align="right">80.5</td>
 <td align="right">0.00989</td>
 <td align="right">24.0</td>
-<td align="left">null_no_cens_sim_res_noDetQ_Qint_ic_T4</td>
 </tr>
-<tr class="odd">
-<td align="left">Null</td>
+<tr class="even">
 <td align="left">LASSO</td>
 <td align="left">tmle</td>
 <td align="left">Yes</td>
-<td align="left">Yes</td>
-<td align="left">Uncensored</td>
+<td align="left">No</td>
 <td align="right">-0.00283</td>
 <td align="right">1e-05</td>
 <td align="right">1e-05</td>
@@ -712,32 +572,26 @@ results</h1>
 <td align="right">80.5</td>
 <td align="right">0.00992</td>
 <td align="right">24.0</td>
-<td align="left">null_no_cens_sim_res_noDetQ_Qint_tmle_T4</td>
-</tr>
-<tr class="even">
-<td align="left">Null</td>
-<td align="left">LASSO</td>
-<td align="left">ic</td>
-<td align="left">No</td>
-<td align="left">No</td>
-<td align="left">Censored+Competing risks</td>
-<td align="right">-0.00109</td>
-<td align="right">1e-05</td>
-<td align="right">1e-05</td>
-<td align="right">-0.36050</td>
-<td align="right">83.5</td>
-<td align="right">93.5</td>
-<td align="right">0.00931</td>
-<td align="right">16.5</td>
-<td align="left">null_sim_res_ic_T4</td>
 </tr>
 <tr class="odd">
-<td align="left">Null</td>
+<td align="left">GLM</td>
+<td align="left">tmle</td>
+<td align="left">Yes</td>
+<td align="left">No</td>
+<td align="right">-0.00262</td>
+<td align="right">1e-05</td>
+<td align="right">1e-05</td>
+<td align="right">-1.00219</td>
+<td align="right">78.5</td>
+<td align="right">83.5</td>
+<td align="right">0.01014</td>
+<td align="right">21.5</td>
+</tr>
+<tr class="even">
 <td align="left">LASSO</td>
 <td align="left">ic</td>
 <td align="left">No</td>
-<td align="left">Yes</td>
-<td align="left">Uncensored</td>
+<td align="left">No</td>
 <td align="right">-0.00158</td>
 <td align="right">1e-05</td>
 <td align="right">1e-05</td>
@@ -746,32 +600,26 @@ results</h1>
 <td align="right">91.0</td>
 <td align="right">0.00974</td>
 <td align="right">15.0</td>
-<td align="left">null_no_cens_sim_res_noDetQ_ic_T4</td>
-</tr>
-<tr class="even">
-<td align="left">Null</td>
-<td align="left">LASSO</td>
-<td align="left">tmle</td>
-<td align="left">No</td>
-<td align="left">Yes</td>
-<td align="left">Censored+Competing risks</td>
-<td align="right">-0.00164</td>
-<td align="right">1e-05</td>
-<td align="right">2e-05</td>
-<td align="right">-0.43727</td>
-<td align="right">86.0</td>
-<td align="right">93.5</td>
-<td align="right">0.01296</td>
-<td align="right">14.0</td>
-<td align="left">null_sim_res_noDetQ_tmle_T4</td>
 </tr>
 <tr class="odd">
-<td align="left">Null</td>
+<td align="left">GLM</td>
+<td align="left">ic</td>
+<td align="left">No</td>
+<td align="left">No</td>
+<td align="right">-0.00095</td>
+<td align="right">1e-05</td>
+<td align="right">1e-05</td>
+<td align="right">-0.33884</td>
+<td align="right">88.0</td>
+<td align="right">94.0</td>
+<td align="right">0.00982</td>
+<td align="right">12.0</td>
+</tr>
+<tr class="even">
 <td align="left">LASSO</td>
 <td align="left">tmle</td>
 <td align="left">No</td>
-<td align="left">Yes</td>
-<td align="left">Uncensored</td>
+<td align="left">No</td>
 <td align="right">-0.00158</td>
 <td align="right">1e-05</td>
 <td align="right">1e-05</td>
@@ -780,15 +628,270 @@ results</h1>
 <td align="right">91.0</td>
 <td align="right">0.01066</td>
 <td align="right">11.5</td>
-<td align="left">null_no_cens_sim_res_noDetQ_tmle_T4</td>
+</tr>
+<tr class="odd">
+<td align="left">GLM</td>
+<td align="left">tmle</td>
+<td align="left">No</td>
+<td align="left">No</td>
+<td align="right">-0.00095</td>
+<td align="right">1e-05</td>
+<td align="right">1e-05</td>
+<td align="right">-0.33884</td>
+<td align="right">91.5</td>
+<td align="right">94.0</td>
+<td align="right">0.01058</td>
+<td align="right">8.5</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="notes" class="section level3">
+<h3>Notes</h3>
+<ul>
+<li>True RR: 1</li>
+<li>True RD: 0</li>
+<li>Dementia prevalence: 13.5%</li>
+<li>GLM performs better than LASSO</li>
+<li>IC still anti-conservative</li>
+<li>Intercept-only Q prediction doesn’t improve prediction</li>
+<li>Better performance estimating RR compared to RD</li>
+</ul>
+</div>
+</div>
+<div id="scenario-2-null-association--1.5-year-followup-censoring-and-competing-risks" class="section level2">
+<h2>Scenario 2: Null association- 1.5 year followup, censoring and
+competing risks</h2>
+<div id="relative-risk-performance-1" class="section level3">
+<h3>Relative risk performance</h3>
+<table style="width:100%;">
+<colgroup>
+<col width="8%" />
+<col width="16%" />
+<col width="4%" />
+<col width="4%" />
+<col width="6%" />
+<col width="7%" />
+<col width="5%" />
+<col width="12%" />
+<col width="7%" />
+<col width="9%" />
+<col width="12%" />
+<col width="5%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">estimator</th>
+<th align="left">variance_estimator</th>
+<th align="left">Qint</th>
+<th align="left">DetQ</th>
+<th align="right">bias</th>
+<th align="right">variance</th>
+<th align="right">mse</th>
+<th align="right">bias_se_ratio</th>
+<th align="right">coverage</th>
+<th align="right">o.coverage</th>
+<th align="right">mean_ci_width</th>
+<th align="right">power</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">LASSO</td>
+<td align="left">ic</td>
+<td align="left">No</td>
+<td align="left">No</td>
+<td align="right">-0.206</td>
+<td align="right">0.036</td>
+<td align="right">0.079</td>
+<td align="right">-1.081</td>
+<td align="right">69.0</td>
+<td align="right">80.0</td>
+<td align="right">0.583</td>
+<td align="right">31.0</td>
 </tr>
 <tr class="even">
-<td align="left">Null</td>
+<td align="left">LASSO</td>
+<td align="left">ic</td>
+<td align="left">Yes</td>
+<td align="left">No</td>
+<td align="right">-0.206</td>
+<td align="right">0.036</td>
+<td align="right">0.079</td>
+<td align="right">-1.081</td>
+<td align="right">69.0</td>
+<td align="right">80.0</td>
+<td align="right">0.583</td>
+<td align="right">31.0</td>
+</tr>
+<tr class="odd">
+<td align="left">LASSO</td>
+<td align="left">tmle</td>
+<td align="left">Yes</td>
+<td align="left">No</td>
+<td align="right">-0.206</td>
+<td align="right">0.036</td>
+<td align="right">0.079</td>
+<td align="right">-1.081</td>
+<td align="right">71.0</td>
+<td align="right">80.0</td>
+<td align="right">0.605</td>
+<td align="right">29.0</td>
+</tr>
+<tr class="even">
+<td align="left">LASSO</td>
+<td align="left">ic</td>
+<td align="left">No</td>
+<td align="left">Yes</td>
+<td align="right">-0.079</td>
+<td align="right">0.036</td>
+<td align="right">0.042</td>
+<td align="right">-0.421</td>
+<td align="right">86.0</td>
+<td align="right">93.5</td>
+<td align="right">0.572</td>
+<td align="right">14.0</td>
+</tr>
+<tr class="odd">
 <td align="left">LASSO</td>
 <td align="left">NA</td>
 <td align="left">No</td>
+<td align="left">Yes</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">89.5</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">10.5</td>
+</tr>
+<tr class="even">
+<td align="left">LASSO</td>
+<td align="left">tmle</td>
 <td align="left">No</td>
-<td align="left">Censored+Competing risks</td>
+<td align="left">No</td>
+<td align="right">-0.098</td>
+<td align="right">0.039</td>
+<td align="right">0.049</td>
+<td align="right">-0.497</td>
+<td align="right">93.0</td>
+<td align="right">91.5</td>
+<td align="right">0.686</td>
+<td align="right">7.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="risk-difference-performance-1" class="section level3">
+<h3>Risk difference performance</h3>
+<table>
+<colgroup>
+<col width="8%" />
+<col width="16%" />
+<col width="4%" />
+<col width="4%" />
+<col width="7%" />
+<col width="7%" />
+<col width="5%" />
+<col width="11%" />
+<col width="7%" />
+<col width="9%" />
+<col width="11%" />
+<col width="5%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">estimator</th>
+<th align="left">variance_estimator</th>
+<th align="left">Qint</th>
+<th align="left">DetQ</th>
+<th align="right">bias</th>
+<th align="right">variance</th>
+<th align="right">mse</th>
+<th align="right">bias_se_ratio</th>
+<th align="right">coverage</th>
+<th align="right">o.coverage</th>
+<th align="right">mean_ci_width</th>
+<th align="right">power</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">LASSO</td>
+<td align="left">ic</td>
+<td align="left">No</td>
+<td align="left">No</td>
+<td align="right">-0.00336</td>
+<td align="right">1e-05</td>
+<td align="right">2e-05</td>
+<td align="right">-1.10400</td>
+<td align="right">63.5</td>
+<td align="right">79.0</td>
+<td align="right">0.00941</td>
+<td align="right">36.5</td>
+</tr>
+<tr class="even">
+<td align="left">LASSO</td>
+<td align="left">ic</td>
+<td align="left">Yes</td>
+<td align="left">No</td>
+<td align="right">-0.00336</td>
+<td align="right">1e-05</td>
+<td align="right">2e-05</td>
+<td align="right">-1.10400</td>
+<td align="right">63.5</td>
+<td align="right">79.0</td>
+<td align="right">0.00941</td>
+<td align="right">36.5</td>
+</tr>
+<tr class="odd">
+<td align="left">LASSO</td>
+<td align="left">tmle</td>
+<td align="left">Yes</td>
+<td align="left">No</td>
+<td align="right">-0.00336</td>
+<td align="right">1e-05</td>
+<td align="right">2e-05</td>
+<td align="right">-1.10400</td>
+<td align="right">65.0</td>
+<td align="right">79.0</td>
+<td align="right">0.00967</td>
+<td align="right">35.0</td>
+</tr>
+<tr class="even">
+<td align="left">LASSO</td>
+<td align="left">ic</td>
+<td align="left">No</td>
+<td align="left">Yes</td>
+<td align="right">-0.00109</td>
+<td align="right">1e-05</td>
+<td align="right">1e-05</td>
+<td align="right">-0.36050</td>
+<td align="right">83.5</td>
+<td align="right">93.5</td>
+<td align="right">0.00931</td>
+<td align="right">16.5</td>
+</tr>
+<tr class="odd">
+<td align="left">LASSO</td>
+<td align="left">tmle</td>
+<td align="left">No</td>
+<td align="left">No</td>
+<td align="right">-0.00164</td>
+<td align="right">1e-05</td>
+<td align="right">2e-05</td>
+<td align="right">-0.43727</td>
+<td align="right">86.0</td>
+<td align="right">93.5</td>
+<td align="right">0.01296</td>
+<td align="right">14.0</td>
+</tr>
+<tr class="even">
+<td align="left">LASSO</td>
+<td align="left">NA</td>
+<td align="left">No</td>
+<td align="left">Yes</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
@@ -797,51 +900,56 @@ results</h1>
 <td align="right">NA</td>
 <td align="right">0.01127</td>
 <td align="right">10.5</td>
-<td align="left">NA</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div id="notes" class="section level3">
+<div id="notes-1" class="section level3">
 <h3>Notes</h3>
-<p>True RR=1, true RD=0 Bootstrap with clustered ID’s in CV
-procedures</p>
+<ul>
+<li>Higher bias and variance with censoring and competing risks</li>
+<li>Bootstrap coverage in between IC and TMLE variance estimators</li>
+<li>Bootstrap with clustered ID’s in CV procedures (also with
+Deterministic Q)</li>
+<li>Deterministic Q increases performance</li>
+</ul>
+<!-- ### Distribution of RR point estimates -->
+<!-- ```{r,echo=FALSE} -->
+<!-- set.seed(123) -->
+<!-- ggplot(d_T4_null, aes(y=analysis, x=estimate)) + -->
+<!--   geom_jitter(width=0, height=0.05, alpha=0.75) + -->
+<!--   coord_cartesian(xlim=c(0.4, 2)) + -->
+<!--   geom_vline(xintercept = 1) + -->
+<!--   geom_vline(aes(xintercept = true.RR), linetype="dashed") + -->
+<!--   scale_x_continuous(trans = "log10") -->
+<!-- ``` -->
 </div>
-<div id="distribution-of-rr-point-estimates" class="section level3">
-<h3>Distribution of RR point estimates</h3>
-<p><img src="data:image/png;base64,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" width="672" /></p>
 </div>
-</div>
-<div id="blind-outcome--1.5-year-followup" class="section level2">
-<h2>Blind outcome- 1.5 year followup</h2>
-<div id="relative-risk-performance-1" class="section level3">
-<h3>Relative risk performance</h3>
-<table>
+<div id="scenario-3-simulated-outcome--1.5-year-followup" class="section level2">
+<h2>Scenario 3: Simulated outcome- 1.5 year followup</h2>
+<div id="relative-risk-performance---uncensored-data" class="section level3">
+<h3>Relative risk performance - uncensored data</h3>
+<table style="width:100%;">
 <colgroup>
-<col width="6%" />
-<col width="4%" />
-<col width="11%" />
-<col width="2%" />
-<col width="2%" />
-<col width="11%" />
-<col width="3%" />
-<col width="4%" />
-<col width="2%" />
-<col width="6%" />
+<col width="8%" />
+<col width="16%" />
 <col width="4%" />
 <col width="4%" />
 <col width="6%" />
-<col width="2%" />
-<col width="28%" />
+<col width="7%" />
+<col width="5%" />
+<col width="12%" />
+<col width="7%" />
+<col width="9%" />
+<col width="12%" />
+<col width="5%" />
 </colgroup>
 <thead>
 <tr class="header">
-<th align="left">simulated_data</th>
 <th align="left">estimator</th>
 <th align="left">variance_estimator</th>
 <th align="left">Qint</th>
 <th align="left">DetQ</th>
-<th align="left">censoring_in_data</th>
 <th align="right">bias</th>
 <th align="right">variance</th>
 <th align="right">mse</th>
@@ -850,17 +958,14 @@ procedures</p>
 <th align="right">o.coverage</th>
 <th align="right">mean_ci_width</th>
 <th align="right">power</th>
-<th align="left">filenames</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">Outcome blind</td>
 <td align="left">LASSO</td>
 <td align="left">ic</td>
 <td align="left">No</td>
-<td align="left">Yes</td>
-<td align="left">Uncensored</td>
+<td align="left">No</td>
 <td align="right">-0.394</td>
 <td align="right">2.015</td>
 <td align="right">2.170</td>
@@ -869,15 +974,12 @@ procedures</p>
 <td align="right">99.5</td>
 <td align="right">1.842</td>
 <td align="right">65.0</td>
-<td align="left">outcome_blind_subsampled_no_cens_sim_res_noDetQ_ic_T4</td>
 </tr>
 <tr class="even">
-<td align="left">Outcome blind</td>
 <td align="left">LASSO</td>
 <td align="left">ic</td>
 <td align="left">Yes</td>
-<td align="left">Yes</td>
-<td align="left">Uncensored</td>
+<td align="left">No</td>
 <td align="right">-0.494</td>
 <td align="right">1.962</td>
 <td align="right">2.206</td>
@@ -886,66 +988,12 @@ procedures</p>
 <td align="right">99.5</td>
 <td align="right">2.031</td>
 <td align="right">65.0</td>
-<td align="left">outcome_blind_subsampled_no_cens_sim_res_noDetQ_Qint_ic_T4</td>
 </tr>
 <tr class="odd">
-<td align="left">Outcome blind</td>
 <td align="left">LASSO</td>
 <td align="left">ic</td>
 <td align="left">No</td>
 <td align="left">No</td>
-<td align="left">Censored+Competing risks</td>
-<td align="right">0.060</td>
-<td align="right">0.106</td>
-<td align="right">0.109</td>
-<td align="right">0.183</td>
-<td align="right">73.0</td>
-<td align="right">94.5</td>
-<td align="right">0.764</td>
-<td align="right">90.0</td>
-<td align="left">outcome_blind_cens_competing_risks_sim_res_ic_T4</td>
-</tr>
-<tr class="even">
-<td align="left">Outcome blind</td>
-<td align="left">LASSO</td>
-<td align="left">ic</td>
-<td align="left">No</td>
-<td align="left">Yes</td>
-<td align="left">Censored+Competing risks</td>
-<td align="right">-0.041</td>
-<td align="right">0.111</td>
-<td align="right">0.113</td>
-<td align="right">-0.123</td>
-<td align="right">74.0</td>
-<td align="right">94.0</td>
-<td align="right">0.701</td>
-<td align="right">96.0</td>
-<td align="left">outcome_blind_cens_competing_risks_sim_res_noDetQ_ic_T4</td>
-</tr>
-<tr class="odd">
-<td align="left">Outcome blind</td>
-<td align="left">LASSO</td>
-<td align="left">ic</td>
-<td align="left">Yes</td>
-<td align="left">Yes</td>
-<td align="left">Censored+Competing risks</td>
-<td align="right">-0.220</td>
-<td align="right">0.105</td>
-<td align="right">0.154</td>
-<td align="right">-0.680</td>
-<td align="right">80.0</td>
-<td align="right">91.0</td>
-<td align="right">0.904</td>
-<td align="right">99.0</td>
-<td align="left">outcome_blind_cens_competing_risks_sim_res_noDetQ_Qint_ic_T4</td>
-</tr>
-<tr class="even">
-<td align="left">Outcome blind</td>
-<td align="left">LASSO</td>
-<td align="left">ic</td>
-<td align="left">No</td>
-<td align="left">Yes</td>
-<td align="left">Uncensored</td>
 <td align="right">0.110</td>
 <td align="right">0.032</td>
 <td align="right">0.044</td>
@@ -954,32 +1002,12 @@ procedures</p>
 <td align="right">93.0</td>
 <td align="right">0.596</td>
 <td align="right">99.5</td>
-<td align="left">outcome_blind_no_cens_sim_res_noDetQ_ic_T4</td>
-</tr>
-<tr class="odd">
-<td align="left">Outcome blind</td>
-<td align="left">LASSO</td>
-<td align="left">bootstrap-no replacement</td>
-<td align="left">No</td>
-<td align="left">No</td>
-<td align="left">Censored+Competing risks</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">84.5</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">92.0</td>
-<td align="left">outcome_blind_bootstrap_no_ties_cens_competing_risks</td>
 </tr>
 <tr class="even">
-<td align="left">Outcome blind</td>
 <td align="left">LASSO</td>
 <td align="left">tmle</td>
 <td align="left">No</td>
-<td align="left">Yes</td>
-<td align="left">Uncensored</td>
+<td align="left">No</td>
 <td align="right">0.110</td>
 <td align="right">0.032</td>
 <td align="right">0.044</td>
@@ -988,49 +1016,12 @@ procedures</p>
 <td align="right">93.0</td>
 <td align="right">0.686</td>
 <td align="right">99.5</td>
-<td align="left">outcome_blind_no_cens_sim_res_noDetQ_tmle_T4</td>
 </tr>
 <tr class="odd">
-<td align="left">Outcome blind</td>
-<td align="left">LASSO</td>
-<td align="left">bootstrap-clustered ID</td>
-<td align="left">No</td>
-<td align="left">Yes</td>
-<td align="left">Censored+Competing risks</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">89.5</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">87.0</td>
-<td align="left">outcome_blind_bootstrap_cens_competing_risks_noDetQ_</td>
-</tr>
-<tr class="even">
-<td align="left">Outcome blind</td>
-<td align="left">LASSO</td>
-<td align="left">bootstrap-clustered ID</td>
-<td align="left">No</td>
-<td align="left">No</td>
-<td align="left">Censored+Competing risks</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">90.5</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">79.5</td>
-<td align="left">outcome_blind_bootstrap_cens_competing_risks_</td>
-</tr>
-<tr class="odd">
-<td align="left">Outcome blind</td>
 <td align="left">LASSO</td>
 <td align="left">ic</td>
 <td align="left">Yes</td>
-<td align="left">Yes</td>
-<td align="left">Uncensored</td>
+<td align="left">No</td>
 <td align="right">0.035</td>
 <td align="right">0.032</td>
 <td align="right">0.034</td>
@@ -1039,15 +1030,12 @@ procedures</p>
 <td align="right">94.5</td>
 <td align="right">0.646</td>
 <td align="right">100.0</td>
-<td align="left">outcome_blind_no_cens_sim_res_noDetQ_Qint_ic_T4</td>
 </tr>
 <tr class="even">
-<td align="left">Outcome blind</td>
 <td align="left">LASSO</td>
 <td align="left">tmle</td>
 <td align="left">No</td>
-<td align="left">Yes</td>
-<td align="left">Uncensored</td>
+<td align="left">No</td>
 <td align="right">-0.393</td>
 <td align="right">2.017</td>
 <td align="right">2.172</td>
@@ -1056,32 +1044,12 @@ procedures</p>
 <td align="right">99.5</td>
 <td align="right">Inf</td>
 <td align="right">0.0</td>
-<td align="left">outcome_blind_subsampled_no_cens_sim_res_noDetQ_tmle_T4</td>
 </tr>
 <tr class="odd">
-<td align="left">Outcome blind</td>
 <td align="left">LASSO</td>
 <td align="left">tmle</td>
+<td align="left">Yes</td>
 <td align="left">No</td>
-<td align="left">Yes</td>
-<td align="left">Censored+Competing risks</td>
-<td align="right">-0.041</td>
-<td align="right">0.111</td>
-<td align="right">0.112</td>
-<td align="right">-0.122</td>
-<td align="right">94.0</td>
-<td align="right">94.0</td>
-<td align="right">1.219</td>
-<td align="right">89.0</td>
-<td align="left">outcome_blind_cens_competing_risks_sim_res_noDetQ_tmle_T4</td>
-</tr>
-<tr class="even">
-<td align="left">Outcome blind</td>
-<td align="left">LASSO</td>
-<td align="left">tmle</td>
-<td align="left">Yes</td>
-<td align="left">Yes</td>
-<td align="left">Uncensored</td>
 <td align="right">0.035</td>
 <td align="right">0.032</td>
 <td align="right">0.034</td>
@@ -1090,15 +1058,12 @@ procedures</p>
 <td align="right">94.5</td>
 <td align="right">0.713</td>
 <td align="right">100.0</td>
-<td align="left">outcome_blind_no_cens_sim_res_noDetQ_Qint_tmle_T4</td>
 </tr>
-<tr class="odd">
-<td align="left">Outcome blind</td>
+<tr class="even">
 <td align="left">LASSO</td>
 <td align="left">tmle</td>
 <td align="left">Yes</td>
-<td align="left">Yes</td>
-<td align="left">Uncensored</td>
+<td align="left">No</td>
 <td align="right">-0.494</td>
 <td align="right">1.959</td>
 <td align="right">2.203</td>
@@ -1107,15 +1072,147 @@ procedures</p>
 <td align="right">99.5</td>
 <td align="right">Inf</td>
 <td align="right">0.0</td>
-<td align="left">outcome_blind_subsampled_no_cens_sim_res_noDetQ_Qint_tmle_T4</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="relative-risk-performance---censoring-and-competing-risks" class="section level3">
+<h3>Relative risk performance - censoring and competing risks</h3>
+<table>
+<colgroup>
+<col width="8%" />
+<col width="20%" />
+<col width="4%" />
+<col width="4%" />
+<col width="5%" />
+<col width="7%" />
+<col width="4%" />
+<col width="11%" />
+<col width="7%" />
+<col width="9%" />
+<col width="11%" />
+<col width="4%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">estimator</th>
+<th align="left">variance_estimator</th>
+<th align="left">Qint</th>
+<th align="left">DetQ</th>
+<th align="right">bias</th>
+<th align="right">variance</th>
+<th align="right">mse</th>
+<th align="right">bias_se_ratio</th>
+<th align="right">coverage</th>
+<th align="right">o.coverage</th>
+<th align="right">mean_ci_width</th>
+<th align="right">power</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">LASSO</td>
+<td align="left">ic</td>
+<td align="left">No</td>
+<td align="left">Yes</td>
+<td align="right">0.060</td>
+<td align="right">0.106</td>
+<td align="right">0.109</td>
+<td align="right">0.183</td>
+<td align="right">73.0</td>
+<td align="right">94.5</td>
+<td align="right">0.764</td>
+<td align="right">90.0</td>
 </tr>
 <tr class="even">
-<td align="left">Outcome blind</td>
+<td align="left">LASSO</td>
+<td align="left">ic</td>
+<td align="left">No</td>
+<td align="left">No</td>
+<td align="right">-0.041</td>
+<td align="right">0.111</td>
+<td align="right">0.113</td>
+<td align="right">-0.123</td>
+<td align="right">74.0</td>
+<td align="right">94.0</td>
+<td align="right">0.701</td>
+<td align="right">96.0</td>
+</tr>
+<tr class="odd">
+<td align="left">LASSO</td>
+<td align="left">ic</td>
+<td align="left">Yes</td>
+<td align="left">No</td>
+<td align="right">-0.220</td>
+<td align="right">0.105</td>
+<td align="right">0.154</td>
+<td align="right">-0.680</td>
+<td align="right">80.0</td>
+<td align="right">91.0</td>
+<td align="right">0.904</td>
+<td align="right">99.0</td>
+</tr>
+<tr class="even">
+<td align="left">LASSO</td>
+<td align="left">bootstrap-no replacement</td>
+<td align="left">No</td>
+<td align="left">Yes</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">84.5</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">92.0</td>
+</tr>
+<tr class="odd">
+<td align="left">LASSO</td>
+<td align="left">bootstrap-clustered ID</td>
+<td align="left">No</td>
+<td align="left">No</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">89.5</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">87.0</td>
+</tr>
+<tr class="even">
+<td align="left">LASSO</td>
+<td align="left">bootstrap-clustered ID</td>
+<td align="left">No</td>
+<td align="left">Yes</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">90.5</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">79.0</td>
+</tr>
+<tr class="odd">
+<td align="left">LASSO</td>
+<td align="left">tmle</td>
+<td align="left">No</td>
+<td align="left">No</td>
+<td align="right">-0.041</td>
+<td align="right">0.111</td>
+<td align="right">0.112</td>
+<td align="right">-0.122</td>
+<td align="right">94.0</td>
+<td align="right">94.0</td>
+<td align="right">1.219</td>
+<td align="right">89.0</td>
+</tr>
+<tr class="even">
 <td align="left">LASSO</td>
 <td align="left">tmle</td>
 <td align="left">Yes</td>
-<td align="left">Yes</td>
-<td align="left">Censored+Competing risks</td>
+<td align="left">No</td>
 <td align="right">-0.220</td>
 <td align="right">0.105</td>
 <td align="right">0.154</td>
@@ -1124,44 +1221,36 @@ procedures</p>
 <td align="right">91.0</td>
 <td align="right">1.427</td>
 <td align="right">97.5</td>
-<td align="left">outcome_blind_cens_competing_risks_sim_res_noDetQ_Qint_tmle_T4</td>
 </tr>
 </tbody>
 </table>
-</div>
-<div id="risk-difference-performance-2" class="section level3">
-<h3>Risk difference performance</h3>
-<!-- # ```{r, echo=FALSE} -->
-<!-- # res_diff <- sim_res_ob_T4$perf_tab_diff -->
-<!-- # knitr::kable(res_diff, digits =5) -->
-<!-- # ``` -->
+<ul>
+<li>True RR: 0.43</li>
+</ul>
 </div>
 </div>
-<div id="blind-outcome--5-year-followup" class="section level2">
-<h2>Blind outcome- 5 year followup</h2>
+<div id="scenario-4-simulated-outcome--5-year-followup" class="section level2">
+<h2>Scenario 4: Simulated outcome- 5 year followup</h2>
 <div id="relative-risk-performance-2" class="section level3">
 <h3>Relative risk performance</h3>
-<table>
+<table style="width:100%;">
 <colgroup>
-<col width="6%" />
-<col width="4%" />
-<col width="8%" />
-<col width="2%" />
-<col width="2%" />
-<col width="11%" />
+<col width="7%" />
+<col width="13%" />
 <col width="3%" />
-<col width="4%" />
-<col width="2%" />
-<col width="6%" />
-<col width="4%" />
+<col width="3%" />
+<col width="17%" />
 <col width="5%" />
 <col width="6%" />
-<col width="2%" />
-<col width="29%" />
+<col width="4%" />
+<col width="10%" />
+<col width="6%" />
+<col width="7%" />
+<col width="10%" />
+<col width="4%" />
 </colgroup>
 <thead>
 <tr class="header">
-<th align="left">simulated_data</th>
 <th align="left">estimator</th>
 <th align="left">variance_estimator</th>
 <th align="left">Qint</th>
@@ -1175,33 +1264,14 @@ procedures</p>
 <th align="right">o.coverage</th>
 <th align="right">mean_ci_width</th>
 <th align="right">power</th>
-<th align="left">filenames</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">Outcome blind</td>
 <td align="left">GLM</td>
 <td align="left">ic</td>
 <td align="left">No</td>
-<td align="left">Yes</td>
-<td align="left">Uncensored</td>
-<td align="right">0.271</td>
-<td align="right">0.020</td>
-<td align="right">0.093</td>
-<td align="right">1.937</td>
-<td align="right">11.0</td>
-<td align="right">46.0</td>
-<td align="right">0.191</td>
-<td align="right">100</td>
-<td align="left">outcome_blind_no_cens_sim_res_glm_noDetQ_ic_T11</td>
-</tr>
-<tr class="even">
-<td align="left">Outcome blind</td>
-<td align="left">GLM</td>
-<td align="left">ic</td>
 <td align="left">No</td>
-<td align="left">Yes</td>
 <td align="left">Censored+Competing risks</td>
 <td align="right">0.355</td>
 <td align="right">0.123</td>
@@ -1211,48 +1281,12 @@ procedures</p>
 <td align="right">81.0</td>
 <td align="right">0.185</td>
 <td align="right">90</td>
-<td align="left">outcome_blind_cens_competing_risks_sim_res_glm_noDetQ_ic_T11</td>
-</tr>
-<tr class="odd">
-<td align="left">Outcome blind</td>
-<td align="left">LASSO</td>
-<td align="left">ic</td>
-<td align="left">Yes</td>
-<td align="left">Yes</td>
-<td align="left">Uncensored</td>
-<td align="right">-0.274</td>
-<td align="right">0.017</td>
-<td align="right">0.092</td>
-<td align="right">-2.100</td>
-<td align="right">18.5</td>
-<td align="right">49.5</td>
-<td align="right">0.340</td>
-<td align="right">100</td>
-<td align="left">outcome_blind_no_cens_sim_res_noDetQ_Qint_ic_T11</td>
 </tr>
 <tr class="even">
-<td align="left">Outcome blind</td>
-<td align="left">GLM</td>
-<td align="left">tmle</td>
-<td align="left">No</td>
-<td align="left">Yes</td>
-<td align="left">Uncensored</td>
-<td align="right">0.271</td>
-<td align="right">0.020</td>
-<td align="right">0.093</td>
-<td align="right">1.937</td>
-<td align="right">28.5</td>
-<td align="right">46.0</td>
-<td align="right">0.387</td>
-<td align="right">100</td>
-<td align="left">outcome_blind_no_cens_sim_res_glm_noDetQ_tmle_T11</td>
-</tr>
-<tr class="odd">
-<td align="left">Outcome blind</td>
 <td align="left">LASSO</td>
 <td align="left">ic</td>
 <td align="left">No</td>
-<td align="left">Yes</td>
+<td align="left">No</td>
 <td align="left">Censored+Competing risks</td>
 <td align="right">0.027</td>
 <td align="right">0.096</td>
@@ -1262,14 +1296,12 @@ procedures</p>
 <td align="right">97.5</td>
 <td align="right">0.308</td>
 <td align="right">100</td>
-<td align="left">outcome_blind_cens_competing_risks_sim_res_noDetQ_ic_T11</td>
 </tr>
-<tr class="even">
-<td align="left">Outcome blind</td>
+<tr class="odd">
 <td align="left">GLM</td>
 <td align="left">tmle</td>
 <td align="left">No</td>
-<td align="left">Yes</td>
+<td align="left">No</td>
 <td align="left">Censored+Competing risks</td>
 <td align="right">0.355</td>
 <td align="right">0.123</td>
@@ -1279,31 +1311,12 @@ procedures</p>
 <td align="right">81.0</td>
 <td align="right">0.777</td>
 <td align="right">60</td>
-<td align="left">outcome_blind_cens_competing_risks_sim_res_glm_noDetQ_tmle_T11</td>
-</tr>
-<tr class="odd">
-<td align="left">Outcome blind</td>
-<td align="left">LASSO</td>
-<td align="left">ic</td>
-<td align="left">No</td>
-<td align="left">Yes</td>
-<td align="left">Uncensored</td>
-<td align="right">0.016</td>
-<td align="right">0.019</td>
-<td align="right">0.019</td>
-<td align="right">0.121</td>
-<td align="right">63.5</td>
-<td align="right">95.0</td>
-<td align="right">0.248</td>
-<td align="right">100</td>
-<td align="left">outcome_blind_no_cens_sim_res_noDetQ_ic_T11</td>
 </tr>
 <tr class="even">
-<td align="left">Null</td>
 <td align="left">LASSO</td>
 <td align="left">NA</td>
 <td align="left">No</td>
-<td align="left">No</td>
+<td align="left">Yes</td>
 <td align="left">Censored+Competing risks</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
@@ -1313,14 +1326,12 @@ procedures</p>
 <td align="right">NA</td>
 <td align="right">NA</td>
 <td align="right">58</td>
-<td align="left">NA</td>
 </tr>
 <tr class="odd">
-<td align="left">Outcome blind</td>
 <td align="left">LASSO</td>
 <td align="left">tmle</td>
 <td align="left">No</td>
-<td align="left">Yes</td>
+<td align="left">No</td>
 <td align="left">Censored+Competing risks</td>
 <td align="right">0.027</td>
 <td align="right">0.095</td>
@@ -1330,31 +1341,12 @@ procedures</p>
 <td align="right">97.5</td>
 <td align="right">1.359</td>
 <td align="right">75</td>
-<td align="left">outcome_blind_cens_competing_risks_sim_res_noDetQ_tmle_T11</td>
 </tr>
 <tr class="even">
-<td align="left">Outcome blind</td>
 <td align="left">LASSO</td>
 <td align="left">tmle</td>
+<td align="left">Yes</td>
 <td align="left">No</td>
-<td align="left">Yes</td>
-<td align="left">Uncensored</td>
-<td align="right">0.016</td>
-<td align="right">0.019</td>
-<td align="right">0.019</td>
-<td align="right">0.121</td>
-<td align="right">95.0</td>
-<td align="right">95.0</td>
-<td align="right">0.525</td>
-<td align="right">100</td>
-<td align="left">outcome_blind_no_cens_sim_res_noDetQ_tmle_T11</td>
-</tr>
-<tr class="odd">
-<td align="left">Outcome blind</td>
-<td align="left">LASSO</td>
-<td align="left">tmle</td>
-<td align="left">Yes</td>
-<td align="left">Yes</td>
 <td align="left">Censored+Competing risks</td>
 <td align="right">-0.266</td>
 <td align="right">0.088</td>
@@ -1364,36 +1356,16 @@ procedures</p>
 <td align="right">84.0</td>
 <td align="right">1.477</td>
 <td align="right">100</td>
-<td align="left">outcome_blind_cens_competing_risks_sim_res_Qint_noDetQ_tmle_T11</td>
-</tr>
-<tr class="even">
-<td align="left">Outcome blind</td>
-<td align="left">LASSO</td>
-<td align="left">tmle</td>
-<td align="left">Yes</td>
-<td align="left">Yes</td>
-<td align="left">Uncensored</td>
-<td align="right">-0.274</td>
-<td align="right">0.017</td>
-<td align="right">0.092</td>
-<td align="right">-2.100</td>
-<td align="right">100.0</td>
-<td align="right">49.5</td>
-<td align="right">0.983</td>
-<td align="right">100</td>
-<td align="left">outcome_blind_no_cens_sim_res_noDetQ_Qint_tmle_T11</td>
 </tr>
 </tbody>
 </table>
-<!-- ### Risk difference performance  -->
-<!-- ```{r, echo=FALSE} -->
-<!-- # res_diff <- perf_tab_diff_outcome_blind_T11 %>% arrange(coverage) -->
-<!-- # knitr::kable(res_diff, digits =5) -->
-<!-- ``` -->
+<ul>
+<li>True RR: 0.43</li>
+</ul>
 </div>
 </div>
-<div id="old-results" class="section level2">
-<h2>Old results</h2>
+<div id="scenario-4-old-simulated-data" class="section level2">
+<h2>Scenario 4: Old simulated data</h2>
 <div id="relative-risk-performance-3" class="section level3">
 <h3>Relative risk performance</h3>
 <table style="width:100%;">
@@ -1654,6 +1626,26 @@ procedures</p>
 </tr>
 </tbody>
 </table>
+<!-- ### Risk difference performance   -->
+<!-- ```{r, echo=FALSE}  -->
+<!--  res_diff <- sim_res_ob_T4$perf_tab_diff   -->
+<!--  knitr::kable(res_diff, digits =5)   -->
+<!-- ```   -->
+<!-- ## Blind outcome- 5 year followup  -->
+<!-- ### Relative risk performance -->
+<!-- ```{r, echo=FALSE} -->
+<!-- res <- sim_res_ob_T11$perf_tab_RR %>% arrange(coverage) -->
+<!-- knitr::kable(res, digits =3) -->
+<!-- ``` -->
+<!-- <!-- ### Risk difference performance  -->
+<p>–&gt;</p>
+<!-- <!-- ```{r, echo=FALSE} -->
+<p>–&gt;
+<!-- <!-- # res_diff <- perf_tab_diff_outcome_blind_T11 %>% arrange(coverage) -->
+–&gt; <!-- <!-- # knitr::kable(res_diff, digits =5) --> –&gt;
+<!-- <!-- ``` --> –&gt;</p>
+<!-- ## Old results -->
+<!-- ``` -->
 <!-- ### Risk difference performance  -->
 <!-- ```{r, echo=FALSE} -->
 <!-- res_diff <- perf_tab_diff_outcome_blind_T11 %>% arrange(coverage) -->
