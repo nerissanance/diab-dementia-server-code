@@ -5,21 +5,28 @@ source(here::here("0_config.R"))
 source(paste0(here::here(),"/0_ltmle_Estimate_update.R"))
 source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
 <<<<<<< HEAD
+<<<<<<< HEAD
 source(paste0(here::here(),"/simulation study/sim_simple/0_simple_sim_functions.R"))
 
 library(parallel)
 library(doParallel)
 registerDoParallel(cores=50)
 =======
+=======
+>>>>>>> b8a879fbe6a71830cba3e7f49e7c904231c09262
 
 library(parallel)
 library(doParallel)
 registerDoParallel(cores=64)
+<<<<<<< HEAD
+>>>>>>> b8a879fbe6a71830cba3e7f49e7c904231c09262
+=======
 >>>>>>> b8a879fbe6a71830cba3e7f49e7c904231c09262
 
 d_wide_list <- readRDS(file=here("data/simulated_data_list_simple.RDS"))
 
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 #run IC and TMLE
 resdf_ic_glm <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
@@ -52,6 +59,8 @@ resdf_tmle_glmnet <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', 
 save(resdf_ic_glm, resdf_tmle_glm, resdf_ic_glmnet, resdf_tmle_glmnet, file=here("sim_res/simulated_data_list_simple.Rdata"))
 
 =======
+=======
+>>>>>>> b8a879fbe6a71830cba3e7f49e7c904231c09262
 
 run_ltmle_simple <- function(d,
                              SL.library = c("SL.glm"),
@@ -97,4 +106,7 @@ resdf_tmle_glm <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .er
   run_ltmle_simple(d_wide_list[[i]],  varmethod = "tmle", SL.library = c("SL.glm"))}
 
 
+<<<<<<< HEAD
+>>>>>>> b8a879fbe6a71830cba3e7f49e7c904231c09262
+=======
 >>>>>>> b8a879fbe6a71830cba3e7f49e7c904231c09262

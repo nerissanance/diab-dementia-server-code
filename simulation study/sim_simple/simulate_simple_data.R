@@ -18,7 +18,11 @@ generate_data3 = function(n) {
 
   #L2 = ifelse(Y2==0, A1 + L1 + U.Lt2, NA) # Note this adds censoring NA's
 <<<<<<< HEAD
+<<<<<<< HEAD
   L2 = as.numeric(U.Lt1 <plogis(A1 + L1 + U.Lt2))
+=======
+  L2 =  A1 + L1 + U.Lt2
+>>>>>>> b8a879fbe6a71830cba3e7f49e7c904231c09262
 =======
   L2 =  A1 + L1 + U.Lt2
 >>>>>>> b8a879fbe6a71830cba3e7f49e7c904231c09262
@@ -36,7 +40,11 @@ n=1000
 simp_sim_data_list <- list()
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 for(i in 1:1000){
+=======
+for(i in 1:100){
+>>>>>>> b8a879fbe6a71830cba3e7f49e7c904231c09262
 =======
 for(i in 1:100){
 >>>>>>> b8a879fbe6a71830cba3e7f49e7c904231c09262
@@ -53,7 +61,10 @@ d <- simp_sim_data_list[[1]]
 head(d)
 table(d$A1)
 <<<<<<< HEAD
+<<<<<<< HEAD
 table(d$L2)
+=======
+>>>>>>> b8a879fbe6a71830cba3e7f49e7c904231c09262
 =======
 >>>>>>> b8a879fbe6a71830cba3e7f49e7c904231c09262
 table(d$Y2)
