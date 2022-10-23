@@ -21,12 +21,12 @@ d <- bind_rows(
 head(d)
 
 #load bootstrap
-boot_iter_files <- dir(path=paste0(here::here(),"/data/bootstrap/simple_sim/"), pattern = "*.RDS")
+boot_iter_files <- dir(path=paste0(here::here(),"/data/sim_simple/bootstrap/"), pattern = "*.RDS")
 boot_iter_files <- boot_iter_files[grepl("sim_res_boot_CV_simple",boot_iter_files)]
 length(boot_iter_files)
-d <- readRDS(paste0(here::here(),"/data/bootstrap/simple_sim/sim_res_boot_CV_simple831.RDS"))
+d <- readRDS(paste0(here::here(),"/data/sim_simple/bootstrap/sim_res_boot_CV_simple831.RDS"))
 head(d)
-setwd(paste0(here::here(),"/data/bootstrap/simple_sim/"))
+setwd(paste0(here::here(),"/data/sim_simple/bootstrap/"))
 boot_res <- boot_iter_files %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="boot_iter")
 
 #calc bootstrap CI's
