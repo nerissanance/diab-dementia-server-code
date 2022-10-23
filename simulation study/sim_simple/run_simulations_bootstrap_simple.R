@@ -23,9 +23,11 @@ for(i in 1:length(d_wide_list)){
   cat(i,"\n")
   d <- d_wide_list[[i]]
   d$id <- 1:nrow(d)
+  d <- d %>% select(id, L1, A1, Y2, L2, A2, Y3)
+
 
   res_df <- NULL
-  res_df <- foreach(j = 1:1000, .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res_df <- foreach(j = 1:200, .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
 
     source(here::here("0_config.R"))
     source(paste0(here::here(),"/0_ltmle_Estimate_update.R"))
@@ -45,7 +47,7 @@ for(i in 1:length(d_wide_list)){
 
   gc()
   res_df$iteration <- i
-  saveRDS(res_df, paste0(here::here(),"/data/sim_simple/bootstrap/sim_res_boot_CV_simple",i,".RDS"))
+  saveRDS(res_df, paste0(here::here(),"/data/sim_simple/bootstrap/sim_res_boot_CV_simple_200iter_",i,".RDS"))
 
 }
 
