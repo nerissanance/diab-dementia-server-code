@@ -9,6 +9,31 @@ source(paste0(here::here(),"/simulation study/0_simulation_cleaning_functions.R"
 
 
 #---------------------------------------------------------
+# Null, old sim
+#---------------------------------------------------------
+files <- dir(path=paste0(here::here(),"/sim_res/"), pattern = "*.RDS")
+files <- files[grepl("old_null_sim_res_",files)]
+#files <- files[grepl("_T4",files)]
+
+setwd(paste0(here::here(),"/sim_res/"))
+d <- readRDS("old_null_sim_res_noDetQ_Qint_ic_T2.RDS")
+
+d <- files %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="analysis")
+d <- d %>% mutate(analysis = factor(analysis))
+levels(d$analysis) = files[as.numeric(levels(d$analysis))]
+d$analysis <- gsub(".RDS","",d$analysis)
+
+# #load bootstrap
+# boot_iter_files <- dir(path=paste0(here::here(),"/data/bootstrap/"), pattern = "*.RDS")
+# boot_iter_files <- boot_iter_files[grepl("sim_res_boot_null_4_",boot_iter_files)]
+# length(boot_iter_files)
+
+old_sim_res_null <- calc_sim_performance(files, boot_iter_files=NULL, 1, 0)
+tab<-old_sim_res_null$perf_tab_RR
+tab
+
+
+#---------------------------------------------------------
 # Null, T4
 #---------------------------------------------------------
 files <- dir(path=paste0(here::here(),"/sim_res/"), pattern = "*.RDS")
@@ -42,9 +67,6 @@ d <- files %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="analysis")
 d <- d %>% mutate(analysis = factor(analysis))
 levels(d$analysis) = files[as.numeric(levels(d$analysis))]
 d$analysis <- gsub(".RDS","",d$analysis)
-
-df <- d %>% filter(analysis=="null_no_cens_sim_res_noDetQ_Qint_ic_T11")
-head(df)
 
 # #load bootstrap
 # boot_iter_files <- dir(path=paste0(here::here(),"/data/bootstrap/"), pattern = "*.RDS")

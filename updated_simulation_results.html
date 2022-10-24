@@ -371,27 +371,145 @@ results</h1>
 </div>
 
 
-<div id="scenario-1-null-association--1.5-year-followup-no-censoring-or-competing-risks" class="section level2">
-<h2>Scenario 1: Null association- 1.5 year followup, no censoring or
+<div id="scenario-1-simple-simulation" class="section level2">
+<h2>Scenario 1: Simple simulation</h2>
+<p>True RR: 0.57</p>
+<p>True RD: -0.3</p>
+<div id="relative-risk-performance" class="section level3">
+<h3>Relative risk performance</h3>
+<table>
+<colgroup>
+<col width="8%" />
+<col width="5%" />
+<col width="7%" />
+<col width="4%" />
+<col width="11%" />
+<col width="9%" />
+<col width="9%" />
+<col width="11%" />
+<col width="13%" />
+<col width="18%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">estimator</th>
+<th align="right">bias</th>
+<th align="right">variance</th>
+<th align="right">mse</th>
+<th align="right">bias_se_ratio</th>
+<th align="right">o.coverage</th>
+<th align="right">coverage_ic</th>
+<th align="right">coverage_tmle</th>
+<th align="right">coverage_cv_boot</th>
+<th align="right">coverage_subsamp_boot</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">GLM</td>
+<td align="right">-0.001</td>
+<td align="right">0.007</td>
+<td align="right">0.007</td>
+<td align="right">-0.015</td>
+<td align="right">94.7</td>
+<td align="right">95.0</td>
+<td align="right">95.0</td>
+<td align="right">93.7</td>
+<td align="right">84.6</td>
+</tr>
+<tr class="even">
+<td align="left">LASSO</td>
+<td align="right">-0.001</td>
+<td align="right">0.007</td>
+<td align="right">0.007</td>
+<td align="right">-0.014</td>
+<td align="right">94.5</td>
+<td align="right">94.9</td>
+<td align="right">94.9</td>
+<td align="right">93.7</td>
+<td align="right">84.8</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="risk-difference-performance" class="section level3">
+<h3>Risk difference performance</h3>
+<table>
+<colgroup>
+<col width="8%" />
+<col width="6%" />
+<col width="7%" />
+<col width="6%" />
+<col width="11%" />
+<col width="8%" />
+<col width="9%" />
+<col width="11%" />
+<col width="13%" />
+<col width="17%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">estimator</th>
+<th align="right">bias</th>
+<th align="right">variance</th>
+<th align="right">mse</th>
+<th align="right">bias_se_ratio</th>
+<th align="right">o.coverage</th>
+<th align="right">coverage_ic</th>
+<th align="right">coverage_tmle</th>
+<th align="right">coverage_cv_boot</th>
+<th align="right">coverage_subsamp_boot</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">GLM</td>
+<td align="right">0.00063</td>
+<td align="right">0.00159</td>
+<td align="right">0.00159</td>
+<td align="right">0.01567</td>
+<td align="right">95.5</td>
+<td align="right">95.3</td>
+<td align="right">95.3</td>
+<td align="right">94.8</td>
+<td align="right">85.4</td>
+</tr>
+<tr class="even">
+<td align="left">LASSO</td>
+<td align="right">0.00066</td>
+<td align="right">0.00159</td>
+<td align="right">0.00159</td>
+<td align="right">0.01661</td>
+<td align="right">95.5</td>
+<td align="right">95.3</td>
+<td align="right">95.3</td>
+<td align="right">94.8</td>
+<td align="right">85.5</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="scenario-2-null-association--1.5-year-followup-no-censoring-or-competing-risks" class="section level2">
+<h2>Scenario 2: Null association- 1.5 year followup, no censoring or
 competing risks</h2>
 <p>True RR: 1</p>
 <p>True RD: 0</p>
-<div id="relative-risk-performance" class="section level3">
+<div id="relative-risk-performance-1" class="section level3">
 <h3>Relative risk performance</h3>
-<table style="width:100%;">
+<table>
 <colgroup>
-<col width="8%" />
-<col width="16%" />
+<col width="9%" />
+<col width="17%" />
 <col width="4%" />
 <col width="4%" />
 <col width="6%" />
-<col width="7%" />
+<col width="8%" />
 <col width="5%" />
 <col width="12%" />
-<col width="7%" />
-<col width="9%" />
+<col width="8%" />
+<col width="10%" />
 <col width="12%" />
-<col width="5%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -406,7 +524,6 @@ competing risks</h2>
 <th align="right">coverage</th>
 <th align="right">o.coverage</th>
 <th align="right">mean_ci_width</th>
-<th align="right">power</th>
 </tr>
 </thead>
 <tbody>
@@ -422,7 +539,6 @@ competing risks</h2>
 <td align="right">80.5</td>
 <td align="right">80.5</td>
 <td align="right">0.473</td>
-<td align="right">19.5</td>
 </tr>
 <tr class="even">
 <td align="left">LASSO</td>
@@ -436,7 +552,6 @@ competing risks</h2>
 <td align="right">80.5</td>
 <td align="right">80.5</td>
 <td align="right">0.475</td>
-<td align="right">19.5</td>
 </tr>
 <tr class="odd">
 <td align="left">GLM</td>
@@ -450,7 +565,6 @@ competing risks</h2>
 <td align="right">83.5</td>
 <td align="right">81.5</td>
 <td align="right">0.481</td>
-<td align="right">16.5</td>
 </tr>
 <tr class="even">
 <td align="left">LASSO</td>
@@ -464,7 +578,6 @@ competing risks</h2>
 <td align="right">89.5</td>
 <td align="right">90.0</td>
 <td align="right">0.441</td>
-<td align="right">10.5</td>
 </tr>
 <tr class="odd">
 <td align="left">GLM</td>
@@ -478,7 +591,6 @@ competing risks</h2>
 <td align="right">91.5</td>
 <td align="right">93.0</td>
 <td align="right">0.433</td>
-<td align="right">8.5</td>
 </tr>
 <tr class="even">
 <td align="left">LASSO</td>
@@ -492,7 +604,6 @@ competing risks</h2>
 <td align="right">93.0</td>
 <td align="right">90.0</td>
 <td align="right">0.486</td>
-<td align="right">7.0</td>
 </tr>
 <tr class="odd">
 <td align="left">GLM</td>
@@ -506,27 +617,25 @@ competing risks</h2>
 <td align="right">94.5</td>
 <td align="right">93.0</td>
 <td align="right">0.469</td>
-<td align="right">5.5</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div id="risk-difference-performance" class="section level3">
+<div id="risk-difference-performance-1" class="section level3">
 <h3>Risk difference performance</h3>
 <table>
 <colgroup>
-<col width="8%" />
-<col width="16%" />
-<col width="4%" />
-<col width="4%" />
-<col width="7%" />
-<col width="7%" />
-<col width="5%" />
-<col width="11%" />
-<col width="7%" />
 <col width="9%" />
-<col width="11%" />
+<col width="17%" />
+<col width="4%" />
+<col width="4%" />
+<col width="8%" />
+<col width="8%" />
 <col width="5%" />
+<col width="12%" />
+<col width="8%" />
+<col width="9%" />
+<col width="12%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -541,7 +650,6 @@ competing risks</h2>
 <th align="right">coverage</th>
 <th align="right">o.coverage</th>
 <th align="right">mean_ci_width</th>
-<th align="right">power</th>
 </tr>
 </thead>
 <tbody>
@@ -557,7 +665,6 @@ competing risks</h2>
 <td align="right">76.0</td>
 <td align="right">80.5</td>
 <td align="right">0.00989</td>
-<td align="right">24.0</td>
 </tr>
 <tr class="even">
 <td align="left">LASSO</td>
@@ -571,7 +678,6 @@ competing risks</h2>
 <td align="right">76.0</td>
 <td align="right">80.5</td>
 <td align="right">0.00992</td>
-<td align="right">24.0</td>
 </tr>
 <tr class="odd">
 <td align="left">GLM</td>
@@ -585,7 +691,6 @@ competing risks</h2>
 <td align="right">78.5</td>
 <td align="right">83.5</td>
 <td align="right">0.01014</td>
-<td align="right">21.5</td>
 </tr>
 <tr class="even">
 <td align="left">LASSO</td>
@@ -599,7 +704,6 @@ competing risks</h2>
 <td align="right">85.0</td>
 <td align="right">91.0</td>
 <td align="right">0.00974</td>
-<td align="right">15.0</td>
 </tr>
 <tr class="odd">
 <td align="left">GLM</td>
@@ -613,7 +717,6 @@ competing risks</h2>
 <td align="right">88.0</td>
 <td align="right">94.0</td>
 <td align="right">0.00982</td>
-<td align="right">12.0</td>
 </tr>
 <tr class="even">
 <td align="left">LASSO</td>
@@ -627,7 +730,6 @@ competing risks</h2>
 <td align="right">88.5</td>
 <td align="right">91.0</td>
 <td align="right">0.01066</td>
-<td align="right">11.5</td>
 </tr>
 <tr class="odd">
 <td align="left">GLM</td>
@@ -641,7 +743,6 @@ competing risks</h2>
 <td align="right">91.5</td>
 <td align="right">94.0</td>
 <td align="right">0.01058</td>
-<td align="right">8.5</td>
 </tr>
 </tbody>
 </table>
@@ -659,25 +760,24 @@ competing risks</h2>
 </ul>
 </div>
 </div>
-<div id="scenario-2-null-association--1.5-year-followup-censoring-and-competing-risks" class="section level2">
-<h2>Scenario 2: Null association- 1.5 year followup, censoring and
+<div id="scenario-3-null-association--1.5-year-followup-censoring-and-competing-risks" class="section level2">
+<h2>Scenario 3: Null association- 1.5 year followup, censoring and
 competing risks</h2>
-<div id="relative-risk-performance-1" class="section level3">
+<div id="relative-risk-performance-2" class="section level3">
 <h3>Relative risk performance</h3>
-<table style="width:100%;">
+<table>
 <colgroup>
-<col width="8%" />
-<col width="16%" />
+<col width="9%" />
+<col width="17%" />
 <col width="4%" />
 <col width="4%" />
 <col width="6%" />
-<col width="7%" />
+<col width="8%" />
 <col width="5%" />
 <col width="12%" />
-<col width="7%" />
-<col width="9%" />
+<col width="8%" />
+<col width="10%" />
 <col width="12%" />
-<col width="5%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -692,7 +792,6 @@ competing risks</h2>
 <th align="right">coverage</th>
 <th align="right">o.coverage</th>
 <th align="right">mean_ci_width</th>
-<th align="right">power</th>
 </tr>
 </thead>
 <tbody>
@@ -708,7 +807,6 @@ competing risks</h2>
 <td align="right">69.0</td>
 <td align="right">80.0</td>
 <td align="right">0.583</td>
-<td align="right">31.0</td>
 </tr>
 <tr class="even">
 <td align="left">LASSO</td>
@@ -722,7 +820,6 @@ competing risks</h2>
 <td align="right">69.0</td>
 <td align="right">80.0</td>
 <td align="right">0.583</td>
-<td align="right">31.0</td>
 </tr>
 <tr class="odd">
 <td align="left">LASSO</td>
@@ -736,7 +833,6 @@ competing risks</h2>
 <td align="right">71.0</td>
 <td align="right">80.0</td>
 <td align="right">0.605</td>
-<td align="right">29.0</td>
 </tr>
 <tr class="even">
 <td align="left">LASSO</td>
@@ -750,7 +846,6 @@ competing risks</h2>
 <td align="right">86.0</td>
 <td align="right">93.5</td>
 <td align="right">0.572</td>
-<td align="right">14.0</td>
 </tr>
 <tr class="odd">
 <td align="left">LASSO</td>
@@ -764,7 +859,6 @@ competing risks</h2>
 <td align="right">89.5</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
-<td align="right">10.5</td>
 </tr>
 <tr class="even">
 <td align="left">LASSO</td>
@@ -778,27 +872,25 @@ competing risks</h2>
 <td align="right">93.0</td>
 <td align="right">91.5</td>
 <td align="right">0.686</td>
-<td align="right">7.0</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div id="risk-difference-performance-1" class="section level3">
+<div id="risk-difference-performance-2" class="section level3">
 <h3>Risk difference performance</h3>
 <table>
 <colgroup>
-<col width="8%" />
-<col width="16%" />
-<col width="4%" />
-<col width="4%" />
-<col width="7%" />
-<col width="7%" />
-<col width="5%" />
-<col width="11%" />
-<col width="7%" />
 <col width="9%" />
-<col width="11%" />
+<col width="17%" />
+<col width="4%" />
+<col width="4%" />
+<col width="8%" />
+<col width="8%" />
 <col width="5%" />
+<col width="12%" />
+<col width="8%" />
+<col width="9%" />
+<col width="12%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -813,7 +905,6 @@ competing risks</h2>
 <th align="right">coverage</th>
 <th align="right">o.coverage</th>
 <th align="right">mean_ci_width</th>
-<th align="right">power</th>
 </tr>
 </thead>
 <tbody>
@@ -829,7 +920,6 @@ competing risks</h2>
 <td align="right">63.5</td>
 <td align="right">79.0</td>
 <td align="right">0.00941</td>
-<td align="right">36.5</td>
 </tr>
 <tr class="even">
 <td align="left">LASSO</td>
@@ -843,7 +933,6 @@ competing risks</h2>
 <td align="right">63.5</td>
 <td align="right">79.0</td>
 <td align="right">0.00941</td>
-<td align="right">36.5</td>
 </tr>
 <tr class="odd">
 <td align="left">LASSO</td>
@@ -857,7 +946,6 @@ competing risks</h2>
 <td align="right">65.0</td>
 <td align="right">79.0</td>
 <td align="right">0.00967</td>
-<td align="right">35.0</td>
 </tr>
 <tr class="even">
 <td align="left">LASSO</td>
@@ -871,7 +959,6 @@ competing risks</h2>
 <td align="right">83.5</td>
 <td align="right">93.5</td>
 <td align="right">0.00931</td>
-<td align="right">16.5</td>
 </tr>
 <tr class="odd">
 <td align="left">LASSO</td>
@@ -885,7 +972,6 @@ competing risks</h2>
 <td align="right">86.0</td>
 <td align="right">93.5</td>
 <td align="right">0.01296</td>
-<td align="right">14.0</td>
 </tr>
 <tr class="even">
 <td align="left">LASSO</td>
@@ -899,7 +985,6 @@ competing risks</h2>
 <td align="right">89.5</td>
 <td align="right">NA</td>
 <td align="right">0.01127</td>
-<td align="right">10.5</td>
 </tr>
 </tbody>
 </table>
@@ -925,24 +1010,23 @@ Deterministic Q)</li>
 <!-- ``` -->
 </div>
 </div>
-<div id="scenario-3-simulated-outcome--1.5-year-followup" class="section level2">
-<h2>Scenario 3: Simulated outcome- 1.5 year followup</h2>
+<div id="scenario-4-simulated-outcome--1.5-year-followup" class="section level2">
+<h2>Scenario 4: Simulated outcome- 1.5 year followup</h2>
 <div id="relative-risk-performance---uncensored-data" class="section level3">
 <h3>Relative risk performance - uncensored data</h3>
-<table style="width:100%;">
+<table>
 <colgroup>
-<col width="8%" />
-<col width="16%" />
+<col width="9%" />
+<col width="17%" />
 <col width="4%" />
 <col width="4%" />
 <col width="6%" />
-<col width="7%" />
+<col width="8%" />
 <col width="5%" />
 <col width="12%" />
-<col width="7%" />
-<col width="9%" />
+<col width="8%" />
+<col width="10%" />
 <col width="12%" />
-<col width="5%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -957,7 +1041,6 @@ Deterministic Q)</li>
 <th align="right">coverage</th>
 <th align="right">o.coverage</th>
 <th align="right">mean_ci_width</th>
-<th align="right">power</th>
 </tr>
 </thead>
 <tbody>
@@ -973,7 +1056,6 @@ Deterministic Q)</li>
 <td align="right">70.0</td>
 <td align="right">99.5</td>
 <td align="right">1.842</td>
-<td align="right">65.0</td>
 </tr>
 <tr class="even">
 <td align="left">LASSO</td>
@@ -987,7 +1069,6 @@ Deterministic Q)</li>
 <td align="right">72.0</td>
 <td align="right">99.5</td>
 <td align="right">2.031</td>
-<td align="right">65.0</td>
 </tr>
 <tr class="odd">
 <td align="left">LASSO</td>
@@ -1001,7 +1082,6 @@ Deterministic Q)</li>
 <td align="right">84.0</td>
 <td align="right">93.0</td>
 <td align="right">0.596</td>
-<td align="right">99.5</td>
 </tr>
 <tr class="even">
 <td align="left">LASSO</td>
@@ -1015,7 +1095,6 @@ Deterministic Q)</li>
 <td align="right">89.5</td>
 <td align="right">93.0</td>
 <td align="right">0.686</td>
-<td align="right">99.5</td>
 </tr>
 <tr class="odd">
 <td align="left">LASSO</td>
@@ -1029,7 +1108,6 @@ Deterministic Q)</li>
 <td align="right">93.0</td>
 <td align="right">94.5</td>
 <td align="right">0.646</td>
-<td align="right">100.0</td>
 </tr>
 <tr class="even">
 <td align="left">LASSO</td>
@@ -1043,7 +1121,6 @@ Deterministic Q)</li>
 <td align="right">93.5</td>
 <td align="right">99.5</td>
 <td align="right">Inf</td>
-<td align="right">0.0</td>
 </tr>
 <tr class="odd">
 <td align="left">LASSO</td>
@@ -1057,7 +1134,6 @@ Deterministic Q)</li>
 <td align="right">96.5</td>
 <td align="right">94.5</td>
 <td align="right">0.713</td>
-<td align="right">100.0</td>
 </tr>
 <tr class="even">
 <td align="left">LASSO</td>
@@ -1071,27 +1147,25 @@ Deterministic Q)</li>
 <td align="right">97.0</td>
 <td align="right">99.5</td>
 <td align="right">Inf</td>
-<td align="right">0.0</td>
 </tr>
 </tbody>
 </table>
 </div>
 <div id="relative-risk-performance---censoring-and-competing-risks" class="section level3">
 <h3>Relative risk performance - censoring and competing risks</h3>
-<table>
+<table style="width:100%;">
 <colgroup>
 <col width="8%" />
-<col width="20%" />
+<col width="21%" />
 <col width="4%" />
 <col width="4%" />
-<col width="5%" />
+<col width="6%" />
 <col width="7%" />
-<col width="4%" />
-<col width="11%" />
+<col width="5%" />
+<col width="12%" />
 <col width="7%" />
 <col width="9%" />
-<col width="11%" />
-<col width="4%" />
+<col width="12%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -1106,7 +1180,6 @@ Deterministic Q)</li>
 <th align="right">coverage</th>
 <th align="right">o.coverage</th>
 <th align="right">mean_ci_width</th>
-<th align="right">power</th>
 </tr>
 </thead>
 <tbody>
@@ -1122,7 +1195,6 @@ Deterministic Q)</li>
 <td align="right">73.0</td>
 <td align="right">94.5</td>
 <td align="right">0.764</td>
-<td align="right">90.0</td>
 </tr>
 <tr class="even">
 <td align="left">LASSO</td>
@@ -1136,7 +1208,6 @@ Deterministic Q)</li>
 <td align="right">74.0</td>
 <td align="right">94.0</td>
 <td align="right">0.701</td>
-<td align="right">96.0</td>
 </tr>
 <tr class="odd">
 <td align="left">LASSO</td>
@@ -1150,7 +1221,6 @@ Deterministic Q)</li>
 <td align="right">80.0</td>
 <td align="right">91.0</td>
 <td align="right">0.904</td>
-<td align="right">99.0</td>
 </tr>
 <tr class="even">
 <td align="left">LASSO</td>
@@ -1164,7 +1234,6 @@ Deterministic Q)</li>
 <td align="right">84.5</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
-<td align="right">92.0</td>
 </tr>
 <tr class="odd">
 <td align="left">LASSO</td>
@@ -1178,7 +1247,6 @@ Deterministic Q)</li>
 <td align="right">89.5</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
-<td align="right">87.0</td>
 </tr>
 <tr class="even">
 <td align="left">LASSO</td>
@@ -1192,7 +1260,6 @@ Deterministic Q)</li>
 <td align="right">90.5</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
-<td align="right">79.0</td>
 </tr>
 <tr class="odd">
 <td align="left">LASSO</td>
@@ -1206,7 +1273,6 @@ Deterministic Q)</li>
 <td align="right">94.0</td>
 <td align="right">94.0</td>
 <td align="right">1.219</td>
-<td align="right">89.0</td>
 </tr>
 <tr class="even">
 <td align="left">LASSO</td>
@@ -1220,7 +1286,6 @@ Deterministic Q)</li>
 <td align="right">99.5</td>
 <td align="right">91.0</td>
 <td align="right">1.427</td>
-<td align="right">97.5</td>
 </tr>
 </tbody>
 </table>
@@ -1229,9 +1294,9 @@ Deterministic Q)</li>
 </ul>
 </div>
 </div>
-<div id="scenario-4-simulated-outcome--5-year-followup" class="section level2">
-<h2>Scenario 4: Simulated outcome- 5 year followup</h2>
-<div id="relative-risk-performance-2" class="section level3">
+<div id="scenario-5-simulated-outcome--5-year-followup" class="section level2">
+<h2>Scenario 5: Simulated outcome- 5 year followup</h2>
+<div id="relative-risk-performance-3" class="section level3">
 <h3>Relative risk performance</h3>
 <table style="width:100%;">
 <colgroup>
@@ -1364,9 +1429,9 @@ Deterministic Q)</li>
 </ul>
 </div>
 </div>
-<div id="scenario-4-old-simulated-data" class="section level2">
-<h2>Scenario 4: Old simulated data</h2>
-<div id="relative-risk-performance-3" class="section level3">
+<div id="scenario-6-old-simulated-data" class="section level2">
+<h2>Scenario 6: Old simulated data</h2>
+<div id="relative-risk-performance-4" class="section level3">
 <h3>Relative risk performance</h3>
 <table style="width:100%;">
 <colgroup>

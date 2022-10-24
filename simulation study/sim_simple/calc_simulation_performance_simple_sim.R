@@ -33,6 +33,8 @@ boot_iter_files_CV <- boot_iter_files[grepl("sim_res_boot_CV_simple_200iter_",bo
 boot_iter_files_no_ties <- boot_iter_files[grepl("sim_res_boot_without_replacement_simple_200iter_",boot_iter_files)]
 boot_iter_files_CV_glm <- boot_iter_files[grepl("sim_res_boot_glm_CV_simple_200iter_",boot_iter_files)]
 boot_iter_files_no_ties_glm <- boot_iter_files[grepl("sim_res_boot_glm_without_replacement_simple_200iter_",boot_iter_files)]
+boot_iter_files_CV_1000iter <- boot_iter_files[grepl("sim_res_boot_CV_simple_1000iter_",boot_iter_files)]
+length(boot_iter_files_CV_1000iter)
 
 setwd(paste0(here::here(),"/data/sim_simple/bootstrap/"))
 boot_res_CV <- boot_iter_files_CV %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="boot_iter")
@@ -73,6 +75,7 @@ boot_res_no_ties <- boot_res_no_ties %>%
   #        ate.boot_subsamp_CI1=ate.boot_subsamp_CI1*(sqrt((2/3)*n)/sqrt(n)),
   #        ate.boot_subsamp_CI2=ate.boot_subsamp_CI2*(sqrt((2/3)*n)/sqrt(n))
   #        )
+
 boot_res_no_ties
 
 
@@ -168,3 +171,4 @@ perf_tab_RD
 perf_tab_RD
 perf_tab_RR
 
+save(perf_tab_RR, perf_tab_RD,  file=paste0(here::here(),"/results/sim_performance_results_simple.Rdata"))
