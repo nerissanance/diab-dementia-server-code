@@ -23,17 +23,18 @@ save(cRD, cRR, file=paste0(here::here(),"/results/truth_rare.Rdata"))
 for(i in 1:n){
   cat("\ni: ",i,"\n")
 
-  flag <- TRUE
-  for(j in 1:20){
-    if(flag){
-      set.seed(i*100 + j)
-      d <- sim(u,115698)
-      d$cum_glp1 <- d$glp1_0+d$glp1_1+d$glp1_2+d$glp1_3+d$glp1_4+d$glp1_5+d$glp1_6+d$glp1_7+d$glp1_8+d$glp1_9+d$glp1_10
-      d$cum_dementia <- d$event_dementia_0+d$event_dementia_1+d$event_dementia_2+d$event_dementia_3+d$event_dementia_4+d$event_dementia_5+d$event_dementia_6+d$event_dementia_7+d$event_dementia_8+d$event_dementia_9+d$event_dementia_10
-      cat(min(table(d$cum_glp1==11, d$cum_dementia>0)),", ")
-      flag <- ifelse(min(table(d$cum_glp1==11, d$cum_dementia>0))<6, TRUE, FALSE)
-    }
-  }
+  d <- sim(u,115698)
+  # flag <- TRUE
+  # for(j in 1:20){
+  #   if(flag){
+  #     set.seed(i*100 + j)
+  #     d <- sim(u,115698)
+  #     d$cum_glp1 <- d$glp1_0+d$glp1_1+d$glp1_2+d$glp1_3+d$glp1_4+d$glp1_5+d$glp1_6+d$glp1_7+d$glp1_8+d$glp1_9+d$glp1_10
+  #     d$cum_dementia <- d$event_dementia_0+d$event_dementia_1+d$event_dementia_2+d$event_dementia_3+d$event_dementia_4+d$event_dementia_5+d$event_dementia_6+d$event_dementia_7+d$event_dementia_8+d$event_dementia_9+d$event_dementia_10
+  #     cat(min(table(d$cum_glp1==11, d$cum_dementia>0)),", ")
+  #     flag <- ifelse(min(table(d$cum_glp1==11, d$cum_dementia>0))<6, TRUE, FALSE)
+  #   }
+  # }
 
   #note: once events jump to 1, need to remain 1 for remainder of follow up
   for(k in 1:(N_time+1)){
