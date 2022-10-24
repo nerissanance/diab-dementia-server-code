@@ -73,3 +73,5 @@ for(i in 1:50){
 
 
 head(resdf_boot)
+
+saveRDS(resdf_boot, paste0(here::here(),"/sim_res/bootstrap_checking.RDS"))
