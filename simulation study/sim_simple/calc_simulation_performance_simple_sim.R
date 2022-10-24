@@ -33,7 +33,6 @@ boot_iter_files_CV <- boot_iter_files[grepl("sim_res_boot_CV_simple_200iter_",bo
 boot_iter_files_no_ties <- boot_iter_files[grepl("sim_res_boot_without_replacement_simple_200iter_",boot_iter_files)]
 boot_iter_files_CV_glm <- boot_iter_files[grepl("sim_res_boot_glm_CV_simple_200iter_",boot_iter_files)]
 boot_iter_files_no_ties_glm <- boot_iter_files[grepl("sim_res_boot_glm_without_replacement_simple_200iter_",boot_iter_files)]
-length(boot_iter_files_CV)
 
 setwd(paste0(here::here(),"/data/sim_simple/bootstrap/"))
 boot_res_CV <- boot_iter_files_CV %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="boot_iter")
@@ -49,7 +48,20 @@ boot_CIs_CV <- boot_res_CV %>% group_by(iteration) %>% summarise(
     ate.boot_cv_CI2=quantile(ate,.975))
 boot_CIs_CV
 
-boot_res_no_ties <- boot_res_no_ties %>% group_by(iteration) %>% summarise(
+#calc bootstrap CI's
+boot_CIs_CV <- boot_res_CV %>%
+  group_by(iteration) %>%
+  summarise(
+    boot_cv_CI1=quantile(estimate,.025),
+    boot_cv_CI2=quantile(estimate,.975),
+    ate.boot_cv_CI1=quantile(ate,.025),
+    ate.boot_cv_CI2=quantile(ate,.975)
+)
+boot_CIs_CV
+
+boot_res_no_ties <- boot_res_no_ties %>%
+  group_by(iteration) %>%
+  summarise(
     boot_subsamp_CI1=quantile(estimate,.025),
     boot_subsamp_CI2=quantile(estimate,.975),
     ate.boot_subsamp_CI1=quantile(ate,.025),
@@ -69,7 +81,7 @@ boot_CIs_CV_glm <- boot_res_CV_glm %>% group_by(iteration) %>% summarise(
   boot_cv_CI2=quantile(estimate,.975),
   ate.boot_cv_CI1=quantile(ate,.025),
   ate.boot_cv_CI2=quantile(ate,.975))
-boot_CIs_CV
+
 
 boot_res_no_ties_glm <- boot_res_no_ties_glm %>% group_by(iteration) %>% summarise(
   boot_subsamp_CI1=quantile(estimate,.025),
@@ -78,6 +90,7 @@ boot_res_no_ties_glm <- boot_res_no_ties_glm %>% group_by(iteration) %>% summari
   ate.boot_subsamp_CI2=quantile(ate,.975),
   n=mean(N))
 
+
 #NOTE: need to correct with Mark's methods
 mean(boot_CIs_CV$ate.boot_cv_CI2-boot_CIs_CV$ate.boot_cv_CI1)
 mean(boot_res_no_ties$ate.boot_subsamp_CI2-boot_res_no_ties$ate.boot_subsamp_CI1)
@@ -85,6 +98,7 @@ mean(boot_res_no_ties$ate.boot_subsamp_CI2-boot_res_no_ties$ate.boot_subsamp_CI1
 
 resdf_glm <- left_join(resdf_glm, boot_CIs_CV_glm, by="iteration")
 resdf_glm <- left_join(resdf_glm, boot_res_no_ties_glm, by="iteration")
+
 resdf_glmnet <- left_join(resdf_glmnet, boot_CIs_CV, by="iteration")
 resdf_glmnet <- left_join(resdf_glmnet, boot_res_no_ties, by="iteration")
 
@@ -127,8 +141,7 @@ perf_tab_RR <- d %>% group_by(estimator) %>%
     # power=mean((CI.2.5. > 1 & CI.97.5.>1)|(CI.2.5. < 1 & CI.97.5.<1))*100
   ) %>%
   distinct()
-
-
+perf_tab_RR
 
 colnames(d)
 perf_tab_RD <- d %>% group_by(estimator) %>%
@@ -149,8 +162,9 @@ perf_tab_RD <- d %>% group_by(estimator) %>%
     # power=mean((CI.2.5. > 1 & CI.97.5.>1)|(CI.2.5. < 1 & CI.97.5.<1))*100
   ) %>%
   distinct()
-
+perf_tab_RD
 
 
 perf_tab_RD
 perf_tab_RR
+
