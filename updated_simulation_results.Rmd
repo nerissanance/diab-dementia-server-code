@@ -21,14 +21,39 @@ try(source(paste0(here::here(),"/simulation study/0_simulation_functions.R")))
 
 load(paste0(here::here(),"/results/sim_performance_results.Rdata"))
 load(paste0(here::here(),"/results/simulation_results_old.Rdata"))
+load(paste0(here::here(),"/results/sim_performance_results_simple.Rdata"))
 
-save(sim_res_null_T4, sim_res_null_T11, sim_res_ob_T4, sim_res_ob_T11, file=paste0(here::here(),"/results/sim_performance_results.Rdata"))
+
+#save(sim_res_null_T4, sim_res_null_T11, sim_res_ob_T4, sim_res_ob_T11, file=paste0(here::here(),"/results/sim_performance_results.Rdata"))
 
 
 library(knitr)
 ```
 
-## Scenario 1: Null association- 1.5 year followup, no censoring or competing risks
+
+## Scenario 1: Simple simulation
+
+True RR: 0.57
+
+True RD: -0.3
+
+### Relative risk performance
+
+```{r, echo=FALSE}
+#res <- sim_res_null_T4$perf_tab_RR %>% arrange(coverage) %>% filter(grepl("no_cens",filenames)) %>% subset(., select=-c(simulated_data, filenames, censoring_in_data, power))
+knitr::kable(perf_tab_RR, digits =3)
+
+```
+
+### Risk difference performance
+
+```{r, echo=FALSE}
+#res_diff <- sim_res_null_T4$perf_tab_diff %>% arrange(coverage)  %>% arrange(coverage) %>% filter(grepl("no_cens",filenames)) %>% subset(., select=-c(simulated_data, filenames, censoring_in_data, power))
+knitr::kable(perf_tab_RD, digits =5)
+```
+
+
+## Scenario 2: Null association- 1.5 year followup, no censoring or competing risks
 
 True RR: 1
 
@@ -37,7 +62,7 @@ True RD: 0
 ### Relative risk performance
 
 ```{r, echo=FALSE}
-res <- sim_res_null_T4$perf_tab_RR %>% arrange(coverage) %>% filter(grepl("no_cens",filenames)) %>% subset(., select=-c(simulated_data, filenames, censoring_in_data))
+res <- sim_res_null_T4$perf_tab_RR %>% arrange(coverage) %>% filter(grepl("no_cens",filenames)) %>% subset(., select=-c(simulated_data, filenames, censoring_in_data, power))
 knitr::kable(res, digits =3)
 
 ```
@@ -45,7 +70,7 @@ knitr::kable(res, digits =3)
 ### Risk difference performance
 
 ```{r, echo=FALSE}
-res_diff <- sim_res_null_T4$perf_tab_diff %>% arrange(coverage)  %>% arrange(coverage) %>% filter(grepl("no_cens",filenames)) %>% subset(., select=-c(simulated_data, filenames, censoring_in_data))
+res_diff <- sim_res_null_T4$perf_tab_diff %>% arrange(coverage)  %>% arrange(coverage) %>% filter(grepl("no_cens",filenames)) %>% subset(., select=-c(simulated_data, filenames, censoring_in_data, power))
 knitr::kable(res_diff, digits =5)
 ```
 
@@ -59,14 +84,14 @@ knitr::kable(res_diff, digits =5)
   *  Intercept-only Q prediction doesn't improve prediction
   *  Better performance estimating RR compared to RD 
 
-## Scenario 2: Null association- 1.5 year followup, censoring and competing risks
+## Scenario 3: Null association- 1.5 year followup, censoring and competing risks
 
 
 
 ### Relative risk performance
 
 ```{r, echo=FALSE}
-res <- sim_res_null_T4$perf_tab_RR %>% arrange(coverage) %>% filter(!grepl("no_cens",filenames)) %>% subset(., select=-c(simulated_data, filenames, censoring_in_data))
+res <- sim_res_null_T4$perf_tab_RR %>% arrange(coverage) %>% filter(!grepl("no_cens",filenames)) %>% subset(., select=-c(simulated_data, filenames, censoring_in_data, power))
 knitr::kable(res, digits =3)
 
 ```
@@ -74,7 +99,7 @@ knitr::kable(res, digits =3)
 ### Risk difference performance
 
 ```{r, echo=FALSE}
-res_diff <- sim_res_null_T4$perf_tab_diff %>% arrange(coverage)  %>% arrange(coverage) %>% filter(!grepl("no_cens",filenames)) %>% subset(., select=-c(simulated_data, filenames, censoring_in_data))
+res_diff <- sim_res_null_T4$perf_tab_diff %>% arrange(coverage)  %>% arrange(coverage) %>% filter(!grepl("no_cens",filenames)) %>% subset(., select=-c(simulated_data, filenames, censoring_in_data, power))
 knitr::kable(res_diff, digits =5)
 ```
 
@@ -99,13 +124,13 @@ knitr::kable(res_diff, digits =5)
 
 <!-- ``` -->
 
-## Scenario 3: Simulated outcome- 1.5 year followup
+## Scenario 4: Simulated outcome- 1.5 year followup
 
 ### Relative risk performance - uncensored data
 
 ```{r, echo=FALSE} 
 
- res <- sim_res_ob_T4$perf_tab_RR %>% arrange(coverage) %>% filter(grepl("no_cens",filenames)) %>% subset(., select=-c(simulated_data, filenames, censoring_in_data))
+ res <- sim_res_ob_T4$perf_tab_RR %>% arrange(coverage) %>% filter(grepl("no_cens",filenames)) %>% subset(., select=-c(simulated_data, filenames, censoring_in_data, power))
 
  knitr::kable(res, digits =3) 
 
@@ -116,7 +141,7 @@ knitr::kable(res_diff, digits =5)
 
 ```{r, echo=FALSE} 
 
- res <- sim_res_ob_T4$perf_tab_RR %>% arrange(coverage) %>% filter(!grepl("no_cens",filenames)) %>% subset(., select=-c(simulated_data, filenames, censoring_in_data))
+ res <- sim_res_ob_T4$perf_tab_RR %>% arrange(coverage) %>% filter(!grepl("no_cens",filenames)) %>% subset(., select=-c(simulated_data, filenames, censoring_in_data, power))
 
  knitr::kable(res, digits =3) 
 
@@ -125,7 +150,7 @@ knitr::kable(res_diff, digits =5)
   *  True RR: 0.43
   
   
-## Scenario 4: Simulated outcome- 5 year followup
+## Scenario 5: Simulated outcome- 5 year followup
 
 ### Relative risk performance 
 
@@ -140,7 +165,7 @@ knitr::kable(res_diff, digits =5)
 
   *  True RR: 0.43
 
-## Scenario 4: Old simulated data 
+## Scenario 6: Old simulated data 
 
 ### Relative risk performance
 
