@@ -12,7 +12,7 @@ registerDoParallel(cores=50)
 
 rm(list=ls())
 gc()
-d_wide_list <- readRDS(file=here("data/simulated_data_list.RDS"))
+d_wide_list <- readRDS(file=here("data/simulated_data_list_old_null.RDS"))
 d_wide_list <- d_wide_list[1:200]
 gc()
 
@@ -20,7 +20,6 @@ i<-j<-1
 resdf_boot = NULL
 #for(i in 1:length(d_wide_list)){
 #temp rerun
-int.start.time <- Sys.time()
 for(i in 1:200){
   #for(i in 1:length(d_wide_list)){
 
@@ -39,11 +38,6 @@ for(i in 1:200){
     set.seed(j)
     dboot <- d[sample(.N, nrow(d),replace=TRUE)]
 
-    # #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-    # #run this code to drop ties, or use the ID argument to CV by ID
-    # dboot <- dboot %>% distinct()
-    # #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
     res <- NULL
     try(res <- run_ltmle_glmnet(dboot, N_time = 11, resdf=NULL, Qint=FALSE, det.Q=TRUE, varmethod = "ic", id=dboot$id), silent=TRUE)
     return(res)
@@ -53,14 +47,11 @@ for(i in 1:200){
   gc()
   res_df$iteration <- i
   resdf_boot <- bind_rows(resdf_boot, res_df)
-  saveRDS(res_df, paste0(here::here(),"/data/bootstrap/sim_res_boot_old_sim_cens_competing_risks_T11_",i,".RDS"))
+  saveRDS(res_df, paste0(here::here(),"/data/bootstrap/sim_res_boot_old_sim_null_T11_",i,".RDS"))
 
 }
-int.end.time <- Sys.time()
-time1 <- difftime(int.end.time, int.start.time, units="mins")
-time1
 
 
-saveRDS(resdf_boot, paste0(here::here(),"/data/sim_res_boot_old_sim_cens_competing_risks_T11.RDS"))
+saveRDS(resdf_boot, paste0(here::here(),"/data/sim_res_boot_old_sim_cens_null_T11.RDS"))
 
 
