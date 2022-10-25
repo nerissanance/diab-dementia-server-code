@@ -135,11 +135,11 @@ perf_tab_RR <- d %>% group_by(estimator) %>%
     variance=variance[1],
     mse = bias^2 + variance,
     bias_se_ratio= bias/sqrt(variance),
-    o.coverage=mean(o.ci.lb<=log(true.RR) & log(true.RR)<= o.ci.ub)*100,
-    coverage_ic=mean(ic_ci_lb<=true.RR & true.RR<=ic_ci_ub)*100,
-    coverage_tmle=mean(tmle_ci_lb<=true.RR & true.RR<=tmle_ci_ub)*100,
-    coverage_cv_boot=mean(boot_cv_CI1<=true.RR & true.RR<=boot_cv_CI2)*100,
-    coverage_subsamp_boot=mean(boot_subsamp_CI1 <=true.RR & true.RR<=boot_subsamp_CI2)*100#,
+    o.coverage=mean(o.ci.lb<log(true.RR) & log(true.RR)< o.ci.ub)*100,
+    coverage_ic=mean(ic_ci_lb<true.RR & true.RR<ic_ci_ub)*100,
+    coverage_tmle=mean(tmle_ci_lb<true.RR & true.RR<tmle_ci_ub)*100,
+    coverage_cv_boot=mean(boot_cv_CI1<true.RR & true.RR<boot_cv_CI2)*100,
+    coverage_subsamp_boot=mean(boot_subsamp_CI1 <true.RR & true.RR<boot_subsamp_CI2)*100#,
     # mean_ci_width=mean(log(CI.97.5.)-log(CI.2.5.)),
     # power=mean((CI.2.5. > 1 & CI.97.5.>1)|(CI.2.5. < 1 & CI.97.5.<1))*100
   ) %>%
@@ -156,11 +156,11 @@ perf_tab_RD <- d %>% group_by(estimator) %>%
     variance=variance[1],
     mse = bias^2 + variance,
     bias_se_ratio= bias/sqrt(variance),
-    o.coverage=mean(o.ci.lb<=(true.RD) & (true.RD)<= o.ci.ub)*100,
-    coverage_ic=mean(ate_ic_ci_lb<=true.RD & true.RD<=ate_ic_ci_ub)*100,
-    coverage_tmle=mean(ate_tmle_ci_lb<=true.RD & true.RD<=ate_tmle_ci_ub)*100,
-    coverage_cv_boot=mean(ate.boot_cv_CI1<=true.RD & true.RD<=ate.boot_cv_CI2)*100,
-    coverage_subsamp_boot=mean(ate.boot_subsamp_CI1 <=true.RD & true.RD<=ate.boot_subsamp_CI2)*100#,
+    o.coverage=mean(o.ci.lb<(true.RD) & (true.RD)< o.ci.ub)*100,
+    coverage_ic=mean(ate_ic_ci_lb<true.RD & true.RD<ate_ic_ci_ub)*100,
+    coverage_tmle=mean(ate_tmle_ci_lb<true.RD & true.RD<ate_tmle_ci_ub)*100,
+    coverage_cv_boot=mean(ate.boot_cv_CI1<true.RD & true.RD<ate.boot_cv_CI2)*100,
+    coverage_subsamp_boot=mean(ate.boot_subsamp_CI1 <true.RD & true.RD<ate.boot_subsamp_CI2)*100#,
     # mean_ci_width=mean((CI.97.5.)-(CI.2.5.)),
     # power=mean((CI.2.5. > 1 & CI.97.5.>1)|(CI.2.5. < 1 & CI.97.5.<1))*100
   ) %>%
@@ -172,3 +172,6 @@ perf_tab_RD
 perf_tab_RR
 
 save(perf_tab_RR, perf_tab_RD,  file=paste0(here::here(),"/results/sim_performance_results_simple.Rdata"))
+
+knitr::kable(perf_tab_RD, digits = 4)
+knitr::kable(perf_tab_RR, digits = 3)
