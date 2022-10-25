@@ -13,7 +13,7 @@ source(paste0(here::here(),"/simulation study/0_simulation_cleaning_functions.R"
 #---------------------------------------------------------
 files <- dir(path=paste0(here::here(),"/sim_res/"), pattern = "*.RDS")
 files <- files[grepl("old_null_sim_res_",files)]
-#files <- files[grepl("_T4",files)]
+files <- files[grepl("_T11",files)]
 
 setwd(paste0(here::here(),"/sim_res/"))
 d <- readRDS("old_null_sim_res_noDetQ_Qint_ic_T2.RDS")
@@ -30,7 +30,9 @@ d$analysis <- gsub(".RDS","",d$analysis)
 
 old_sim_res_null <- calc_sim_performance(files, boot_iter_files=NULL, 1, 0)
 tab<-old_sim_res_null$perf_tab_RR
-tab
+tab<-tab %>% select(variance_estimator, Qint,  DetQ, o.coverage, bias, variance,mse, bias_se_ratio, coverage, mean_ci_width)
+
+knitr::kable(tab, digits = 3)
 
 
 #---------------------------------------------------------

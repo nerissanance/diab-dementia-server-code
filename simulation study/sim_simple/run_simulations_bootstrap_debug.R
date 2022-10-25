@@ -75,3 +75,19 @@ for(i in 1:50){
 head(resdf_boot)
 
 saveRDS(resdf_boot, paste0(here::here(),"/sim_res/bootstrap_checking.RDS"))
+
+resdf_boot <- readRDS(paste0(here::here(),"/sim_res/bootstrap_checking.RDS"))
+head(resdf_boot)
+
+d <- resdf_boot %>% select(estimate, boot_analysis, iteration) %>% mutate()
+head(d)
+
+summary(d$estimate[d$boot_analysis=="main"])
+summary(d$estimate[d$boot_analysis=="CV"])
+summary(d$estimate[d$boot_analysis=="sub"])
+
+d %>% group_by(boot_analysis, iteration) %>%
+  summarise(
+    boot_cv_CI1=quantile(estimate,.025),
+    boot_cv_CI2=quantile(estimate,.975)
+  )
