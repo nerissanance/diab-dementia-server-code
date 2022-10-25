@@ -27,20 +27,20 @@ for(i in 1:50){
 
 
   res_df <- NULL
-  res_df <- foreach(j = 1:100, .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res_df <- foreach(j = 1:200, .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
 
     source(here::here("0_config.R"))
     source(paste0(here::here(),"/0_ltmle_Estimate_update.R"))
     source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
     source(paste0(here::here(),"/simulation study/sim_simple/0_simple_sim_functions.R"))
 
-    set.seed(j)
     d <- data.table(d)
     res0 <- NULL
     try(res0 <- run_ltmle_simple(d %>% subset(., select=-c(id)),  varmethod = "ic", SL.library = c("glm")), silent=TRUE)
     if(!is.null(res0)){
       res0$boot_analysis="main"
     }
+    set.seed(j)
     dboot <- d[sample(.N, nrow(d),replace=TRUE)]
 
     res1 <- res2 <- NULL
