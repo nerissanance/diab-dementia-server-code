@@ -12,15 +12,14 @@ registerDoParallel(cores=50)
 
 rm(list=ls())
 gc()
-d_wide_list <- readRDS(file=here("data/simulated_data_list_old_null.RDS"))
+d_wide_list <- readRDS(file=here("data/simulated_data_list.RDS"))
 d_wide_list <- d_wide_list[1:200]
 gc()
 
 i<-j<-1
 resdf_boot = NULL
-#for(i in 1:length(d_wide_list)){
-#temp rerun
-for(i in 8:200){
+
+for(i in 1:200){
   #for(i in 1:length(d_wide_list)){
 
   cat(i,"\n")
@@ -29,13 +28,13 @@ for(i in 8:200){
 
 
   res_df <- NULL
-  res_df <- foreach(j = 134:200, .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res_df <- foreach(j = 1:500, .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
 
     source(here::here("0_config.R"))
     source(paste0(here::here(),"/0_ltmle_Estimate_update.R"))
     source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
 
-    set.seed(j)
+    set.seed(j*100)
     dboot <- d[sample(.N, nrow(d),replace=TRUE)]
 
     res <- NULL
@@ -47,11 +46,11 @@ for(i in 8:200){
   gc()
   res_df$iteration <- i
   resdf_boot <- bind_rows(resdf_boot, res_df)
-  saveRDS(res_df, paste0(here::here(),"/data/bootstrap/sim_res_boot_old_sim_null_T11_",i,".RDS"))
+  saveRDS(res_df, paste0(here::here(),"/data/bootstrap/sim_res_boot_old_sim_cens_competing_risks_500_iter_T11_",i,".RDS"))
 
 }
 
 
-saveRDS(resdf_boot, paste0(here::here(),"/data/sim_res_boot_old_sim_cens_null_T11.RDS"))
+saveRDS(resdf_boot, paste0(here::here(),"/data/sim_res_boot_old_sim_cens_competing_risks_500_iter_T11.RDS"))
 
 
