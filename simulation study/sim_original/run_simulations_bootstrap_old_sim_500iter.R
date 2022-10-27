@@ -19,7 +19,7 @@ gc()
 i<-j<-1
 resdf_boot = NULL
 
-for(i in 1:200){
+for(i in 11:200){
   #for(i in 1:length(d_wide_list)){
 
   cat(i,"\n")
