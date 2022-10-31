@@ -14,6 +14,20 @@ source(paste0(here::here(),"/simulation study/0_simulation_cleaning_functions.R"
 
 load(paste0(here::here(),"/sim_res/simulation_results_simple.Rdata"))
 
+#get iptw
+colnames(resdf_ic_glm)
+resdf_ic_glm<- resdf_ic_glm %>% select(starts_with("iptw."))
+colnames(resdf_ic_glm) <- gsub("ic_iptw_","iptw.",colnames(resdf_ic_glm))
+%>% rename(ic_ci_lb=CI.2.5., ic_ci_ub=CI.97.5., ate_ic_ci_lb=ate.ci.lb, ate_ic_ci_ub=ate.ci.ub)
+resdf_tmle_glm<- resdf_tmle_glm %>% select(CI.2.5., CI.97.5., ate.ci.lb, ate.ci.ub) %>% rename(tmle_ci_lb=CI.2.5., tmle_ci_ub=CI.97.5., ate_tmle_ci_lb=ate.ci.lb, ate_tmle_ci_ub=ate.ci.ub)
+resdf_glm <- cbind(resdf_ic_glm, resdf_tmle_glm) %>% mutate(estimator="GLM", iteration=1:n())
+
+resdf_ic_glmnet<- resdf_ic_glmnet %>% select(estimate, std.dev, CI.2.5., CI.97.5., ate, ate.sd, ate.ci.lb, ate.ci.ub) %>% rename(ic_ci_lb=CI.2.5., ic_ci_ub=CI.97.5., ate_ic_ci_lb=ate.ci.lb, ate_ic_ci_ub=ate.ci.ub)
+resdf_tmle_glmnet<- resdf_tmle_glmnet %>% select(CI.2.5., CI.97.5., ate.ci.lb, ate.ci.ub) %>% rename(tmle_ci_lb=CI.2.5., tmle_ci_ub=CI.97.5., ate_tmle_ci_lb=ate.ci.lb, ate_tmle_ci_ub=ate.ci.ub)
+resdf_glmnet <- cbind(resdf_ic_glmnet, resdf_tmle_glmnet) %>% mutate(estimator="LASSO", iteration=1:n())
+
+
+
 #merge IC and TMLE
 colnames(resdf_ic_glm)
 resdf_ic_glm<- resdf_ic_glm %>% select(estimate, std.dev, CI.2.5., CI.97.5., ate, ate.sd, ate.ci.lb, ate.ci.ub) %>% rename(ic_ci_lb=CI.2.5., ic_ci_ub=CI.97.5., ate_ic_ci_lb=ate.ci.lb, ate_ic_ci_ub=ate.ci.ub)

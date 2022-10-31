@@ -9,10 +9,9 @@ logit2prob <- function(logit){
   return(prob)
 }
 
-calc_sim_truth <- function(coefficient_tab){
+calc_sim_truth <- function(coefficient_tab, nsamp=1000000){
   cc <- coefficient_tab
 
-  nsamp<-1000000
   seed <- 3457347
 
   set.seed(seed)
