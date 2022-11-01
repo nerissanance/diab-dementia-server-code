@@ -10,73 +10,10 @@ source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
 
 gc()
 d_wide_list <- readRDS(file=here("data/simulated_data_list.RDS"))
-d_wide_list <- d_wide_list[1:100]
+d_wide_list <- d_wide_list[1:200]
 gc()
 
 #Add:
-
-#lasso prescreen
-resdf_Qint_noDetQ_lasso_prescreen <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
-  res <- NULLgit
-  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, varmethod = "tmle", override_function=SuperLearner_override_lasso_prescreen))
-
-  return(res)
-}
-saveRDS(resdf_Qint_noDetQ_lasso_prescreen, paste0(here::here(),"/data/sim_res_Qint_noDetQ_lasso_prescreen.RDS"))
-
-
-#all interactions with A - check on simulation? no interactions in the data
-#try(res <- run_ltmle_glmnet_interaction(d_wide_list[[1]], resdf=NULL, Qint=TRUE, override_function=SuperLearner_override_1se))
-
-#Make sglt2+glp1
-#Make all non-deterministic with tmle variance option
-#Make more common and rerun
-
-
-#unadjusted
-
-
-resdf_Qint_1se_int <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
-  res <- NULL
-  try(res <- run_ltmle_glmnet_interaction(d_wide_list[[i]], resdf=NULL, Qint=TRUE, override_function=SuperLearner_override_1se))
-  return(res)
-}
-saveRDS(resdf_Qint_1se_int, paste0(here::here(),"/data/sim_res_Qint_1se_int.RDS"))
-
-
-resdf_1se_int <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
-  res <- NULL
-  try(res <- run_ltmle_glmnet_interaction(d_wide_list[[i]], resdf=NULL, Qint=FALSE, override_function=SuperLearner_override_1se))
-  return(res)
-}
-saveRDS(resdf_1se_int, paste0(here::here(),"/data/sim_res_1se_int.RDS"))
-
-
-
-
-int.start.time <- Sys.time()
-resdf_glm <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows') %dopar% {
-  res <- run_ltmle(d_wide_list[[i]], varmethod = "ic", resdf=NULL, SL.library="glm")
-}
-int.end.time <- Sys.time()
-difftime(int.end.time, int.start.time, units="mins")
-resdf_glm
-
-gc()
-saveRDS(resdf_glm, paste0(here::here(),"/data/sim_res_glm_ic.RDS"))
-
-
-int.start.time <- Sys.time()
-resdf_gcomp <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
-  res <- NULL
-  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE, gcomp=TRUE))
-  return(res)
-}
-int.end.time <- Sys.time()
-difftime(int.end.time, int.start.time, units="mins")
-
-saveRDS(resdf_gcomp, paste0(here::here(),"/data/sim_res_gcomp.RDS"))
-
 
 int.start.time <- Sys.time()
 resdf_noDetQ_ic <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
@@ -100,6 +37,66 @@ int.end.time <- Sys.time()
 difftime(int.end.time, int.start.time, units="mins")
 
 saveRDS(resdf_noDetQ_tmle, paste0(here::here(),"/data/sim_res_noDetQ_tmle.RDS"))
+
+#lasso prescreen
+resdf_Qint_noDetQ_lasso_prescreen <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, varmethod = "tmle", override_function=SuperLearner_override_lasso_prescreen))
+
+  return(res)
+}
+
+# resdf_noDetQ_Qint_tmle <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+#   res <- NULL
+#   try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, varmethod = "tmle",N_time=2))
+#   return(res)
+# }
+saveRDS(resdf_Qint_noDetQ_lasso_prescreen, paste0(here::here(),"/data/sim_res_Qint_noDetQ_lasso_prescreen.RDS"))
+
+
+#all interactions with A - check on simulation? no interactions in the data
+#try(res <- run_ltmle_glmnet_interaction(d_wide_list[[1]], resdf=NULL, Qint=TRUE, override_function=SuperLearner_override_1se))
+
+#Make sglt2+glp1
+#Make all non-deterministic with tmle variance option
+#Make more common and rerun
+
+
+#unadjusted
+
+
+# resdf_Qint_1se_int <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+#   res <- NULL
+#   try(res <- run_ltmle_glmnet_interaction(d_wide_list[[i]], resdf=NULL, Qint=TRUE, override_function=SuperLearner_override_1se))
+#   return(res)
+# }
+# saveRDS(resdf_Qint_1se_int, paste0(here::here(),"/data/sim_res_Qint_1se_int.RDS"))
+
+
+# resdf_1se_int <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+#   res <- NULL
+#   try(res <- run_ltmle_glmnet_interaction(d_wide_list[[i]], resdf=NULL, Qint=FALSE, override_function=SuperLearner_override_1se))
+#   return(res)
+# }
+# saveRDS(resdf_1se_int, paste0(here::here(),"/data/sim_res_1se_int.RDS"))
+
+
+
+
+int.start.time <- Sys.time()
+resdf_glm <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows') %dopar% {
+  res <- run_ltmle(d_wide_list[[i]], varmethod = "ic", resdf=NULL, SL.library="glm")
+}
+int.end.time <- Sys.time()
+difftime(int.end.time, int.start.time, units="mins")
+resdf_glm
+
+gc()
+saveRDS(resdf_glm, paste0(here::here(),"/data/sim_res_glm_ic.RDS"))
+
+
+
+
 
 
 int.start.time <- Sys.time()
@@ -293,3 +290,15 @@ resdf_RF_gcomp
 gc()
 saveRDS(resdf_RF_gcomp, paste0(here::here(),"/data/sim_res_rf_gcomp.RDS"))
 
+
+
+int.start.time <- Sys.time()
+resdf_gcomp <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE, gcomp=TRUE))
+  return(res)
+}
+int.end.time <- Sys.time()
+difftime(int.end.time, int.start.time, units="mins")
+
+saveRDS(resdf_gcomp, paste0(here::here(),"/data/sim_res_gcomp.RDS"))
