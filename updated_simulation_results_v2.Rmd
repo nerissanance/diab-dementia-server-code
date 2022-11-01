@@ -1,0 +1,96 @@
+---
+title: "Diabetes-dementia updated simulation results"
+author: "Andrew Mertens"
+date: "2022-10-19"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+source(here::here("0_config.R"))
+source(paste0(here::here(),"/0_ltmle_Estimate_update.R"))
+try(source(paste0(here::here(),"/simulation study/0_simulation_functions.R")))
+
+# load(paste0(here::here(),"/simulation study/sim_performance_results/T4_null_sim_res.Rdata"))
+# load(paste0(here::here(),"/simulation study/sim_performance_results/T4_outcome_blind_sim_res.Rdata"))
+# load(paste0(here::here(),"/simulation study/sim_performance_results/T10_sim_res.Rdata"))
+
+load(paste0(here::here(),"/results/sim_performance_results.Rdata"))
+load(paste0(here::here(),"/results/simulation_results_old.Rdata"))
+load(paste0(here::here(),"/results/sim_performance_results_simple.Rdata"))
+
+#save(sim_res_null_T4, sim_res_null_T11, sim_res_ob_T4, sim_res_ob_T11, file=paste0(here::here(),"/results/sim_performance_results.Rdata"))
+
+library(knitr)
+```
+
+
+## Scenario 1: Simple simulation
+
+True RR: 0.57
+
+True RD: -0.3
+
+### Relative risk performance
+
+```{r, echo=FALSE}
+#res <- sim_res_null_T4$perf_tab_RR %>% arrange(coverage) %>% filter(grepl("no_cens",filenames)) %>% subset(., select=-c(simulated_data, filenames, censoring_in_data, power))
+knitr::kable(perf_tab_RR, digits =3)
+
+```
+
+### Risk difference performance
+
+```{r, echo=FALSE}
+#res_diff <- sim_res_null_T4$perf_tab_diff %>% arrange(coverage)  %>% arrange(coverage) %>% filter(grepl("no_cens",filenames)) %>% subset(., select=-c(simulated_data, filenames, censoring_in_data, power))
+knitr::kable(perf_tab_RD, digits =5)
+```
+
+
+## Scenario 2: Null association- realistic data with outcome scrambled
+
+
+### Relative risk performance
+
+```{r, echo=FALSE}
+res <- old_sim_res_null$perf_tab_RR %>% arrange(coverage) %>% subset(., select=-c(simulated_data, filenames, censoring_in_data, power))
+knitr::kable(res, digits =3)
+
+```
+
+### Risk difference performance
+
+```{r, echo=FALSE}
+res_diff <- old_sim_res_null$perf_tab_diff %>% arrange(coverage)  %>% arrange(coverage)  %>% subset(., select=-c(simulated_data, filenames, censoring_in_data, power))
+knitr::kable(res_diff, digits =5)
+```
+
+### Notes
+
+  *  True RR: 1
+  *  True RD: 0
+  *  Oracle good
+  *  IC still anti-conservative
+  *  Intercept-only Q prediction doesn't improve prediction
+  *  Better performance estimating RR compared to RD 
+
+
+
+## Scenario 3: Realistic simulated data - protective effect of GLP1
+
+### Relative risk performance
+
+```{r, echo=FALSE}
+
+#unique(perf_tab_RR_old$analysis)
+#res <- perf_tab_RR_old %>% filter(analysis %in% c("LASSO no DetQ tmle updated estimator","LASSO no DetQ IC updated estimator","Bootstrap - clustered ID" )) %>% arrange(coverage) %>% subset(., select=-c( analysis))
+res <- perf_tab_RR_old %>% filter(!grepl("common",analysis),!grepl("unadj",analysis),!grepl("GLM",analysis),!grepl("Ridge",analysis),!grepl("interactions",analysis),!grepl("AUC",analysis), analysis!="LASSO no DetQ tmle") %>% mutate(analysis=gsub("updated estimator","",analysis)) %>% arrange(coverage)
+
+knitr::kable(res, digits =3)
+
+```
+

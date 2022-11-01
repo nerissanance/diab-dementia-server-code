@@ -86,8 +86,14 @@ summary(d$estimate[d$boot_analysis=="main"])
 summary(d$estimate[d$boot_analysis=="CV"])
 summary(d$estimate[d$boot_analysis=="sub"])
 
-d %>% group_by(boot_analysis, iteration) %>%
+df <- d %>% group_by(boot_analysis, iteration) %>%
   summarise(
     boot_cv_CI1=quantile(estimate,.025),
     boot_cv_CI2=quantile(estimate,.975)
   )
+
+plotdf <- df %>% filter(iteration <= 10, boot_analysis!="main")
+
+ggplot(plotdf, aes(x=iteration , group=boot_analysis, color=boot_analysis)) +
+  geom_linerange(aes(ymin=boot_cv_CI1 ,ymax=boot_cv_CI2), position=position_dodge(0.5))
+

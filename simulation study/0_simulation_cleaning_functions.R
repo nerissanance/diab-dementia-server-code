@@ -10,7 +10,8 @@
 # trueRR=cRR
 # trueRD=cRD
 # boot_CIs=T
-
+trueRR=1
+trueRD=0
 calc_sim_performance <- function(files, boot_iter_files=NULL, trueRR, trueRD){
 
   setwd(paste0(here::here(),"/sim_res/"))
@@ -19,9 +20,18 @@ calc_sim_performance <- function(files, boot_iter_files=NULL, trueRR, trueRD){
   levels(d$analysis) = files[as.numeric(levels(d$analysis))]
   d$analysis <- gsub(".RDS","",d$analysis)
 
+
+  #transform iptw
+  colnames(d)
+  d.iptw <- d %>% select(analysis, starts_with("iptw.")) %>% mutate(analysis=paste0(analysis,"_iptw"))
+  colnames(d.iptw) <- gsub("iptw.","",colnames(d.iptw))
+  d.iptw <- d.iptw %>% rename(CI.2.5.=ci.lb, CI.97.5.=ci.ub)
+  d <- d %>% select(!starts_with("iptw."))
+  d <- bind_rows(d, d.iptw)
+
+
   d$true.RR <- trueRR
   d$true.RD <- trueRD
-
 
   perf_tab_RR <- d %>% group_by(analysis) %>%
     mutate(variance=mean((log(estimate)-mean(log(estimate)))^2),
@@ -74,6 +84,14 @@ calc_sim_performance <- function(files, boot_iter_files=NULL, trueRR, trueRD){
     }else{
       boot_res <- boot_iter_files %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="boot_iter")
     }
+
+    #transform iptw
+    boot_res$analysis = "bootstrap"
+    boot_res.iptw <- boot_res %>% select(analysis, starts_with("iptw.")) %>% mutate(analysis=paste0(analysis,"_iptw"))
+    colnames(boot_res.iptw) <- gsub("iptw.","",colnames(boot_res.iptw))
+    boot_res.iptw <- boot_res.iptw %>% rename(CI.2.5.=ci.lb, CI.97.5.=ci.ub)
+    boot_res <- boot_res %>% select(!starts_with("iptw."))
+    boot_res <- bind_rows(boot_res, boot_res.iptw)
 
     if(!is.null(boot_res$analysis)){
       boot_CIs <- boot_res %>% group_by(iteration, analysis) %>%
