@@ -20,7 +20,7 @@ i<-j<-1
 resdf_boot = NULL
 #for(i in 1:length(d_wide_list)){
 #temp rerun
-for(i in 8:200){
+for(i in 133:200){
   #for(i in 1:length(d_wide_list)){
 
   cat(i,"\n")
@@ -29,7 +29,7 @@ for(i in 8:200){
 
 
   res_df <- NULL
-  res_df <- foreach(j = 134:200, .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res_df <- foreach(j = 1:200, .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
 
     source(here::here("0_config.R"))
     source(paste0(here::here(),"/0_ltmle_Estimate_update.R"))

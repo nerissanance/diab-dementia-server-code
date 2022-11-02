@@ -20,17 +20,17 @@ cRD <- sim_truth$cRD
 cRR <- sim_truth$cRR
 save(cRD, cRR, file=paste0(here::here(),"/results/truth_rare.Rdata"))
 
-#for thomas:
-#alt truth calculation
-#original: 0.3930283
-sim_truth2 <- calc_sim_truth(cc, nsamp=1000001)
-#0.3955411
-sim_truth3 <- calc_sim_truth(cc, nsamp=2000001)
-#0.3921497
-sim_truth4 <- calc_sim_truth(cc, nsamp=3000001)
-#0.3934562
-sim_truth5 <- calc_sim_truth(cc, nsamp=3200001)
-#0.3927931
+# #for thomas:
+# #alt truth calculation
+# #original: 0.3930283
+# sim_truth2 <- calc_sim_truth(cc, nsamp=1000001)
+# #0.3955411
+# sim_truth3 <- calc_sim_truth(cc, nsamp=2000001)
+# #0.3921497
+# sim_truth4 <- calc_sim_truth(cc, nsamp=3000001)
+# #0.3934562
+# sim_truth5 <- calc_sim_truth(cc, nsamp=3200001)
+# #0.3927931
 
 for(i in 1:n){
   cat("\ni: ",i,"\n")
