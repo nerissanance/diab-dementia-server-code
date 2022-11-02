@@ -23,6 +23,7 @@ save(cRD, cRR, file=paste0(here::here(),"/results/truth_rare.Rdata"))
 #for thomas:
 #alt truth calculation
 #original: 0.3930283
+#RD: -0.035852
 sim_truth2 <- calc_sim_truth(cc, nsamp=1000001)
 #0.3955411
 sim_truth3 <- calc_sim_truth(cc, nsamp=2000001)
@@ -31,6 +32,8 @@ sim_truth4 <- calc_sim_truth(cc, nsamp=3000001)
 #0.3934562
 sim_truth5 <- calc_sim_truth(cc, nsamp=3200001)
 #0.3927931
+
+
 
 for(i in 1:n){
   cat("\ni: ",i,"\n")
@@ -54,7 +57,6 @@ for(i in 1:n){
     j=k+1
     d[get(paste0("event_dementia_",k))==1, (paste0("event_dementia_",j)):=1]
     d[get(paste0("event_death_",k))==1, (paste0("event_death_",j)):=1]
-    d[get(paste0("event_death_",k))==1, (paste0("censor_",i)):=0]
     d[get(paste0("event_death_",k))==1, (paste0("censor_",j)):=1]
     d[get(paste0("censor_",k))==1, (paste0("censor_",j)):=1]
 

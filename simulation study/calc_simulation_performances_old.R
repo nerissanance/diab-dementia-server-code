@@ -1,0 +1,200 @@
+
+
+
+rm(list=ls())
+source(here::here("0_config.R"))
+source(paste0(here::here(),"/0_ltmle_Estimate_update.R"))
+source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
+source(paste0(here::here(),"/simulation study/0_simulation_cleaning_functions.R"))
+
+
+#Calc iptw performance
+
+#---------------------------------------------------------
+# old sim
+#---------------------------------------------------------
+# files <- dir(path=paste0(here::here(),"/sim_res/"), pattern = "*.RDS")
+# files <- files[grepl("old_null_sim_res_",files)]
+# files <- files[grepl("_T11",files)]
+files <- c(#"sim_res_Qint_noDetQ_lasso_prescreen.RDS",
+           #"sim_res_Qint_1se_int.RDS",
+           #"sim_res_1se_int.RDS",
+           #"sim_res_glm_ic.RDS",
+           "sim_res_gcomp.RDS",
+           "sim_res_noDetQ_ic.RDS",
+           "sim_res_noDetQ_tmle.RDS",
+           "sim_res_noDetQ_Qint_ic.RDS",
+           "sim_res_noDetQ_Qint_tmle.RDS",
+           "sim_res_ic.RDS"#,
+           #"/data/sim_res_Qint_ic.RDS",
+           #"/data/sim_res_EN.RDS",
+           #"/data/sim_res_Qint_EN.RDS",
+           #"/data/sim_res_AUC.RDS",
+           #"/data/sim_res_Qint_AUC.RDS",
+           #"/data/sim_res_1se.RDS",
+           #"/data/sim_res_Qint_1se.RDS",
+           #"/data/sim_res_AUC_1se.RDS",
+           #"/data/sim_res_Qint_AUC_1se.RDS",
+           #"/data/sim_res_rf.RDS"
+           )
+
+setwd(paste0(here::here(),"/data/"))
+
+d <- files %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="analysis")
+d <- d %>% mutate(analysis = factor(analysis))
+levels(d$analysis) = files[as.numeric(levels(d$analysis))]
+d$analysis <- gsub(".RDS","",d$analysis)
+
+#load bootstrap
+boot_iter_files <- dir(path=paste0(here::here(),"/data/bootstrap/"), pattern = "*.RDS")
+boot_iter_files <- boot_iter_files[grepl("sim_res_boot_old_sim_cens_competing_risks_500_iter_",boot_iter_files)]
+length(boot_iter_files)
+
+load(file=paste0(here::here(),"/results/truth_rare.Rdata"))
+
+old_sim_res_null <- calc_sim_performance(files, boot_iter_files=boot_iter_files, cRR, cRD)
+tab<-old_sim_res_null$perf_tab_RR
+tab<-tab %>% select(variance_estimator, Qint,  DetQ, o.coverage, bias, variance,mse, bias_se_ratio, coverage, mean_ci_width)
+
+knitr::kable(tab, digits = 3)
+
+
+#---------------------------------------------------------
+# Null, old sim
+#---------------------------------------------------------
+files <- dir(path=paste0(here::here(),"/sim_res/"), pattern = "*.RDS")
+files <- files[grepl("old_null_sim_res_",files)]
+files <- files[grepl("_T11",files)]
+
+setwd(paste0(here::here(),"/sim_res/"))
+d <- readRDS("old_null_sim_res_noDetQ_Qint_ic_T2.RDS")
+
+d <- files %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="analysis")
+d <- d %>% mutate(analysis = factor(analysis))
+levels(d$analysis) = files[as.numeric(levels(d$analysis))]
+d$analysis <- gsub(".RDS","",d$analysis)
+
+#load bootstrap
+boot_iter_files <- dir(path=paste0(here::here(),"/data/bootstrap/"), pattern = "*.RDS")
+boot_iter_files <- boot_iter_files[grepl("sim_res_boot_old_sim_null_T11_",boot_iter_files)]
+length(boot_iter_files)
+
+old_sim_res_null <- calc_sim_performance(files, boot_iter_files=boot_iter_files, 1, 0)
+tab<-old_sim_res_null$perf_tab_RR
+tab<-tab %>% select(variance_estimator, Qint,  DetQ, o.coverage, bias, variance,mse, bias_se_ratio, coverage, mean_ci_width)
+
+knitr::kable(tab, digits = 3)
+
+
+#---------------------------------------------------------
+# Null, T4
+#---------------------------------------------------------
+files <- dir(path=paste0(here::here(),"/sim_res/"), pattern = "*.RDS")
+files <- files[grepl("null_",files)]
+files <- files[grepl("_T4",files)]
+
+setwd(paste0(here::here(),"/sim_res/"))
+d <- files %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="analysis")
+d <- d %>% mutate(analysis = factor(analysis))
+levels(d$analysis) = files[as.numeric(levels(d$analysis))]
+d$analysis <- gsub(".RDS","",d$analysis)
+
+#load bootstrap
+boot_iter_files <- dir(path=paste0(here::here(),"/data/bootstrap/"), pattern = "*.RDS")
+boot_iter_files <- boot_iter_files[grepl("sim_res_boot_null_4_",boot_iter_files)]
+length(boot_iter_files)
+
+sim_res_null_T4 <- calc_sim_performance(files, boot_iter_files, 1, 0)
+tab<-sim_res_null_T4$perf_tab_RR
+tab
+
+#---------------------------------------------------------
+# Null, T11
+#---------------------------------------------------------
+files <- dir(path=paste0(here::here(),"/sim_res/"), pattern = "*.RDS")
+files <- files[grepl("null_",files)]
+files <- files[grepl("_T11",files)]
+
+setwd(paste0(here::here(),"/sim_res/"))
+d <- files %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="analysis")
+d <- d %>% mutate(analysis = factor(analysis))
+levels(d$analysis) = files[as.numeric(levels(d$analysis))]
+d$analysis <- gsub(".RDS","",d$analysis)
+
+# #load bootstrap
+# boot_iter_files <- dir(path=paste0(here::here(),"/data/bootstrap/"), pattern = "*.RDS")
+# boot_iter_files <- boot_iter_files[grepl("sim_res_boot_null_11_",boot_iter_files)]
+# length(boot_iter_files)
+
+sim_res_null_T11 <- calc_sim_performance(files, boot_iter_files=NULL, 1, 0)
+
+
+#---------------------------------------------------------
+# Outcome blind, T4
+#---------------------------------------------------------
+
+files <- dir(path=paste0(here::here(),"/sim_res/"), pattern = "*.RDS")
+files <- files[grepl("outcome_blind_",files)]
+files <- files[grepl("_T4",files)]
+
+boot_iter_files <- dir(path=paste0(here::here(),"/data/bootstrap/"), pattern = "*.RDS")
+boot_iter_files <- boot_iter_files[grepl("_T4",boot_iter_files)]
+boot_iter_files <- boot_iter_files[!grepl("_null",boot_iter_files)]
+
+
+boot_iter_files_no_ties <- boot_iter_files[grepl("_no_ties",boot_iter_files)]
+length(boot_iter_files_no_ties)
+boot_iter_files <- boot_iter_files[!grepl("_no_ties",boot_iter_files)]
+length(boot_iter_files)
+
+boot_iter_files_no_cens <- boot_iter_files[!grepl("_cens_competing",boot_iter_files)]
+length(boot_iter_files_no_cens)
+
+boot_iter_files_cens <- boot_iter_files[grepl("_cens_competing",boot_iter_files)]
+length(boot_iter_files_cens)
+boot_iter_files_cens_no_detQ <- boot_iter_files_cens[grepl("noDetQ",boot_iter_files_cens)]
+boot_iter_files_cens <- boot_iter_files_cens[!grepl("noDetQ",boot_iter_files_cens)]
+length(boot_iter_files_cens_no_detQ)
+length(boot_iter_files_cens)
+
+load(paste0(here::here(),"/results/truth_blind_T4.Rdata"))
+trueRR=cRR3
+trueRD=cRD3
+
+
+boot_iter_files <-bind_rows(
+  data.frame(boot_file=boot_iter_files_cens, analysis="outcome_blind_bootstrap_cens_competing_risks_"),
+  data.frame(boot_file=boot_iter_files_cens_no_detQ, analysis="outcome_blind_bootstrap_cens_competing_risks_noDetQ_"),
+  data.frame(boot_file=boot_iter_files_no_ties, analysis="outcome_blind_bootstrap_no_ties_cens_competing_risks")
+)
+
+
+load(paste0(here::here(),"/results/truth_blind_T4.Rdata"))
+sim_res_ob_T4 <- calc_sim_performance(files, boot_iter_files, 0.4493307, cRD3)
+
+
+
+#---------------------------------------------------------
+# Outcome blind, T11
+#---------------------------------------------------------
+
+files <- dir(path=paste0(here::here(),"/sim_res/"), pattern = "*.RDS")
+files <- files[grepl("outcome_blind_",files)]
+files <- files[grepl("_T11",files)]
+
+boot_iter_files <- dir(path=paste0(here::here(),"/data/bootstrap/"), pattern = "*.RDS")
+boot_iter_files <- boot_iter_files[grepl("_T11",boot_iter_files)]
+boot_iter_files <- boot_iter_files[!grepl("_null",boot_iter_files)]
+boot_iter_files <- boot_iter_files[!grepl("_subsampled",boot_iter_files)]
+boot_iter_files <- boot_iter_files[!grepl("_outcome_blind",boot_iter_files)]
+length(boot_iter_files)
+
+boot_iter_files
+
+load(paste0(here::here(),"/results/truth_blind_T10.Rdata"))
+
+sim_res_ob_T11 <- calc_sim_performance(files, boot_iter_files, 0.4398625, cRD)
+
+save(sim_res_null_T4, sim_res_null_T11, sim_res_ob_T4, sim_res_ob_T11, old_sim_res_null, file=paste0(here::here(),"/results/sim_performance_results.Rdata"))
+
+

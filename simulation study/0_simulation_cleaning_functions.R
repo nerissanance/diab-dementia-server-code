@@ -10,15 +10,18 @@
 # trueRR=cRR
 # trueRD=cRD
 # boot_CIs=T
-trueRR=1
-trueRD=0
-calc_sim_performance <- function(files, boot_iter_files=NULL, trueRR, trueRD){
+trueRR=0.3930283
+trueRD=-0.035852
 
-  setwd(paste0(here::here(),"/sim_res/"))
+calc_sim_performance <- function(files, boot_iter_files=NULL, trueRR, trueRD, iptw=F){
+
+  #setwd(paste0(here::here(),"/sim_res/"))
   d <- files %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="analysis")
   d <- d %>% mutate(analysis = factor(analysis))
   levels(d$analysis) = files[as.numeric(levels(d$analysis))]
   d$analysis <- gsub(".RDS","",d$analysis)
+
+
 
 
   #transform iptw
@@ -27,8 +30,10 @@ calc_sim_performance <- function(files, boot_iter_files=NULL, trueRR, trueRD){
   colnames(d.iptw) <- gsub("iptw.","",colnames(d.iptw))
   d.iptw <- d.iptw %>% rename(CI.2.5.=ci.lb, CI.97.5.=ci.ub)
   d <- d %>% select(!starts_with("iptw."))
-  d <- bind_rows(d, d.iptw)
 
+  if(iptw){
+    d <- bind_rows(d, d.iptw)
+  }
 
   d$true.RR <- trueRR
   d$true.RD <- trueRD
@@ -48,7 +53,7 @@ calc_sim_performance <- function(files, boot_iter_files=NULL, trueRR, trueRD){
       o.coverage=mean(o.ci.lb<=log(true.RR) & log(true.RR)<= o.ci.ub)*100,
       mean_ci_width=mean(log(CI.97.5.)-log(CI.2.5.)),
       power=mean((CI.2.5. > 1 & CI.97.5.>1)|(CI.2.5. < 1 & CI.97.5.<1))*100
-    ) %>%
+    ) %>% filter(!is.na(variance)) %>%
     distinct()
 
 
@@ -85,13 +90,18 @@ calc_sim_performance <- function(files, boot_iter_files=NULL, trueRR, trueRD){
       boot_res <- boot_iter_files %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="boot_iter")
     }
 
-    #transform iptw
+
     boot_res$analysis = "bootstrap"
-    boot_res.iptw <- boot_res %>% select(analysis, starts_with("iptw.")) %>% mutate(analysis=paste0(analysis,"_iptw"))
-    colnames(boot_res.iptw) <- gsub("iptw.","",colnames(boot_res.iptw))
-    boot_res.iptw <- boot_res.iptw %>% rename(CI.2.5.=ci.lb, CI.97.5.=ci.ub)
-    boot_res <- boot_res %>% select(!starts_with("iptw."))
-    boot_res <- bind_rows(boot_res, boot_res.iptw)
+
+    #transform iptw
+    if(iptw){
+      boot_res.iptw <- boot_res %>% select(analysis, starts_with("iptw.")) %>% mutate(analysis=paste0(analysis,"_iptw"))
+      colnames(boot_res.iptw) <- gsub("iptw.","",colnames(boot_res.iptw))
+      boot_res.iptw <- boot_res.iptw %>% rename(CI.2.5.=ci.lb, CI.97.5.=ci.ub)
+      boot_res <- boot_res %>% select(!starts_with("iptw."))
+      boot_res <- bind_rows(boot_res, boot_res.iptw)
+    }
+
 
     if(!is.null(boot_res$analysis)){
       boot_CIs <- boot_res %>% group_by(iteration, analysis) %>%
@@ -126,12 +136,14 @@ calc_sim_performance <- function(files, boot_iter_files=NULL, trueRR, trueRD){
         )
       boot_CIs$analysis = "bootstrap"
 
+
       #calculate bootstrap performance
       perf_tab_RR_boot <- data.frame(
         coverage = mean(boot_CIs$CI1 <= d$true.RR[1] &  boot_CIs$CI2 >= d$true.RR[1])*100,
         mean_ci_width_logRR=mean(log(boot_CIs$CI2)-log(boot_CIs$CI1)),
         power=mean((boot_CIs$CI1 > 1 & boot_CIs$CI2>1)|(boot_CIs$CI1 < 1 & boot_CIs$CI2<1))*100
       )
+      perf_tab_RR_boot
 
       perf_tab_diff_boot <- data.frame(
         coverage = mean(boot_CIs$ate.CI1 <= d$true.RD[1] &  boot_CIs$ate.CI2 >= d$true.RD[1])*100,
