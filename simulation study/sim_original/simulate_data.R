@@ -60,59 +60,61 @@ for(i in 1:n){
                         d$event_dementia_9 +
                         d$event_dementia_10 >0))
 
-  #note: once events jump to 1, need to remain 1 for remainder of follow up
-  for(k in 1:(N_time+1)){
-    j=k+1
-    d[get(paste0("event_dementia_",k))==1, (paste0("event_dementia_",j)):=1]
-    d[get(paste0("event_death_",k))==1, (paste0("event_death_",j)):=1]
-    d[get(paste0("event_death_",k))==1, (paste0("censor_",i)):=0]
-    d[get(paste0("event_death_",k))==1, (paste0("censor_",j)):=1]
-    d[get(paste0("censor_",k))==1, (paste0("censor_",j)):=1]
+  d<- clean_sim_data(d, N_time = 10)
 
-  }
-  ## UNCOMMENT FOR RUNNING MANUAL COMPETING RISK FIX
-  ## edit--when one occurs first, set other to zero so there's no competing event:
-  dementia.nodes<- grep("event_dementia_",names(d))
-  death.nodes<- grep("event_death_",names(d))
-  d[, sum_death :=rowSums(.SD,na.rm=T), .SDcols = death.nodes]
-  d[, sum_dementia :=rowSums(.SD,na.rm=T), .SDcols = dementia.nodes]
-
-  d[sum_death > sum_dementia, (dementia.nodes) := replace(.SD, .SD == 1, 0), .SDcols = dementia.nodes]
-  d[sum_death < sum_dementia, (death.nodes) := replace(.SD, .SD == 1, 0), .SDcols = death.nodes]
-  # NOTE: decided to prioritize dementia in the event that both death and dementia occur in the same time bin
-  d[sum_death== sum_dementia, (death.nodes) := replace(.SD, .SD == 1, 0), .SDcols = death.nodes]
+  # #note: once events jump to 1, need to remain 1 for remainder of follow up
+  # for(k in 1:(N_time+1)){
+  #   j=k+1
+  #   d[get(paste0("event_dementia_",k))==1, (paste0("event_dementia_",j)):=1]
+  #   d[get(paste0("event_death_",k))==1, (paste0("event_death_",j)):=1]
+  #   d[get(paste0("event_death_",k))==1, (paste0("censor_",i)):=0]
+  #   d[get(paste0("event_death_",k))==1, (paste0("censor_",j)):=1]
+  #   d[get(paste0("censor_",k))==1, (paste0("censor_",j)):=1]
+  #
+  # }
+  # ## UNCOMMENT FOR RUNNING MANUAL COMPETING RISK FIX
+  # ## edit--when one occurs first, set other to zero so there's no competing event:
+  # dementia.nodes<- grep("event_dementia_",names(d))
+  # death.nodes<- grep("event_death_",names(d))
+  # d[, sum_death :=rowSums(.SD,na.rm=T), .SDcols = death.nodes]
+  # d[, sum_dementia :=rowSums(.SD,na.rm=T), .SDcols = dementia.nodes]
+  #
+  # d[sum_death > sum_dementia, (dementia.nodes) := replace(.SD, .SD == 1, 0), .SDcols = dementia.nodes]
+  # d[sum_death < sum_dementia, (death.nodes) := replace(.SD, .SD == 1, 0), .SDcols = death.nodes]
+  # # NOTE: decided to prioritize dementia in the event that both death and dementia occur in the same time bin
+  # d[sum_death== sum_dementia, (death.nodes) := replace(.SD, .SD == 1, 0), .SDcols = death.nodes]
 
   sim_list[[i]] <- d
   gc()
 }
-
-prev2 <-prev1 <- rep(NA, 200)
-for(i in 1:200){
-  prev1[i] <- sim_list[[i]]$dem_prev[1]
-  prev2[i] <- prop.table(table(sim_list[[i]]$event_dementia_10))[2]
-
-}
-mean(prev1)*100
-mean(prev2)*100
-
-table(1*sim_list[[i]]$event_dementia_7, sim_list[[i]]$event_dementia_8)
-table(1*sim_list[[i]]$event_dementia_8, sim_list[[i]]$event_dementia_9)
-table(1*sim_list[[i]]$event_dementia_9, sim_list[[i]]$event_dementia_10)
-
-
-mean(1*(sim_list[[i]]$event_dementia_1 +
-          sim_list[[i]]$event_dementia_2 +
-          sim_list[[i]]$event_dementia_3 +
-          sim_list[[i]]$event_dementia_4 +
-          sim_list[[i]]$event_dementia_5 +
-          sim_list[[i]]$event_dementia_6 +
-          sim_list[[i]]$event_dementia_7 +
-          sim_list[[i]]$event_dementia_8 +
-          sim_list[[i]]$event_dementia_9 +
-          sim_list[[i]]$event_dementia_10 >0))
-
-#Prevalence: 5.8% before competing risk fix
-             #2% after
-
+#
+# prev2 <-prev1 <- rep(NA, 200)
+# for(i in 1:200){
+#   prev1[i] <- sim_list[[i]]$dem_prev[1]
+#   prev2[i] <- prop.table(table(sim_list[[i]]$event_dementia_10))[2]
+#
+# }
+# mean(prev1)*100
+# mean(prev2)*100
+#
+# table(1*sim_list[[i]]$event_dementia_7, sim_list[[i]]$event_dementia_8)
+# table(1*sim_list[[i]]$event_dementia_8, sim_list[[i]]$event_dementia_9)
+# table(1*sim_list[[i]]$event_dementia_9, sim_list[[i]]$event_dementia_10)
+#
+#
+# mean(1*(sim_list[[i]]$event_dementia_1 +
+#           sim_list[[i]]$event_dementia_2 +
+#           sim_list[[i]]$event_dementia_3 +
+#           sim_list[[i]]$event_dementia_4 +
+#           sim_list[[i]]$event_dementia_5 +
+#           sim_list[[i]]$event_dementia_6 +
+#           sim_list[[i]]$event_dementia_7 +
+#           sim_list[[i]]$event_dementia_8 +
+#           sim_list[[i]]$event_dementia_9 +
+#           sim_list[[i]]$event_dementia_10 >0))
+#
+# #Prevalence: 5.8% before competing risk fix
+#              #2% after
 
 saveRDS(sim_list, paste0(here::here(),"/data/simulated_data_list.RDS"))
+d_wide_list<-sim_list
