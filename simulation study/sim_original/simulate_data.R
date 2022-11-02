@@ -49,6 +49,17 @@ for(i in 1:n){
   #   }
   # }
 
+  d$dem_prev <-    mean(1*(d$event_dementia_1 +
+                        d$event_dementia_2 +
+                        d$event_dementia_3 +
+                        d$event_dementia_4 +
+                        d$event_dementia_5 +
+                        d$event_dementia_6 +
+                        d$event_dementia_7 +
+                        d$event_dementia_8 +
+                        d$event_dementia_9 +
+                        d$event_dementia_10 >0))
+
   #note: once events jump to 1, need to remain 1 for remainder of follow up
   for(k in 1:(N_time+1)){
     j=k+1
@@ -74,5 +85,34 @@ for(i in 1:n){
   sim_list[[i]] <- d
   gc()
 }
+
+prev2 <-prev1 <- rep(NA, 200)
+for(i in 1:200){
+  prev1[i] <- sim_list[[i]]$dem_prev[1]
+  prev2[i] <- prop.table(table(sim_list[[i]]$event_dementia_10))[2]
+
+}
+mean(prev1)*100
+mean(prev2)*100
+
+table(1*sim_list[[i]]$event_dementia_7, sim_list[[i]]$event_dementia_8)
+table(1*sim_list[[i]]$event_dementia_8, sim_list[[i]]$event_dementia_9)
+table(1*sim_list[[i]]$event_dementia_9, sim_list[[i]]$event_dementia_10)
+
+
+mean(1*(sim_list[[i]]$event_dementia_1 +
+          sim_list[[i]]$event_dementia_2 +
+          sim_list[[i]]$event_dementia_3 +
+          sim_list[[i]]$event_dementia_4 +
+          sim_list[[i]]$event_dementia_5 +
+          sim_list[[i]]$event_dementia_6 +
+          sim_list[[i]]$event_dementia_7 +
+          sim_list[[i]]$event_dementia_8 +
+          sim_list[[i]]$event_dementia_9 +
+          sim_list[[i]]$event_dementia_10 >0))
+
+#Prevalence: 5.8% before competing risk fix
+             #2% after
+
 
 saveRDS(sim_list, paste0(here::here(),"/data/simulated_data_list.RDS"))
