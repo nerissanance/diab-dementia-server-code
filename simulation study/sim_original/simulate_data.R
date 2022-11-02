@@ -20,7 +20,7 @@ cRD <- sim_truth$cRD
 cRR <- sim_truth$cRR
 save(cRD, cRR, file=paste0(here::here(),"/results/truth_rare.Rdata"))
 
-# #for thomas:
+homas:
 # #alt truth calculation
 # #original: 0.3930283
 # sim_truth2 <- calc_sim_truth(cc, nsamp=1000001)
@@ -31,6 +31,8 @@ save(cRD, cRR, file=paste0(here::here(),"/results/truth_rare.Rdata"))
 # #0.3934562
 # sim_truth5 <- calc_sim_truth(cc, nsamp=3200001)
 # #0.3927931
+
+
 
 for(i in 1:n){
   cat("\ni: ",i,"\n")
@@ -60,7 +62,17 @@ for(i in 1:n){
                         d$event_dementia_9 +
                         d$event_dementia_10 >0))
 
+<<<<<<< HEAD
   d<- clean_sim_data(d, N_time = 10)
+=======
+  #note: once events jump to 1, need to remain 1 for remainder of follow up
+  for(k in 1:(N_time+1)){
+    j=k+1
+    d[get(paste0("event_dementia_",k))==1, (paste0("event_dementia_",j)):=1]
+    d[get(paste0("event_death_",k))==1, (paste0("event_death_",j)):=1]
+    d[get(paste0("event_death_",k))==1, (paste0("censor_",j)):=1]
+    d[get(paste0("censor_",k))==1, (paste0("censor_",j)):=1]
+>>>>>>> 699645e9d95830204ad99714f724bb100d519ab4
 
   # #note: once events jump to 1, need to remain 1 for remainder of follow up
   # for(k in 1:(N_time+1)){

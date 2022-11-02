@@ -241,6 +241,54 @@ clean_sim_data <- function(d, N_time){
 
 
 
+spec_analysis_sim <- function(data, long_covariates, baseline_vars, N_time, Avars=c("glp1_"), Yvars=c("event_dementia_"), alt=FALSE){
+
+  if(!alt){
+    node_names <- spec_nodes(baseline_vars=baseline_vars,
+                             longitudinal_vars=c(Avars,"censor_",Yvars, long_covariates),
+                             num_time=0:(N_time-1))
+  }else{
+    node_names <- spec_nodes(baseline_vars=baseline_vars,
+                             longitudinal_vars=c(Avars,"censor_",Yvars, long_covariates),
+                             num_time=0:(N_time-1))
+  }
+
+  for(i in long_covariates){
+    node_names <- node_names[!grepl(paste0(i, (N_time-1)), node_names)]
+  }
+  #Drop A_0
+  node_names <- node_names[node_names!=paste0(Avars,"0")]
+
+  Lnode_names <- c(baseline_vars, expand.grid(long_covariates,0:(N_time-1)) %>% apply(1, function(row) paste0(row, collapse = "")))
+  Lnode_names <- gsub(" ","", Lnode_names)
+  for(i in long_covariates){
+    Lnode_names <- Lnode_names[!grepl(paste0(i, (N_time-1)), Lnode_names)]
+  }
+
+  #subset to analysis columns and arrange
+  d_ltmle <- data %>% dplyr::select(!!(node_names))
+  colnames(d_ltmle)
+
+  #clean censoring nodes to right format
+  Cnode_names = node_names[grep("^censor", node_names)]
+  for(i in Cnode_names){
+    d_ltmle[[i]] <- BinaryToCensoring(is.censored=d_ltmle[[i]])
+  }
+
+
+
+  return(list(
+    data=d_ltmle,
+    node_names=node_names,
+    Anodes = node_names[sort(grep(paste("^",Avars, collapse="|", sep=""), node_names))],
+    Cnodes = Cnode_names,
+    Lnodes = Lnode_names,
+    Ynodes = node_names[sort(grep(paste("^",Yvars, collapse="|", sep=""), node_names))]
+  ))
+}
+
+
+
 run_ltmle_glmnet <- function(d,
                              N_time = 11, #number of time points you want to look at
                              SL.library = c("SL.glmnet"),
@@ -270,7 +318,7 @@ run_ltmle_glmnet <- function(d,
     dplyr::select(!!(baseline_vars),matches(paste0("_(",paste0(0:(N_time-1),collapse="|"),")$")))
 
 
-  spec_ltmle <- spec_analysis(data=d, c(long_covariates,"event_death_"),
+  spec_ltmle <- spec_analysis_sim(data=d, c(long_covariates,"event_death_"),
                               baseline_vars, N_time,
                               Avars=c("glp1_"),
                               Yvars=c("event_dementia_"),
@@ -286,28 +334,7 @@ run_ltmle_glmnet <- function(d,
   if(Qint){
 
     if(N_time==11){
-      # qform = c(
-      #   insulin_0="Q.kplus1 ~ 1",
-      #   insulin_1="Q.kplus1 ~ 1",
-      #   event_dementia_1="Q.kplus1 ~ 1",
-      #   insulin_2="Q.kplus1 ~ 1",
-      #   event_dementia_2="Q.kplus1 ~ 1",
-      #   insulin_3="Q.kplus1 ~ 1",
-      #   event_dementia_3="Q.kplus1 ~ 1",
-      #   insulin_4="Q.kplus1 ~ 1",
-      #   event_dementia_4="Q.kplus1 ~ 1",
-      #   insulin_5="Q.kplus1 ~ 1",
-      #   event_dementia_5="Q.kplus1 ~ 1",
-      #   insulin_6="Q.kplus1 ~ 1",
-      #   event_dementia_6="Q.kplus1 ~ 1",
-      #   insulin_7="Q.kplus1 ~ 1",
-      #   event_dementia_7="Q.kplus1 ~ 1",
-      #   insulin_8="Q.kplus1 ~ 1",
-      #   event_dementia_8="Q.kplus1 ~ 1",
-      #   insulin_9="Q.kplus1 ~ 1",
-      #   event_dementia_9="Q.kplus1 ~ 1",
-      #   event_dementia_10="Q.kplus1 ~ 1"
-      # )
+
       qform = c(
         insulin_0="Q.kplus1 ~ 1",
         event_dementia_1="Q.kplus1 ~ 1",
@@ -628,7 +655,7 @@ run_ltmle_glmnet_unadj <- function(d,
     dplyr::select(!!(baseline_vars),matches(paste0("_(",paste0(0:(N_time-1),collapse="|"),")$")))
 
 
-  spec_ltmle <- spec_analysis(data=d, c("event_death_"),
+  spec_ltmle <- spec_analysis_sim(data=d, c("event_death_"),
                               baseline_vars=NULL, N_time,
                               Avars=c("glp1_"),
                               Yvars=c("event_dementia_"))
@@ -768,7 +795,7 @@ run_ltmle_glmnet_interaction <- function(d,
     dplyr::select(!!(baseline_vars),matches(paste0("_(",paste0(0:(N_time-1),collapse="|"),")$")))
 
 
-  spec_ltmle <- spec_analysis(data=d, c(long_covariates, int_vars, "event_death_"),
+  spec_ltmle <- spec_analysis_sim(data=d, c(long_covariates, int_vars, "event_death_"),
                               baseline_vars, N_time,
                               Avars=c("glp1_"),
                               Yvars=c("event_dementia_"))
@@ -883,7 +910,7 @@ run_ltmle <- function(d,
     dplyr::select(!!(baseline_vars),matches(paste0("_(",paste0(0:(N_time-1),collapse="|"),")$")))
 
 
-  spec_ltmle <- spec_analysis(data=d, c(long_covariates,"event_death_"),
+  spec_ltmle <- spec_analysis_sim(data=d, c(long_covariates,"event_death_"),
                               baseline_vars, N_time,
                               Avars=c("glp1_"),
                               Yvars=c("event_dementia_"))
