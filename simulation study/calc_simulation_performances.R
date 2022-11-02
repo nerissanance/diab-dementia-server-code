@@ -25,6 +25,10 @@ files <- c(#"sim_res_Qint_noDetQ_lasso_prescreen.RDS",
            "sim_res_noDetQ_tmle.RDS",
            "sim_res_noDetQ_Qint_ic.RDS",
            "sim_res_noDetQ_Qint_tmle.RDS",
+           "sim_res_noDetQ_Qint_ic_V2.RDS",
+           "sim_res_noDetQ_Qint_tmle_V2.RDS",
+           "sim_res_noDetQ_Qint_ic_no_cens.RDS",
+           "sim_res_noDetQ_Qint_tmle_no_cens.RDS",
            "sim_res_ic.RDS"#,
            #"/data/sim_res_Qint_ic.RDS",
            #"/data/sim_res_EN.RDS",
@@ -43,8 +47,11 @@ load(file=paste0(here::here(),"/results/truth_rare.Rdata"))
 
 d1<-readRDS("sim_res_noDetQ_ic.RDS")
 d2<-readRDS("sim_res_noDetQ_ic_v2.RDS")
-res1 <- calc_sim_performance(files=c("sim_res_noDetQ_ic.RDS","sim_res_noDetQ_ic_v2.RDS"), boot_iter_files=NULL, cRR, cRD)
+d2<-readRDS("sim_res_noDetQ_ic_no_cens.RDS")
+res1 <- calc_sim_performance(files=c("sim_res_noDetQ_ic.RDS",
+                                     "sim_res_noDetQ_tmle.RDS","sim_res_noDetQ_Qint_tmle_est_update.RDS"), boot_iter_files=NULL, 0.6924793 , -0.005929)
 res1$perf_tab_RR
+res1$perf_tab_diff
 
 d <- files %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="analysis")
 d <- d %>% mutate(analysis = factor(analysis))
@@ -59,6 +66,8 @@ length(boot_iter_files)
 boot_iter_files <- dir(path=paste0(here::here(),"/data/bootstrap/"), pattern = "*.RDS")
 boot_iter_files2 <- boot_iter_files[grepl("old_sim_",boot_iter_files)]
 length(boot_iter_files2)
+
+old_sim_res <- calc_sim_performance(files, boot_iter_files=boot_iter_files, 0.6924793 , -0.005929 )
 
 
 tab<-old_sim_res_null$perf_tab_RR

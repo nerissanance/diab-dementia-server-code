@@ -18,7 +18,7 @@ gc()
 
 i<-j<-1
 resdf_boot = NULL
-for(i in 516:length(d_wide_list)){
+for(i in 1:length(d_wide_list)){
 
   cat(i,"\n")
   d <- d_wide_list[[i]]

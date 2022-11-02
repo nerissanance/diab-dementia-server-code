@@ -28,11 +28,13 @@ d_wide_list <- d_wide_list[1:100]
 prev <- rep(NA, 100)
 for(i in 1:100){
   prev[i] <- prop.table(table(d_wide_list[[i]]$event_dementia_10))[2]*100
+  A<-1
+  d_A1 <- d_wide_list[[i]] %>% filter(glp1_1==!!(A), glp1_2==!!(A), glp1_3==!!(A), glp1_4==!!(A), glp1_5==!!(A), glp1_6==!!(A), glp1_7==!!(A), glp1_8==!!(A), glp1_9==!!(A), glp1_10==!!(A))
+
 }
 mean(prev)
 
 d <- d_wide_list[[1]]
-A<-1
 prop.table(table(d$event_dementia_10))*100
 table(d$event_dementia_9, d$event_dementia_10)
-d1 <- d %>% filter(glp1_1==!!(A), glp1_2==!!(A), glp1_3==!!(A), glp1_4==!!(A), glp1_5==!!(A), glp1_6==!!(A), )
+#d1 <- d %>%
