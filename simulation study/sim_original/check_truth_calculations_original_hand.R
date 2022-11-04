@@ -83,28 +83,28 @@ Y0_a0_t9 <- 1-logit2prob(sum(as.numeric(cc[cc$var=="event_dementia_9",-c(1:2)]),
 Y0_a1_t10 <- 1-logit2prob(sum(as.numeric(cc[cc$var=="event_dementia_10",-c(1:2)]), na.rm =  T))
 Y0_a0_t10 <- 1-logit2prob(sum(as.numeric(cc[cc$var=="event_dementia_10",-c(1:2)]), na.rm =  T) - cc[cc$var=="event_dementia_10",which(colnames(cc)=="glp1_10")])
 
-# Y1death_a1_t1 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_1",-c(1:2)]), na.rm =  T))
-# Y1death_a0_t1 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_1",-c(1:2)]), na.rm =  T) - cc[cc$var=="event_death_1",which(colnames(cc)=="glp1_1")])
-# Y1death_a1_t2 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_2",-c(1:2)]), na.rm =  T))
-# Y1death_a0_t2 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_2",-c(1:2)]), na.rm =  T) - cc[cc$var=="event_death_2",which(colnames(cc)=="glp1_2")])
-# Y1death_a1_t3 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_3",-c(1:2)]), na.rm =  T))
-# Y1death_a0_t3 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_3",-c(1:2)]), na.rm =  T) - cc[cc$var=="event_death_3",which(colnames(cc)=="glp1_3")])
-# Y1death_a1_t4 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_4",-c(1:2)]), na.rm =  T))
-# Y1death_a0_t4 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_4",-c(1:2)]), na.rm =  T) - cc[cc$var=="event_death_4",which(colnames(cc)=="glp1_4")])
-# Y1death_a1_t5 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_5",-c(1:2)]), na.rm =  T))
-# Y1death_a0_t5 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_5",-c(1:2)]), na.rm =  T) - cc[cc$var=="event_death_5",which(colnames(cc)=="glp1_5")])
-# Y1death_a1_t6 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_6",-c(1:2)]), na.rm =  T))
-# Y1death_a0_t6 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_6",-c(1:2)]), na.rm =  T) - cc[cc$var=="event_death_6",which(colnames(cc)=="glp1_6")])
-# Y1death_a1_t7 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_7",-c(1:2)]), na.rm =  T))
-# Y1death_a0_t7 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_7",-c(1:2)]), na.rm =  T) - cc[cc$var=="event_death_7",which(colnames(cc)=="glp1_7")])
-# Y1death_a1_t8 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_8",-c(1:2)]), na.rm =  T))
-# Y1death_a0_t8 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_8",-c(1:2)]), na.rm =  T) - cc[cc$var=="event_death_8",which(colnames(cc)=="glp1_8")])
-# Y1death_a1_t9 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_9",-c(1:2)]), na.rm =  T))
-# Y1death_a0_t9 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_9",-c(1:2)]), na.rm =  T) - cc[cc$var=="event_death_9",which(colnames(cc)=="glp1_9")])
-# Y1death_a1_t10 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_10",-c(1:2)]), na.rm =  T))
-# Y1death_a0_t10 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_10",-c(1:2)]), na.rm =  T) - cc[cc$var=="event_death_10",which(colnames(cc)=="glp1_10")])
-#
-#
+Y1death_a1_t1 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_1",-c(1:2)]), na.rm =  T))
+Y1death_a0_t1 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_1",-c(1:2)]), na.rm =  T) - cc[cc$var=="event_death_1",which(colnames(cc)=="glp1_1")])
+Y1death_a1_t2 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_2",-c(1:2)]), na.rm =  T))
+Y1death_a0_t2 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_2",-c(1:2)]), na.rm =  T) - cc[cc$var=="event_death_2",which(colnames(cc)=="glp1_2")])
+Y1death_a1_t3 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_3",-c(1:2)]), na.rm =  T))
+Y1death_a0_t3 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_3",-c(1:2)]), na.rm =  T) - cc[cc$var=="event_death_3",which(colnames(cc)=="glp1_3")])
+Y1death_a1_t4 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_4",-c(1:2)]), na.rm =  T))
+Y1death_a0_t4 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_4",-c(1:2)]), na.rm =  T) - cc[cc$var=="event_death_4",which(colnames(cc)=="glp1_4")])
+Y1death_a1_t5 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_5",-c(1:2)]), na.rm =  T))
+Y1death_a0_t5 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_5",-c(1:2)]), na.rm =  T) - cc[cc$var=="event_death_5",which(colnames(cc)=="glp1_5")])
+Y1death_a1_t6 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_6",-c(1:2)]), na.rm =  T))
+Y1death_a0_t6 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_6",-c(1:2)]), na.rm =  T) - cc[cc$var=="event_death_6",which(colnames(cc)=="glp1_6")])
+Y1death_a1_t7 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_7",-c(1:2)]), na.rm =  T))
+Y1death_a0_t7 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_7",-c(1:2)]), na.rm =  T) - cc[cc$var=="event_death_7",which(colnames(cc)=="glp1_7")])
+Y1death_a1_t8 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_8",-c(1:2)]), na.rm =  T))
+Y1death_a0_t8 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_8",-c(1:2)]), na.rm =  T) - cc[cc$var=="event_death_8",which(colnames(cc)=="glp1_8")])
+Y1death_a1_t9 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_9",-c(1:2)]), na.rm =  T))
+Y1death_a0_t9 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_9",-c(1:2)]), na.rm =  T) - cc[cc$var=="event_death_9",which(colnames(cc)=="glp1_9")])
+Y1death_a1_t10 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_10",-c(1:2)]), na.rm =  T))
+Y1death_a0_t10 <- logit2prob(sum(as.numeric(cc[cc$var=="event_death_10",-c(1:2)]), na.rm =  T) - cc[cc$var=="event_death_10",which(colnames(cc)=="glp1_10")])
+
+
 # Y0_a1_t1 <- Y0_a1_t1 -Y1death_a1_t1
 # Y0_a1_t2 <- Y0_a1_t2 -Y1death_a1_t2
 # Y0_a1_t3 <- Y0_a1_t3 -Y1death_a1_t3
@@ -115,19 +115,30 @@ Y0_a0_t10 <- 1-logit2prob(sum(as.numeric(cc[cc$var=="event_dementia_10",-c(1:2)]
 # Y0_a1_t8 <- Y0_a1_t8 -Y1death_a1_t8
 # Y0_a1_t9 <- Y0_a1_t9 -Y1death_a1_t9
 # Y0_a1_t10 <- Y0_a1_t10 -Y1death_a1_t10
-#
-# Y0_a0_t1 <- Y0_a0_t1 -Y1death_a0_t1
-# Y0_a0_t2 <- Y0_a0_t2 -Y1death_a0_t2
-# Y0_a0_t3 <- Y0_a0_t3 -Y1death_a0_t3
-# Y0_a0_t4 <- Y0_a0_t4 -Y1death_a0_t4
-# Y0_a0_t5 <- Y0_a0_t5 -Y1death_a0_t5
-# Y0_a0_t6 <- Y0_a0_t6 -Y1death_a0_t6
-# Y0_a0_t7 <- Y0_a0_t7 -Y1death_a0_t7
-# Y0_a0_t8 <- Y0_a0_t8 -Y1death_a0_t8
-# Y0_a0_t9 <- Y0_a0_t9 -Y1death_a0_t9
-# Y0_a0_t10 <- Y0_a0_t10 -Y1death_a0_t10
 
+Y0_a1_t1 <- Y0_a1_t1 -Y1death_a0_t1
+Y0_a1_t2 <- Y0_a1_t2 -Y1death_a0_t2
+Y0_a1_t3 <- Y0_a1_t3 -Y1death_a0_t3
+Y0_a1_t4 <- Y0_a1_t4 -Y1death_a0_t4
+Y0_a1_t5 <- Y0_a1_t5 -Y1death_a0_t5
+Y0_a1_t6 <- Y0_a1_t6 -Y1death_a0_t6
+Y0_a1_t7 <- Y0_a1_t7 -Y1death_a0_t7
+Y0_a1_t8 <- Y0_a1_t8 -Y1death_a0_t8
+Y0_a1_t9 <- Y0_a1_t9 -Y1death_a0_t9
+Y0_a1_t10 <- Y0_a1_t10 -Y1death_a0_t10
 
+Y0_a0_t1 <- Y0_a0_t1 -Y1death_a0_t1
+Y0_a0_t2 <- Y0_a0_t2 -Y1death_a0_t2
+Y0_a0_t3 <- Y0_a0_t3 -Y1death_a0_t3
+Y0_a0_t4 <- Y0_a0_t4 -Y1death_a0_t4
+Y0_a0_t5 <- Y0_a0_t5 -Y1death_a0_t5
+Y0_a0_t6 <- Y0_a0_t6 -Y1death_a0_t6
+Y0_a0_t7 <- Y0_a0_t7 -Y1death_a0_t7
+Y0_a0_t8 <- Y0_a0_t8 -Y1death_a0_t8
+Y0_a0_t9 <- Y0_a0_t9 -Y1death_a0_t9
+Y0_a0_t10 <- Y0_a0_t10 -Y1death_a0_t10
+
+#NOTE! How to remove competing risk? just use baseline risk of death?
 
 #XXXX NOTE!!!!
 #Also, see what happens when drop out censoring in the truth calculation
@@ -136,11 +147,11 @@ Y0_a0_t10 <- 1-logit2prob(sum(as.numeric(cc[cc$var=="event_dementia_10",-c(1:2)]
 #need to subtract history of death at each time point
 #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-# CI_A1 <- 1-(Y0_a1_t1*Y0_a1_t2*Y0_a1_t3*Y0_a1_t4*Y0_a1_t5*Y0_a1_t6*Y0_a1_t7*Y0_a1_t8*Y0_a1_t9*Y0_a1_t10)
-# CI_A0 <-1-(Y0_a0_t1*Y0_a0_t2*Y0_a0_t3*Y0_a0_t4*Y0_a0_t5*Y0_a0_t6*Y0_a0_t7*Y0_a0_t8*Y0_a0_t9*Y0_a0_t10)
-#
-# CI_A1/CI_A0
-# CI_A1-CI_A0
+CI_A1 <- 1-(Y0_a1_t1*Y0_a1_t2*Y0_a1_t3*Y0_a1_t4*Y0_a1_t5*Y0_a1_t6*Y0_a1_t7*Y0_a1_t8*Y0_a1_t9*Y0_a1_t10)
+CI_A0 <-1-(Y0_a0_t1*Y0_a0_t2*Y0_a0_t3*Y0_a0_t4*Y0_a0_t5*Y0_a0_t6*Y0_a0_t7*Y0_a0_t8*Y0_a0_t9*Y0_a0_t10)
+
+CI_A1/CI_A0
+CI_A1-CI_A0
 
 
 CI_A1_t1 <- 1-(Y0_a1_t1)
@@ -165,5 +176,20 @@ CI_A1_t9-CI_A0_t9
 #Def wrong... should be increasing CI over time
 
 
+p1 <- logit2prob(cc[cc$var=="event_dementia_1",which(colnames(cc)=="glp1_1")])
+p2 <- logit2prob(cc[cc$var=="event_dementia_2",which(colnames(cc)=="glp1_2")])
+p3 <- logit2prob(cc[cc$var=="event_dementia_3",which(colnames(cc)=="glp1_3")])
+p4 <- logit2prob(cc[cc$var=="event_dementia_4",which(colnames(cc)=="glp1_4")])
+p5 <- logit2prob(cc[cc$var=="event_dementia_5",which(colnames(cc)=="glp1_5")])
+p6 <- logit2prob(cc[cc$var=="event_dementia_6",which(colnames(cc)=="glp1_6")])
+p7 <- logit2prob(cc[cc$var=="event_dementia_7",which(colnames(cc)=="glp1_7")])
+p8 <- logit2prob(cc[cc$var=="event_dementia_8",which(colnames(cc)=="glp1_8")])
+p9 <- logit2prob(cc[cc$var=="event_dementia_9",which(colnames(cc)=="glp1_9")])
+p10 <- logit2prob(cc[cc$var=="event_dementia_10",which(colnames(cc)=="glp1_10")])
 
+1-(1-p1)
+
+1-((1-p1)*(1-p2))
+1-((1-p1)*(1-p2)*(1-p3))
+1-((1-p1)*(1-p2)*(1-p3)*(1-p4))
 

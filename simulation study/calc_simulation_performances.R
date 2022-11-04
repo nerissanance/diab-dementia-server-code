@@ -8,8 +8,24 @@ source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
 source(paste0(here::here(),"/simulation study/0_simulation_cleaning_functions.R"))
 
 
-#Calc iptw performance
+#---------------------------------------------------------
+# v3
+#---------------------------------------------------------
+files <- dir(path=paste0(here::here(),"/sim_res/"), pattern = "*.RDS")
+files <- files[grepl("_v3",files)]
 
+
+setwd(paste0(here::here(),"/sim_res/"))
+
+d1<-readRDS("sim_res_1se_ic_v3.RDS")
+d2<-readRDS("sim_res_ridge_ic_v3.RDS")
+d3<-readRDS("sim_res_noDetQ_ic_v3.RDS")
+
+old_sim_res <- calc_sim_performance(files, boot_iter_files=NULL, trueRR=0.6924793, trueRD= -0.005929, iptw=F )
+
+old_sim_res <- calc_sim_performance(files, boot_iter_files=NULL, trueRR=0.3430989, trueRD= -0.01292504, iptw=F )
+view(old_sim_res$perf_tab_diff)
+view(old_sim_res$perf_tab_RR)
 #---------------------------------------------------------
 # old sim
 #---------------------------------------------------------
