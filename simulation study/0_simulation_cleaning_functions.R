@@ -10,12 +10,12 @@
 # trueRR=cRR
 # trueRD=cRD
 # boot_CIs=T
-trueRR=0.3930283
-trueRD=-0.035852
+# trueRR=0.3930283
+# trueRD=-0.035852
 
 calc_sim_performance <- function(files, boot_iter_files=NULL, trueRR, trueRD, iptw=F){
 
-  #setwd(paste0(here::here(),"/sim_res/"))
+  setwd(paste0(here::here(),"/sim_res/"))
   d <- files %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="analysis")
   d <- d %>% mutate(analysis = factor(analysis))
   levels(d$analysis) = files[as.numeric(levels(d$analysis))]
@@ -40,9 +40,11 @@ calc_sim_performance <- function(files, boot_iter_files=NULL, trueRR, trueRD, ip
 
   perf_tab_RR <- d %>% group_by(analysis) %>%
     mutate(variance=mean((log(estimate)-mean(log(estimate)))^2),
-           RD.variance=mean((mean(ate)-ate)^2),
            o.ci.lb = log(estimate) - 1.96 * sqrt(variance),
-           o.ci.ub = log(estimate) + 1.96 * sqrt(variance)) %>%
+           o.ci.ub = log(estimate) + 1.96 * sqrt(variance),
+           abs.variance=mean(((estimate)-mean((estimate)))^2),
+           abs.o.ci.lb = (estimate) - 1.96 * sqrt(abs.variance),
+           abs.o.ci.ub = (estimate) + 1.96 * sqrt(abs.variance)) %>%
     summarize(
       bias=mean(log(estimate))-log(true.RR),
       variance=mean((mean(log(estimate))-log(estimate))^2),
@@ -51,6 +53,7 @@ calc_sim_performance <- function(files, boot_iter_files=NULL, trueRR, trueRD, ip
       coverage=mean(CI.2.5.<=true.RR & true.RR<=CI.97.5.)*100,
       #oracle coverage
       o.coverage=mean(o.ci.lb<=log(true.RR) & log(true.RR)<= o.ci.ub)*100,
+      abs.o.coverage=mean(abs.o.ci.lb<=(true.RR) & (true.RR)<= abs.o.ci.ub)*100,
       mean_ci_width=mean(log(CI.97.5.)-log(CI.2.5.)),
       power=mean((CI.2.5. > 1 & CI.97.5.>1)|(CI.2.5. < 1 & CI.97.5.<1))*100
     ) %>% filter(!is.na(variance)) %>%

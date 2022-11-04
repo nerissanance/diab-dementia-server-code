@@ -111,10 +111,11 @@ clean_sim_data <- function(d, N_time=10){
 
  seed <- 3457347
  nsamp=3000000
+ nsamp=100000
 
   set.seed(seed)
-  u <- synthesizeDD(cc)
-  d.full <- sim(u, nsamp)
+  # u <- synthesizeDD(cc)
+  # d.full <- sim(u, nsamp)
 
   set.seed(seed)
   u.always <- synthesizeDD.always(cc)
@@ -128,105 +129,15 @@ clean_sim_data <- function(d, N_time=10){
   d.never <- d.never.full
   N_time=10
 
-  d <- clean_sim_data(d.full, 10)
+
+  #Temp: get deaths from the never on in case confounding by glp1 effect on comorbidities
+  ddeath <- d.never.full %>% select(starts_with("event_death"))
+  d.always.full <- d.always.full %>% select(!starts_with("event_death"))
+  d.always.full <- bind_cols(d.always.full, ddeath)
+
+  #d <- clean_sim_data(d.full, 10)
   d.always <- clean_sim_data(d.always.full, 10)
   d.never <- clean_sim_data(d.never.full, 10)
-
-  # tab_comp <- function(var){
-  #   print(table(d.full[[var]]))
-  #   print(table(d.always.full[[var]]))
-  #   print(table(d.never.full[[var]]))
-  #   cat("\nAfter cleaning:\n")
-  #   print(table(d[[var]]))
-  #   print(table(d.always[[var]]))
-  #   print(table(d.never[[var]]))
-  # }
-  #
-  # tab_comp("event_dementia_1")
-  # tab_comp("event_dementia_2")
-  #
-  # #table(d$glp1_0+d$glp1_1+d$glp1_0)
-  # d <- d %>% filter()
-  # tab_comp("event_dementia_10")
-  #
-  #
-  # (prop <-
-  #     1*(d$event_dementia_1 +
-  #          d$event_dementia_2 +
-  #          d$event_dementia_3 +
-  #          d$event_dementia_4 +
-  #          d$event_dementia_5 +
-  #          d$event_dementia_6 +
-  #          d$event_dementia_7 +
-  #          d$event_dementia_8 +
-  #          d$event_dementia_9 +
-  #          d$event_dementia_10 >0)  %>% table %>% prop.table)
-  # (prop9 <- d$event_dementia_9 %>% table %>% prop.table)
-  # (prop10 <- d$event_dementia_10 %>% table %>% prop.table)
-  # (prop11 <- d$event_dementia_11 %>% table %>% prop.table)
-  #
-  #
-  # (prop.always <-
-  #     1*(d.always$event_dementia_1 +
-  #          d.always$event_dementia_2 +
-  #          d.always$event_dementia_3 +
-  #          d.always$event_dementia_4 +
-  #          d.always$event_dementia_5 +
-  #          d.always$event_dementia_6 +
-  #          d.always$event_dementia_7 +
-  #          d.always$event_dementia_8 +
-  #          d.always$event_dementia_9 +
-  #          d.always$event_dementia_10 >0)  %>% table %>% prop.table)
-  # (prop.always1 <- d.always$event_dementia_1 %>% table %>% prop.table)
-  # (prop.always2 <- d.always$event_dementia_2 %>% table %>% prop.table)
-  # (prop.always9 <- d.always$event_dementia_9 %>% table %>% prop.table)
-  # (prop.always10 <- d.always$event_dementia_10 %>% table %>% prop.table)
-  # (prop.always11 <- d.always$event_dementia_11 %>% table %>% prop.table)
-  #
-  #
-  # (prop.never <-
-  #     1*(d.never$event_dementia_1 +
-  #          d.never$event_dementia_2 +
-  #          d.never$event_dementia_3 +
-  #          d.never$event_dementia_4 +
-  #          d.never$event_dementia_5 +
-  #          d.never$event_dementia_6 +
-  #          d.never$event_dementia_7 +
-  #          d.never$event_dementia_8 +
-  #          d.never$event_dementia_9 +
-  #          d.never$event_dementia_10 >0) %>% table %>% prop.table)
-  # (prop.never1 <- d.never$event_dementia_1 %>% table %>% prop.table)
-  # (prop.never2 <- d.never$event_dementia_2 %>% table %>% prop.table)
-  # (prop.never9 <- d.never$event_dementia_9 %>% table %>% prop.table)
-  # (prop.never10 <- d.never$event_dementia_10 %>% table %>% prop.table)
-  # (prop.never11 <- d.never$event_dementia_11 %>% table %>% prop.table)
-  #
-  #
-  #
-  # prop*100
-  # prop.always*100
-  # prop.never*100
-  # #mean(d_wide_list[[1]]$event_dementia_10)*100
-  #
-  # prop10*100
-  # prop.always10*100
-  # prop.never10*100
-  #
-  # (cRD <-  prop.always[2] - prop.never[2])
-  # (cRR <- (prop.always[2])/(prop.never[2]))
-  #
-  # cat("Risk ratio T10: ",cRR,"\n")
-  # cat("Risk difference T10: ",cRD,"\n")
-  #
-  #
-  #
-  # (prop.always1[2])/(prop.never1[2])
-  # (prop.always2[2])/(prop.never2[2])
-  # (prop.always2[2])-(prop.never2[2])
-  #
-  #   (prop.always9[2])/(prop.never9[2])
-  # (prop.always10[2])/(prop.never10[2])
-  # (prop.always11[2])/(prop.never11[2])
 
 
   mean(d.always$event_dementia_1,na.rm=T)/mean(d.never$event_dementia_1,na.rm=T)
