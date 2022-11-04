@@ -10,48 +10,15 @@ source(paste0(here::here(),"/simulation study/0_simulation_cleaning_functions.R"
 cc <- fread(paste0(here::here(),"/data/coefficients.txt"))
 
 
-# #Calculate truth
-# synthesizeDD <- function(coefficients){
-#   requireNamespace("lava")
-#   coefficients <- data.table(coefficients)
-#   XNAMES <- names(coefficients)[-(1:3)]
-#   BETA <- coefficients[,-(1:3),with=0L]
-#   INTERCEPT <- coefficients[["(Intercept)"]]
-#   # empty lava model for simulation
-#   m <- lvm()
-#   distribution(m,"age_base") <- normal.lvm(mean=70,sd=10)
-#   distribution(m,"sex") <- binomial.lvm(p=0.4)
-#   m <- addvar(m,"ie_type")
-#   m <- addvar(m,"code5txt")
-#   m <- addvar(m,"quartile_income")
-#   # loop across time and variables
-#   for (j in 1:NROW(coefficients)){
-#     V <- coefficients$var[j]
-#     beta <- unlist(BETA[j,])
-#     X <- XNAMES[!is.na(beta)]
-#     beta <- beta[!is.na(beta)]
-#     # add V ~ Intercept + beta X
-#     distribution(m,V) <- binomial.lvm()
-#     intercept(m,V) <- INTERCEPT[j]
-#     regression(m,from=X,to=V) <- beta
-#   }
-#   class(m) <- c("synthesizeDD",class(m))
-#   m
-# }
-#
-#
+
 synthesizeDD.always <- function(coefficients, A_name = "glp1"){
   requireNamespace("lava")
   coefficients <- data.table(coefficients)
   XNAMES <- names(coefficients)[-(1:3)]
   BETA <- coefficients[,-(1:3),with=0L]
-  # collect At and Ct nodes; intervene At=1 and Ct=0 later
+  # collect At  nodes; intervene At=1 and Ct=0 later
   loc_A <- grep(paste0("^", A_name, "_"), XNAMES)
   beta_A <- BETA[, loc_A, with = F]
-  # loc_C <- grep("^censor_", XNAMES)
-  # beta_C <- BETA[, loc_C, with = F]
-
-  colnames(BETA)[loc_A]
 
 
   INTERCEPT <- coefficients[["(Intercept)"]]
@@ -66,7 +33,6 @@ synthesizeDD.always <- function(coefficients, A_name = "glp1"){
   for (j in 1:NROW(coefficients)){
     # At constant 1 -> intercept becomes intercept + At coefficient
     # also remove At from fitted betas
-    # Ct constant 0 -> intercept no change, remove Ct from fitted betas
     temp_intercept <- INTERCEPT[j]
     temp_sum_A_coef <- rowSums(beta_A[j], na.rm = T)  # intercept + At coefficients
     temp_intercept <- temp_intercept + temp_sum_A_coef
@@ -74,15 +40,11 @@ synthesizeDD.always <- function(coefficients, A_name = "glp1"){
     V <- coefficients$var[j]
     beta <- unlist(BETA[j,])
     beta[loc_A] <- NA  # absorb A coefficient into intercept for always-on group; not depending on observed A values any more
-    #beta[loc_C] <- NA  # C is also intervened so will be ignored in conditional logistic models
 
     X <- XNAMES[!is.na(beta)]
     beta <- beta[!is.na(beta)]
     # add V ~ Intercept + beta X
     distribution(m,V) <- binomial.lvm()
-    # intercept(m,V) <- INTERCEPT[j]
-    # intercept(m,V) <- temp_intercept
-    #TEMP!
     intercept(m,V) <- ifelse(grepl("event_death",V), INTERCEPT[j], temp_intercept) #remove competing risk
     regression(m,from=X,to=V) <- beta
   }
@@ -100,8 +62,6 @@ synthesizeDD.never <- function(coefficients, A_name = "glp1"){
   # collect At and Ct nodes; intervene At=1 and Ct=0 later
   loc_A <- grep(paste0("^", A_name, "_"), XNAMES)
   beta_A <- BETA[, loc_A, with = F]
-  # loc_C <- grep("^censor_", XNAMES)
-  # beta_C <- BETA[, loc_C, with = F]
 
 
   INTERCEPT <- coefficients[["(Intercept)"]]
@@ -114,21 +74,14 @@ synthesizeDD.never <- function(coefficients, A_name = "glp1"){
   m <- addvar(m,"quartile_income")
   # loop across time and variables
   for (j in 1:NROW(coefficients)){
-    # At constant 1 -> intercept becomes intercept + At coefficient
-    # also remove At from fitted betas
-    # Ct constant 0 -> intercept no change, remove Ct from fitted betas
-
     V <- coefficients$var[j]
     beta <- unlist(BETA[j,])
     beta[loc_A] <- NA  # absorb A coefficient into intercept for always-on group; not depending on observed A values any more
-    #beta[loc_C] <- NA  # C is also intervened so will be ignored in conditional logistic models
-
     X <- XNAMES[!is.na(beta)]
     beta <- beta[!is.na(beta)]
     # add V ~ Intercept + beta X
     distribution(m,V) <- binomial.lvm()
     intercept(m,V) <- INTERCEPT[j] #keep only intercept for "never on"
-    # intercept(m,V) <- temp_intercept[j]
     regression(m,from=X,to=V) <- beta
   }
   class(m) <- c("synthesizeDD",class(m))
@@ -140,8 +93,6 @@ synthesizeDD.never <- function(coefficients, A_name = "glp1"){
 
 clean_sim_data <- function(d, N_time=10){
 
-  #d <- as.data.frame(sapply(d, as.numeric))
-  #d[is.na(d)] <- 0 #Missingness due to censoring should be coded 0 as long as censoring variable is equal to 1.
   d<- data.table(d)
 
   for(i in 1:(N_time+1)){
@@ -151,14 +102,6 @@ clean_sim_data <- function(d, N_time=10){
     d[get(paste0("event_death_",i))==1, (paste0("event_death_",j)):=1]
     d[get(paste0("event_death_",i))==1, (paste0("event_dementia_",j)):=NA]
   }
-
-  # dementia.nodes<- grep("event_dementia_",names(d))
-  # death.nodes<- grep("event_death_",names(d))
-  # d[, sum_death :=rowSums(.SD,na.rm=T), .SDcols = death.nodes]
-  # d[, sum_dementia :=rowSums(.SD,na.rm=T), .SDcols = dementia.nodes]
-  # d[sum_death > sum_dementia, (dementia.nodes) := replace(.SD, .SD == 1, NA), .SDcols = dementia.nodes]
-  # d[sum_death < sum_dementia, (death.nodes) := replace(.SD, .SD == 1, 0), .SDcols = death.nodes]
-  #d[sum_death== sum_dementia, (death.nodes) := replace(.SD, .SD == 1, 0), .SDcols = death.nodes]
   return(d)
 }
 
@@ -166,22 +109,18 @@ clean_sim_data <- function(d, N_time=10){
 
 
 
-#nsamp=115698
-# seed <- 3457347
+ seed <- 3457347
  nsamp=3000000
 
-  #set.seed(seed)
-  set.seed(12345)
+  set.seed(seed)
   u <- synthesizeDD(cc)
   d.full <- sim(u, nsamp)
 
-  #set.seed(12345)
-  set.seed(12345)
+  set.seed(seed)
   u.always <- synthesizeDD.always(cc)
   d.always.full <- sim(u.always, nsamp)
 
-  #set.seed(seed)
-  set.seed(12345)
+  set.seed(seed)
   u.never <- synthesizeDD.never(cc)
   d.never.full <- sim(u.never, nsamp)
 

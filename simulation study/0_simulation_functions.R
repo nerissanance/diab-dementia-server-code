@@ -275,10 +275,19 @@ spec_analysis_sim <- function(data, long_covariates, baseline_vars, N_time, Avar
     d_ltmle[[i]] <- BinaryToCensoring(is.censored=d_ltmle[[i]])
   }
 
+
+
   d_ltmle <- d_ltmle %>% subset(., select = -c(censor_0, event_dementia_0,event_death_0))
-  d_ltmle <- d_ltmle %>% select(  ie_type,                      age_base,                     sex,                          code5txt,                     quartile_income,
-                                  insulin_0,                    any.malignancy_0,             chronic.pulmonary.disease_0,  hypertension_0,               myocardial.infarction_0,
-                                  ischemic.heart.disease_0,     heart.failure_0, renal.disease_0, sglt2_inhib_0, glp1_0,   everything())
+
+  if(!is.null(d_ltmle$id)){
+    d_ltmle <- d_ltmle %>% select(  id, ie_type,                      age_base,                     sex,                          code5txt,                     quartile_income,
+                                    insulin_0,                    any.malignancy_0,             chronic.pulmonary.disease_0,  hypertension_0,               myocardial.infarction_0,
+                                    ischemic.heart.disease_0,     heart.failure_0, renal.disease_0, sglt2_inhib_0, glp1_0,   everything())
+  }else{
+    d_ltmle <- d_ltmle %>% select( ie_type,                      age_base,                     sex,                          code5txt,                     quartile_income,
+                                    insulin_0,                    any.malignancy_0,             chronic.pulmonary.disease_0,  hypertension_0,               myocardial.infarction_0,
+                                    ischemic.heart.disease_0,     heart.failure_0, renal.disease_0, sglt2_inhib_0, glp1_0,   everything())
+  }
 
 
 
@@ -292,6 +301,21 @@ spec_analysis_sim <- function(data, long_covariates, baseline_vars, N_time, Avar
   ))
 }
 
+
+# d=dboot
+# N_time = 11
+# resdf=NULL
+# Qint=FALSE
+# det.Q=FALSE
+# varmethod = "ic"
+# id=dboot$id
+#
+# gcomp=F
+#
+# gbound = c(0.01, 1)
+# override_function=SuperLearner_override
+# glm=FALSE
+# SL.library = c("SL.glmnet")
 
 run_ltmle_glmnet_test <- function(d, N_time = 3,
                                   SL.library = c("SL.glmnet"),
@@ -315,12 +339,13 @@ run_ltmle_glmnet_test <- function(d, N_time = 3,
   d <-clean_sim_data(d, N_time=N_time)
 
   if(!is.null(id)){
-    baseline_vars <- c(baseline_vars,"id")
+    baseline_vars <- c("id",baseline_vars)
   }
 
   #Use only first N time points
   d <- d %>%
     dplyr::select(!!(baseline_vars),matches(paste0("_(",paste0(0:(N_time-1),collapse="|"),")$")))
+
 
 
   spec_ltmle <- spec_analysis_sim(data=d, c(long_covariates,"event_death_"),
@@ -334,8 +359,50 @@ run_ltmle_glmnet_test <- function(d, N_time = 3,
   set.seed(12345)
   fit = NULL
 
-  qform=NULL
-  det.q.fun = NULL
+  if(Qint){
+    if(N_time==11){
+
+      qform = c(
+        insulin_0="Q.kplus1 ~ 1",
+        event_dementia_1="Q.kplus1 ~ 1",
+        event_dementia_2="Q.kplus1 ~ 1",
+        event_dementia_3="Q.kplus1 ~ 1",
+        event_dementia_4="Q.kplus1 ~ 1",
+        event_dementia_5="Q.kplus1 ~ 1",
+        event_dementia_6="Q.kplus1 ~ 1",
+        event_dementia_7="Q.kplus1 ~ 1",
+        event_dementia_8="Q.kplus1 ~ 1",
+        event_dementia_9="Q.kplus1 ~ 1",
+        event_dementia_10="Q.kplus1 ~ 1"
+      )
+    }
+    if(N_time==4){
+      qform = c(
+        insulin_0="Q.kplus1 ~ 1",
+        event_dementia_1="Q.kplus1 ~ 1",
+        event_dementia_2="Q.kplus1 ~ 1",
+        event_dementia_3="Q.kplus1 ~ 1")
+    }
+    if(N_time==2){
+      qform = c(
+        insulin_0="Q.kplus1 ~ 1",
+        event_dementia_1="Q.kplus1 ~ 1")
+    }
+  }else{
+    qform=NULL
+  }
+
+
+  if(det.Q){
+    det.q.fun = det.Q.function
+  }else{
+    det.q.fun = NULL
+  }
+
+  if(!is.null(id)){
+    id <- spec_ltmle$data[["id"]]
+  }
+
 
 
   package_stub("SuperLearner", "SuperLearner", override_function, {
@@ -343,7 +410,7 @@ run_ltmle_glmnet_test <- function(d, N_time = 3,
       try(fit <- ltmle(data=spec_ltmle$data,
                        Anodes = spec_ltmle$Anodes,
                        Cnodes = spec_ltmle$Cnodes[-1],
-                       Lnodes = spec_ltmle$Lnodes[spec_ltmle$Lnodes!="event_death_0"],
+                       Lnodes = unique(spec_ltmle$Lnodes[spec_ltmle$Lnodes!="event_death_0"]),
                        Ynodes = spec_ltmle$Ynodes[-1],
                        gbound=gbound,
                        survivalOutcome = T,
