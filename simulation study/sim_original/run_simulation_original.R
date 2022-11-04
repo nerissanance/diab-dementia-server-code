@@ -15,7 +15,76 @@ d_wide_list <- readRDS(file=here("data/simulated_data_list.RDS"))
 d_wide_list <- d_wide_list[1:200]
 gc()
 
-res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE, det.Q =FALSE, varmethod = "ic")
+res <- run_ltmle_glmnet(d_wide_list[[1]], resdf=NULL, Qint=FALSE, det.Q =FALSE, varmethod = "ic")
+res
+
+d=d_wide_list[[1]]
+N_time = 2
+SL.library = c("SL.glmnet")
+resdf=NULL
+Qint=F
+gcomp=F
+det.Q=T
+gbound = c(0.01, 1)
+override_function=SuperLearner_override
+varmethod = "ic" #variance method
+label=""
+glm=FALSE
+id=NULL
+
+  warn = getOption("warn")
+  options(warn=-1)
+
+  #clean competing events
+  d <-clean_sim_data(d, N_time=N_time)
+
+  if(!is.null(id)){
+    baseline_vars <- c(baseline_vars,"id")
+  }
+
+  #Use only first N time points
+  d <- d %>%
+    dplyr::select(!!(baseline_vars),matches(paste0("_(",paste0(0:(N_time-1),collapse="|"),")$")))
+
+
+  spec_ltmle <- spec_analysis_sim(data=d, c(long_covariates,"event_death_"),
+                                  baseline_vars, N_time,
+                                  Avars=c("glp1_"),
+                                  Yvars=c("event_dementia_"),
+                                  Cvars=c("censor_"))
+  #abar_spec = list(rep(1,N_time-1),rep(0,N_time-1))
+  abar_spec = list(rep(1,N_time),rep(0,N_time))
+
+  set.seed(12345)
+  fit = NULL
+
+    qform=NULL
+    det.q.fun = NULL
+
+
+    package_stub("SuperLearner", "SuperLearner", override_function, {
+      testthatsomemore::package_stub("ltmle", "Estimate", Estimate_override, {
+        try(fit <- ltmle(data=spec_ltmle$data,
+                         Anodes = spec_ltmle$Anodes,
+                         Cnodes = spec_ltmle$Cnodes[-1],
+                         Lnodes = spec_ltmle$Lnodes[spec_ltmle$Lnodes!="event_death_0"],
+                         Ynodes = spec_ltmle$Ynodes[-1],
+                         gbound=gbound,
+                         survivalOutcome = T,
+                         abar = abar_spec,
+                         gcomp=gcomp,
+                         Qform = qform,
+                         estimate.time=F,
+                         deterministic.Q.function = det.q.fun,
+                         SL.library = SL.library,
+                         variance.method = varmethod,
+                         id=id
+        ))
+      })})
+
+    res <- summary(fit)
+    res
+
 
 
 int.start.time <- Sys.time()

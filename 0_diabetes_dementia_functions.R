@@ -37,33 +37,34 @@ SuperLearner_override <- function(Y, X, newX = NULL, family = gaussian(), SL.lib
   #try(res <- SL.glmnet(Y, X, newX, family, obsWeights, id, alpha=alpha, useMin =TRUE,  nfolds = 5), silent=TRUE)
 
   if(is.null(res)){
-      cat("glmnet failed!!!!!!!!!!!!!!!!!!!!!!!!!!\n")
-      cat("family:",family[1]$family,"\n")
-      cat("summary:\n")
-      print(summary((Y)))
-      cat("unique outcome:\n")
-      cat(length(unique(Y)))
-      cat("num predictors:\n")
-      cat(ncol((X)))
-      cat("\n")
-      cat("N outcome:",min(table(Y)))
-      cat("\n")
+      # cat("glmnet failed!!!!!!!!!!!!!!!!!!!!!!!!!!\n")
+      # cat("family:",family[1]$family,"\n")
+      # cat("summary:\n")
+      # print(summary((Y)))
+      # cat("unique outcome:\n")
+      # cat(length(unique(Y)))
+      # cat("num predictors:\n")
+      # cat(ncol((X)))
+      # cat("\n")
+      # cat("N outcome:",min(table(Y)))
+      # cat("\n")
 
 
       res <- SL.mean(Y, X, newX, family, obsWeights, id)
-    }else{
-      cat("glmnet succeeded\n")
-      cat("family:",family[1]$family,"\n")
-      cat("summary:\n")
-      print(summary((Y)))
-      cat("unique outcome:\n")
-      cat(length(unique(Y)))
-      cat("num predictors:\n")
-      cat(ncol((X)))
-      cat("\n")
-      cat("N outcome:",min(table(Y)))
-      cat("\n")
-    }
+  }
+    # }else{
+    #   cat("glmnet succeeded\n")
+    #   cat("family:",family[1]$family,"\n")
+    #   cat("summary:\n")
+    #   print(summary((Y)))
+    #   cat("unique outcome:\n")
+    #   cat(length(unique(Y)))
+    #   cat("num predictors:\n")
+    #   cat(ncol((X)))
+    #   cat("\n")
+    #   cat("N outcome:",min(table(Y)))
+    #   cat("\n")
+    # }
 
   list(model=res$fit, SL.predict = res$pred)
 }
