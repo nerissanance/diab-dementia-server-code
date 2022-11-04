@@ -83,6 +83,14 @@ resdf_ic_lasso_prescreen_t11  <- foreach(i = 1:200, .combine = 'bind_rows', .err
 saveRDS(resdf_ic_lasso_prescreen_t11, paste0(here::here(),"/sim_res/sim_res_lasso_prescreen_ic_v3.RDS"))
 
 
+#SuperLearner_override_1se
+resdf_ic_1se_t11  <- foreach(i = 1:200, .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet_test(d=d_wide_list[[i]],  N_time=11, override_function=SuperLearner_override_1se))
+  return(res)
+}
+saveRDS(resdf_ic_1se_t11, paste0(here::here(),"/sim_res/sim_res_1se_ic_v3.RDS"))
+
 
 #SuperLearner_override_ridge_1se
 resdf_ic_ridge_1se_t11  <- foreach(i = 1:200, .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
@@ -93,16 +101,7 @@ resdf_ic_ridge_1se_t11  <- foreach(i = 1:200, .combine = 'bind_rows', .errorhand
 saveRDS(resdf_ic_ridge_1se_t11, paste0(here::here(),"/sim_res/sim_res_ridge_1se_ic_v3.RDS"))
 
 
-#SuperLearner_override_1se
-resdf_ic_1se_t11  <- foreach(i = 1:200, .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
-  res <- NULL
-  try(res <- run_ltmle_glmnet_test(d=d_wide_list[[i]],  N_time=11, override_function=SuperLearner_override_1se))
-  return(res)
-}
-saveRDS(resdf_ic_1se_t11, paste0(here::here(),"/sim_res/sim_res_1se_ic_v3.RDS"))
 
-
-#KEEP running these:
 
 #SuperLearner_override_EN_1se
 resdf_ic_EN_1se_t11  <- foreach(i = 1:200, .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
