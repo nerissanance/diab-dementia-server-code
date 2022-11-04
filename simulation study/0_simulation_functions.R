@@ -302,27 +302,26 @@ spec_analysis_sim <- function(data, long_covariates, baseline_vars, N_time, Avar
 }
 
 
-# d=dboot
-# N_time = 11
-# resdf=NULL
-# Qint=FALSE
-# det.Q=FALSE
+# d=d_wide_list[[i]]
+# N_time=2
 # varmethod = "ic"
-# id=dboot$id
-#
+# N_time = 3
+# SL.library = c("SL.glmnet")
+# resdf=NULL
+# Qint=F
 # gcomp=F
-#
+# det.Q=F
 # gbound = c(0.01, 1)
 # override_function=SuperLearner_override
-# glm=FALSE
-# SL.library = c("SL.glmnet")
+# label=""
+# id=NULL
 
 run_ltmle_glmnet_test <- function(d, N_time = 3,
                                   SL.library = c("SL.glmnet"),
                                   resdf=NULL,
                                   Qint=F,
                                   gcomp=F,
-                                  det.Q=T,
+                                  det.Q=F,
                                   gbound = c(0.01, 1),
                                   override_function=SuperLearner_override,
                                   varmethod = "ic", #variance method
