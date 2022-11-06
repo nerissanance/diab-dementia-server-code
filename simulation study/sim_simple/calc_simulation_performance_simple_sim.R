@@ -58,6 +58,7 @@ boot_res_CV <- boot_iter_files_CV %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .
 boot_res_no_ties <- boot_iter_files_no_ties %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="boot_iter")
 boot_res_CV_glm <- boot_iter_files_CV %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="boot_iter")
 boot_res_no_ties_glm <- boot_iter_files_no_ties_glm %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="boot_iter")
+boot_res_CV_1000iter <- boot_iter_files_CV_1000iter %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="boot_iter")
 
 #calc bootstrap CI's
 boot_CIs_CV <- boot_res_CV %>% group_by(iteration) %>% summarise(
@@ -102,6 +103,18 @@ boot_CIs_CV_glm <- boot_res_CV_glm %>% group_by(iteration) %>% summarise(
   ate.boot_cv_iptw_CI2=quantile(iptw.ate,.975)
 )
 
+boot_res_CV_1000iter <- boot_res_CV_1000iter %>% group_by(iteration) %>% summarise(
+  boot_cv_1000iter_CI1=quantile(estimate,.025),
+  boot_cv_1000iter_CI2=quantile(estimate,.975),
+  boot_cv_iptw_1000iter_CI1=quantile(iptw.estimate,.025),
+  boot_cv_iptw_1000iter_CI2=quantile(iptw.estimate,.975),
+  ate.boot_cv_1000iter_CI1=quantile(ate,.025),
+  ate.boot_cv_1000iter_CI2=quantile(ate,.975),
+  ate.boot_cv_iptw_1000iter_CI1=quantile(iptw.ate,.025),
+  ate.boot_cv_iptw_1000iter_CI2=quantile(iptw.ate,.975)
+)
+
+
 
 # boot_res_no_ties_glm <- boot_res_no_ties_glm %>% group_by(iteration) %>% summarise(
 #   boot_subsamp_CI1=quantile(estimate,.025),
@@ -120,6 +133,9 @@ resdf_glm <- left_join(resdf_glm, boot_CIs_CV_glm, by="iteration")
 #resdf_glm <- left_join(resdf_glm, boot_res_no_ties_glm, by="iteration")
 
 resdf_glmnet <- left_join(resdf_glmnet, boot_CIs_CV, by="iteration")
+resdf_glmnet <- left_join(resdf_glmnet, boot_res_CV_1000iter, by="iteration")
+
+
 #resdf_glmnet <- left_join(resdf_glmnet, boot_res_no_ties, by="iteration")
 
 d <- bind_rows(resdf_glm, resdf_glmnet)
@@ -160,6 +176,7 @@ perf_tab_RR <- d %>% group_by(estimator) %>%
     coverage_ic=mean(ic_ci_lb<true.RR & true.RR<ic_ci_ub)*100,
     coverage_tmle=mean(tmle_ci_lb<true.RR & true.RR<tmle_ci_ub)*100,
     coverage_cv_boot=mean(boot_cv_CI1<true.RR & true.RR<boot_cv_CI2)*100,
+    coverage_cv_boot_1000iter=mean(boot_cv_1000iter_CI1<true.RR & true.RR<boot_cv_1000iter_CI2)*100,
     bias=mean(log(estimate))-log(true.RR),
     variance=variance[1],
     mse = bias^2 + variance,
@@ -188,7 +205,10 @@ perf_tab_RD <- d %>% group_by(estimator) %>%
     coverage_ic=mean(ate_ic_ci_lb<true.RD & true.RD<ate_ic_ci_ub)*100,
     coverage_tmle=mean(ate_tmle_ci_lb<true.RD & true.RD<ate_tmle_ci_ub)*100,
     coverage_cv_boot=mean(ate.boot_cv_CI1<true.RD & true.RD<ate.boot_cv_CI2)*100,
-    coverage_subsamp_boot=mean(ate.boot_subsamp_CI1 <true.RD & true.RD<ate.boot_subsamp_CI2)*100#,
+    coverage_cv_boot_1000iter=mean(ate.boot_cv_iptw_1000iter_CI1 <true.RD & true.RD<ate.boot_cv_iptw_1000iter_CI2)*100,
+    coverage_iptw=mean(iptw.ate.ci.lb<true.RD & true.RD<iptw.ate.ci.ub)*100,
+    coverage_iptw_boot_1000iter=mean(ate.boot_cv_iptw_1000iter_CI1 <true.RD & true.RD<ate.boot_cv_iptw_1000iter_CI2)*100#,
+    #coverage_subsamp_boot=mean(ate.boot_subsamp_CI1 <true.RD & true.RD<ate.boot_subsamp_CI2)*100#,
     # mean_ci_width=mean((CI.97.5.)-(CI.2.5.)),
     # power=mean((CI.2.5. > 1 & CI.97.5.>1)|(CI.2.5. < 1 & CI.97.5.<1))*100
   ) %>%
