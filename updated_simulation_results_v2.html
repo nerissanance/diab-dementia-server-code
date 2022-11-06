@@ -377,18 +377,20 @@ results</h1>
 <p>True RD: -0.3</p>
 <div id="relative-risk-performance" class="section level3">
 <h3>Relative risk performance</h3>
-<table>
+<table style="width:100%;">
 <colgroup>
-<col width="8%" />
-<col width="5%" />
-<col width="7%" />
+<col width="6%" />
 <col width="4%" />
+<col width="5%" />
+<col width="3%" />
+<col width="8%" />
+<col width="6%" />
+<col width="7%" />
+<col width="8%" />
+<col width="10%" />
+<col width="16%" />
+<col width="8%" />
 <col width="11%" />
-<col width="9%" />
-<col width="9%" />
-<col width="11%" />
-<col width="13%" />
-<col width="18%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -401,7 +403,9 @@ results</h1>
 <th align="right">coverage_ic</th>
 <th align="right">coverage_tmle</th>
 <th align="right">coverage_cv_boot</th>
-<th align="right">coverage_subsamp_boot</th>
+<th align="right">coverage_cv_boot_1000iter</th>
+<th align="right">coverage_iptw</th>
+<th align="right">coverage_iptw_boot</th>
 </tr>
 </thead>
 <tbody>
@@ -415,7 +419,9 @@ results</h1>
 <td align="right">95.0</td>
 <td align="right">95.0</td>
 <td align="right">93.7</td>
-<td align="right">84.6</td>
+<td align="right">NA</td>
+<td align="right">95.7</td>
+<td align="right">93.5</td>
 </tr>
 <tr class="even">
 <td align="left">LASSO</td>
@@ -427,7 +433,9 @@ results</h1>
 <td align="right">94.9</td>
 <td align="right">94.9</td>
 <td align="right">93.7</td>
-<td align="right">84.8</td>
+<td align="right">94.5</td>
+<td align="right">95.7</td>
+<td align="right">93.5</td>
 </tr>
 </tbody>
 </table>
@@ -436,16 +444,18 @@ results</h1>
 <h3>Risk difference performance</h3>
 <table>
 <colgroup>
+<col width="5%" />
+<col width="4%" />
+<col width="5%" />
+<col width="4%" />
 <col width="8%" />
 <col width="6%" />
 <col width="7%" />
-<col width="6%" />
-<col width="11%" />
 <col width="8%" />
 <col width="9%" />
-<col width="11%" />
-<col width="13%" />
-<col width="17%" />
+<col width="15%" />
+<col width="8%" />
+<col width="16%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -458,7 +468,9 @@ results</h1>
 <th align="right">coverage_ic</th>
 <th align="right">coverage_tmle</th>
 <th align="right">coverage_cv_boot</th>
-<th align="right">coverage_subsamp_boot</th>
+<th align="right">coverage_cv_boot_1000iter</th>
+<th align="right">coverage_iptw</th>
+<th align="right">coverage_iptw_boot_1000iter</th>
 </tr>
 </thead>
 <tbody>
@@ -472,7 +484,9 @@ results</h1>
 <td align="right">95.3</td>
 <td align="right">95.3</td>
 <td align="right">94.8</td>
-<td align="right">85.4</td>
+<td align="right">NA</td>
+<td align="right">95.3</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="left">LASSO</td>
@@ -484,7 +498,9 @@ results</h1>
 <td align="right">95.3</td>
 <td align="right">95.3</td>
 <td align="right">94.8</td>
-<td align="right">85.5</td>
+<td align="right">95.2</td>
+<td align="right">95.3</td>
+<td align="right">95.2</td>
 </tr>
 </tbody>
 </table>

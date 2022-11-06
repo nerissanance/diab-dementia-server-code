@@ -218,11 +218,12 @@ clean_sim_results <- function(d){
   d <- d %>% subset(., select = -c(analysis))
   #d <- d %>% select(analysis)
 
-  d <- d %>% select(simulated_data, estimator, variance_estimator, Qint,DetQ,
-                    censoring_in_data,bias,variance,mse,bias_se_ratio,
-                    coverage,         o.coverage,       mean_ci_width,
-                    power, filenames) %>%
-    arrange(coverage)
+  d <- d[,which(colnames(d) %in% c("simulated_data", "estimator", "variance_estimator", "Qint","DetQ",
+                                   "censoring_in_data","bias","variance","mse","bias_se_ratio",
+                                   "coverage",        'o.coverage',  "abs.o.coverage",       'mean_ci_width',
+                                   "power", "filenames"))]
+
+  d <- d %>% arrange(o.coverage)
 
 
   return(d)

@@ -19,15 +19,14 @@ boot_iter_files <- boot_iter_files[grepl("_v3",boot_iter_files)]
 length(boot_iter_files)
 
 
-# setwd(paste0(here::here(),"/sim_res/"))
-# d1<-readRDS("sim_res_1se_ic_v3.RDS")
-# d2<-readRDS("sim_res_ridge_ic_v3.RDS")
-# d3<-readRDS("sim_res_noDetQ_ic_v3.RDS")
+old_sim_res_v3 <- calc_sim_performance(files, boot_iter_files=boot_iter_files, trueRR=0.5148661, trueRD= -0.009683665, iptw=F )
 
-old_sim_res_v3 <- calc_sim_performance(files, boot_iter_files=boot_iter_files, trueRR=0.3430989, trueRD= -0.01292504, iptw=F )
-old_sim_res_v3 <- calc_sim_performance(files, boot_iter_files=boot_iter_files, trueRR=0.5057803, trueRD= -0.01006919, iptw=F )
+
 view(old_sim_res_v3$perf_tab_diff)
 view(old_sim_res_v3$perf_tab_RR)
+
+
+
 
 
 #---------------------------------------------------------
@@ -91,6 +90,7 @@ length(boot_iter_files2)
 
 #old_sim_res <- calc_sim_performance(files, boot_iter_files=boot_iter_files, 0.6924793 , -0.005929 )
 old_sim_res <- calc_sim_performance(files, boot_iter_files=boot_iter_files, trueRR=0.3430989, trueRD= -0.01292504, iptw=F )
+old_sim_res_v3 <- calc_sim_performance(files, boot_iter_files=boot_iter_files, trueRR=0.5148661, trueRD= -0.009683665, iptw=F )
 
 
 tab<-old_sim_res$perf_tab_RR
@@ -106,22 +106,18 @@ files <- dir(path=paste0(here::here(),"/sim_res/"), pattern = "*.RDS")
 files <- files[grepl("old_null_sim_res_",files)]
 files <- files[grepl("_T11",files)]
 
-setwd(paste0(here::here(),"/sim_res/"))
-d <- readRDS("old_null_sim_res_noDetQ_Qint_ic_T2.RDS")
-
-d <- files %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="analysis")
-d <- d %>% mutate(analysis = factor(analysis))
-levels(d$analysis) = files[as.numeric(levels(d$analysis))]
-d$analysis <- gsub(".RDS","",d$analysis)
-
 #load bootstrap
 boot_iter_files <- dir(path=paste0(here::here(),"/data/bootstrap/"), pattern = "*.RDS")
 boot_iter_files <- boot_iter_files[grepl("sim_res_boot_old_sim_null_T11_",boot_iter_files)]
 length(boot_iter_files)
 
-old_sim_res_null <- calc_sim_performance(files, boot_iter_files=boot_iter_files, 1, 0)
-tab<-old_sim_res_null$perf_tab_RR
+original_sim_res_null <- calc_sim_performance(files, boot_iter_files=boot_iter_files, 1, 0)
+original_sim_res_null$perf_tab_RR
+original_sim_res_null$perf_tab_RD
+tab<-original_sim_res_null$perf_tab_RR
 tab<-tab %>% select(variance_estimator, Qint,  DetQ, o.coverage, bias, variance,mse, bias_se_ratio, coverage, mean_ci_width)
 
 knitr::kable(tab, digits = 3)
+
+save(original_sim_res_null,  file=paste0(here::here(),"/results/sim_performance_results_original_null.Rdata"))
 

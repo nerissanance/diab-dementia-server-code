@@ -35,6 +35,11 @@ True RR: 0.57
 
 True RD: -0.3
 
+**Notes:**
+
+  * All estimators perform well, a sanity check on the ltmle LASSO implementation. 
+  * Increasing bootstrap iterations from 200 to 1000 increased coverage closer to 95% in the RR estimation. 200 iterations was sufficient for RD.
+
 ### Relative risk performance
 
 ```{r, echo=FALSE}
