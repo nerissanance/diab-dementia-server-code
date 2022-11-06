@@ -111,7 +111,11 @@ clean_sim_data <- function(d, N_time=10){
 
  seed <- 3457347
  nsamp=3000000
+<<<<<<< HEAD
  nsamp=1000000
+=======
+ nsamp=5000000
+>>>>>>> cb5cc528a441ac763303e163149458975335a362
 
   set.seed(seed)
   # u <- synthesizeDD(cc)
