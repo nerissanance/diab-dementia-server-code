@@ -303,12 +303,11 @@ spec_analysis_sim <- function(data, long_covariates, baseline_vars, N_time, Avar
 
 
 # d=d_wide_list[[i]]
-# N_time=2
+# N_time=11
 # varmethod = "ic"
-# N_time = 3
 # SL.library = c("SL.glmnet")
 # resdf=NULL
-# Qint=F
+# Qint=T
 # gcomp=F
 # det.Q=F
 # gbound = c(0.01, 1)
@@ -363,29 +362,29 @@ run_ltmle_glmnet_test <- function(d, N_time = 3,
 
       qform = c(
         insulin_0="Q.kplus1 ~ 1",
-        event_dementia_1="Q.kplus1 ~ 1",
-        event_dementia_2="Q.kplus1 ~ 1",
-        event_dementia_3="Q.kplus1 ~ 1",
-        event_dementia_4="Q.kplus1 ~ 1",
-        event_dementia_5="Q.kplus1 ~ 1",
-        event_dementia_6="Q.kplus1 ~ 1",
-        event_dementia_7="Q.kplus1 ~ 1",
-        event_dementia_8="Q.kplus1 ~ 1",
-        event_dementia_9="Q.kplus1 ~ 1",
-        event_dementia_10="Q.kplus1 ~ 1"
+        insulin_1="Q.kplus1 ~ 1",
+        insulin_2="Q.kplus1 ~ 1",
+        insulin_3="Q.kplus1 ~ 1",
+        insulin_4="Q.kplus1 ~ 1",
+        insulin_5="Q.kplus1 ~ 1",
+        insulin_6="Q.kplus1 ~ 1",
+        insulin_7="Q.kplus1 ~ 1",
+        insulin_8="Q.kplus1 ~ 1",
+        insulin_9="Q.kplus1 ~ 1",
+        insulin_10="Q.kplus1 ~ 1"
       )
     }
     if(N_time==4){
       qform = c(
         insulin_0="Q.kplus1 ~ 1",
-        event_dementia_1="Q.kplus1 ~ 1",
-        event_dementia_2="Q.kplus1 ~ 1",
-        event_dementia_3="Q.kplus1 ~ 1")
+        insulin_1="Q.kplus1 ~ 1",
+        insulin_2="Q.kplus1 ~ 1",
+        insulin_3="Q.kplus1 ~ 1")
     }
     if(N_time==2){
       qform = c(
         insulin_0="Q.kplus1 ~ 1",
-        event_dementia_1="Q.kplus1 ~ 1")
+        insulin_1="Q.kplus1 ~ 1")
     }
   }else{
     qform=NULL
@@ -557,10 +556,10 @@ if(glm){
   package_stub("SuperLearner", "SuperLearner", override_function, {
     testthatsomemore::package_stub("ltmle", "Estimate", Estimate_override, {
       try(fit <- ltmle(data=spec_ltmle$data,
-                       Anodes = spec_ltmle$Anodes,
-                       Cnodes = spec_ltmle$Cnodes,
-                       Lnodes = spec_ltmle$Lnodes,
-                       Ynodes = spec_ltmle$Ynodes,
+                       Anodes = spec_ltmle$Anodes[spec_ltmle$Anodes!="glp1_0"],
+                       Cnodes = spec_ltmle$Cnodes[spec_ltmle$Cnodes!="censor_0"],
+                       Lnodes = spec_ltmle$Lnodes[spec_ltmle$Lnodes!="event_death_0"],
+                       Ynodes = spec_ltmle$Ynodes[spec_ltmle$Ynodes!="event_dementia_0"],
                        gbound=gbound,
                        survivalOutcome = T,
                        abar = abar_spec,

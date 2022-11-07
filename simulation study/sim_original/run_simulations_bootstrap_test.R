@@ -19,7 +19,7 @@ gc()
 i<-j<-1
 resdf_boot = NULL
 
-for(i in 176:200){
+for(i in 185:200){
 
   cat(i,"\n")
   d <- d_wide_list[[i]]
