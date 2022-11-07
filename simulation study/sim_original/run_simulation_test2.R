@@ -119,6 +119,13 @@ resdf_ic_AUC_t11  <- foreach(i = 1:200, .combine = 'bind_rows', .errorhandling =
 }
 saveRDS(resdf_ic_AUC_t11, paste0(here::here(),"/sim_res/sim_res_AUC_ic_v3.RDS"))
 
+resdf_ic_detQ_AUC_t11  <- foreach(i = 1:200, .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet_test(d=d_wide_list[[i]],  N_time=11, det.Q=T, override_function=SuperLearner_override_AUC))
+  return(res)
+}
+saveRDS(resdf_ic_detQ_AUC_t11, paste0(here::here(),"/sim_res/sim_res_detQ_AUC_ic_v3.RDS"))
+
 
 #SuperLearner_override_RF
 resdf_ic_RF_t11  <- foreach(i = 1:200, .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
