@@ -28,8 +28,8 @@ calc_sim_performance <- function(files, boot_iter_files=NULL, trueRR, trueRD, ip
   colnames(d)
   d.iptw <- d %>% select(analysis, starts_with("iptw.")) %>% mutate(analysis=paste0(analysis,"_iptw"))
   colnames(d.iptw) <- gsub("iptw.","",colnames(d.iptw))
-  d.iptw <- d.iptw %>% rename(CI.2.5.=ci.lb, CI.97.5.=ci.ub)
-  d <- d %>% select(!starts_with("iptw."))
+  d.iptw <- d.iptw %>% rename(CI.2.5.=ci.lb, CI.97.5.=ci.ub) %>% mutate(IPTW=T)
+  d <- d %>% select(!starts_with("iptw.")) %>% mutate(IPTW=F)
 
   if(iptw){
     d <- bind_rows(d, d.iptw)
@@ -91,16 +91,16 @@ calc_sim_performance <- function(files, boot_iter_files=NULL, trueRR, trueRD, ip
       boot_res <- boot_res %>% subset(., select = -c(boot_file))
     }else{
       boot_res <- boot_iter_files %>% map(readRDS) %>% map_dfr(~bind_rows(.) , .id="boot_iter")
+      boot_res$analysis = "bootstrap"
     }
 
 
-    boot_res$analysis = "bootstrap"
 
     #transform iptw
     if(iptw){
       boot_res.iptw <- boot_res %>% select(analysis, starts_with("iptw.")) %>% mutate(analysis=paste0(analysis,"_iptw"))
       colnames(boot_res.iptw) <- gsub("iptw.","",colnames(boot_res.iptw))
-      boot_res.iptw <- boot_res.iptw %>% rename(CI.2.5.=ci.lb, CI.97.5.=ci.ub)
+      boot_res.iptw <- boot_res.iptw %>% rename(CI.2.5.=ci.lb, CI.97.5.=ci.ub) %>% mutate(analysis=paste0(analysis,"-IPTW"))
       boot_res <- boot_res %>% select(!starts_with("iptw."))
       boot_res <- bind_rows(boot_res, boot_res.iptw)
     }
