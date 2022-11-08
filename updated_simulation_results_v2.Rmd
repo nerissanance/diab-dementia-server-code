@@ -1,7 +1,7 @@
 ---
 title: "Diabetes-dementia updated simulation results"
 author: "Andrew Mertens"
-date: "2022-10-19"
+date: "2022-11-17"
 output: html_document
 editor_options: 
   markdown: 
@@ -27,6 +27,12 @@ load(paste0(here::here(),"/results/sim_performance_results_original_null.Rdata")
 
 library(knitr)
 ```
+
+
+# Summary
+
+A simulation study was performed to identify the best estimator performance for a longitunal TMLE analysis of the effect of second-line diabetes drugs on dementia risk in the Danish National Registry data with four key features: many timepoints (10), a rare outcome (dementia prevalence: 1.9%), competing risks from death, and a high degree of administrative censoring. Three simulations were completed. 1) A simple simulation without positivity violiations, rare outcomes, long-term followup, or competing risks as a sanity check that estimators were implemented correctly, especially as we modified the LTMLE package code, 2) a realistic simulation in terms of dementia prevalence and diabetes drug patterns, but with scrambled outcomes and competing risks to check estimator performance with a known null association, and 3) a realistic simulation with a protective effect of GLP1 usage on dementia and death, with the truth calculated as the counterfactual 5 year risk of dementia prior to death when continiously on GLP1 versus not, with the effect of GLP1 on death removed to remove the competing risk.
+
 
 
 # Scenario 1: Simple simulation
@@ -68,7 +74,7 @@ True RD: 0
 **Notes:**
 
   * Outcome, death and censoring all jointly scrambled 
-  * Oracle coverage is good for all estimators, but GLM estimators have more variance
+  * Oracle coverage is pretty good but a little too high for all estimators, but GLM estimators have more variance
   
 ### RD oracle coverage of different estimators
   
@@ -101,11 +107,12 @@ knitr::kable(old_sim_res_null_RR_coverage, digits = 3)
 
 **Notes:**
   
-  * Only showing LASSO estimator results-all estimator performances assessed in the realistic simulated data below
-  * Sanity-check on estimation performance on data with a known null association between GLP1 and dementia
-  * The IC variance estimator is anti-conservative and the TMLE variance estimator is conservative
-  * The bootstrap is anti-conservative but less so than the IC variance estimator
-  * The IPTW estimator is uniformly biased with overly-wide confidence intervals in all simulations (not shown)
+  * Only showing LASSO estimator results-all estimator performances assessed in the realistic simulated data below.
+  * Sanity-check on estimation performance on data with a known null association between GLP1 and dementia.
+  * The IC variance estimator is anti-conservative and the TMLE variance estimator is conservative.
+  * The bootstrap is anti-conservative but less so than the IC variance estimator.
+  * The TMLE estimator is very conservative, with CI widths 8-10X that of the bootstrap.
+  * The IPTW estimator is uniformly biased with overly-wide confidence intervals in all simulations (not shown).
   
 ### Risk difference performance
 
@@ -169,11 +176,16 @@ old_sim_res_v3_diff_coverage <- old_sim_res_v3_diff_coverage %>% filter(variance
 
 #unique(old_sim_res_v3_diff_coverage$filenames)
 old_sim_res_v3_diff_coverage$estimator <- "LASSO"
+old_sim_res_v3_diff_coverage$estimator[grepl("rf",old_sim_res_v3_diff_coverage$filenames)] <- "Random Forest"
 old_sim_res_v3_diff_coverage$estimator[grepl("glm",old_sim_res_v3_diff_coverage$filenames)] <- "GLM"
 old_sim_res_v3_diff_coverage$estimator[grepl("ridge",old_sim_res_v3_diff_coverage$filenames)] <- "Ridge"
 old_sim_res_v3_diff_coverage$estimator[grepl("EN",old_sim_res_v3_diff_coverage$filenames)] <- "Elastic Net"
 old_sim_res_v3_diff_coverage$estimator[grepl("lasso_prescreen",old_sim_res_v3_diff_coverage$filenames)] <- "GLM, LASSO prescreen"
 old_sim_res_v3_diff_coverage$estimator[grepl("_DetQ",old_sim_res_v3_diff_coverage$filenames)] <- paste0(old_sim_res_v3_diff_coverage$estimator[grepl("_DetQ",old_sim_res_v3_diff_coverage$filenames)],", Det-Q")
+old_sim_res_v3_diff_coverage$estimator[grepl("_detQ",old_sim_res_v3_diff_coverage$filenames)] <- paste0(old_sim_res_v3_diff_coverage$estimator[grepl("_detQ",old_sim_res_v3_diff_coverage$filenames)],", Det-Q")
+
+
+
 old_sim_res_v3_diff_coverage$estimator[old_sim_res_v3_diff_coverage$Qint=="Yes"] <- paste0(old_sim_res_v3_diff_coverage$estimator[old_sim_res_v3_diff_coverage$Qint=="Yes"],", Q-intercept")
 old_sim_res_v3_diff_coverage$estimator[grepl("1se",old_sim_res_v3_diff_coverage$filenames)] <- paste0(old_sim_res_v3_diff_coverage$estimator[grepl("1se",old_sim_res_v3_diff_coverage$filenames)],", Lambda: 1se")
 old_sim_res_v3_diff_coverage$estimator[grepl("AUC",old_sim_res_v3_diff_coverage$filenames)] <- paste0(old_sim_res_v3_diff_coverage$estimator[grepl("AUC",old_sim_res_v3_diff_coverage$filenames)],", AUC fit")
@@ -199,11 +211,14 @@ old_sim_res_v3_RR_coverage <- old_sim_res_v3_RR_coverage %>% filter(variance_est
 
 #unique(old_sim_res_v3_RR_coverage$filenames)
 old_sim_res_v3_RR_coverage$estimator <- "LASSO"
+old_sim_res_v3_RR_coverage$estimator[grepl("rf",old_sim_res_v3_RR_coverage$filenames)] <- "Random Forest"
 old_sim_res_v3_RR_coverage$estimator[grepl("glm",old_sim_res_v3_RR_coverage$filenames)] <- "GLM"
 old_sim_res_v3_RR_coverage$estimator[grepl("ridge",old_sim_res_v3_RR_coverage$filenames)] <- "Ridge"
 old_sim_res_v3_RR_coverage$estimator[grepl("EN",old_sim_res_v3_RR_coverage$filenames)] <- "Elastic Net"
 old_sim_res_v3_RR_coverage$estimator[grepl("lasso_prescreen",old_sim_res_v3_RR_coverage$filenames)] <- "GLM, LASSO prescreen"
 old_sim_res_v3_RR_coverage$estimator[grepl("_DetQ",old_sim_res_v3_RR_coverage$filenames)] <- paste0(old_sim_res_v3_RR_coverage$estimator[grepl("_DetQ",old_sim_res_v3_RR_coverage$filenames)],", Det-Q")
+old_sim_res_v3_RR_coverage$estimator[grepl("_detQ",old_sim_res_v3_RR_coverage$filenames)] <- paste0(old_sim_res_v3_RR_coverage$estimator[grepl("_detQ",old_sim_res_v3_RR_coverage$filenames)],", Det-Q")
+
 old_sim_res_v3_RR_coverage$estimator[old_sim_res_v3_RR_coverage$Qint=="Yes"] <- paste0(old_sim_res_v3_RR_coverage$estimator[old_sim_res_v3_RR_coverage$Qint=="Yes"],", Q-intercept")
 old_sim_res_v3_RR_coverage$estimator[grepl("1se",old_sim_res_v3_RR_coverage$filenames)] <- paste0(old_sim_res_v3_RR_coverage$estimator[grepl("1se",old_sim_res_v3_RR_coverage$filenames)],", Lambda: 1se")
 old_sim_res_v3_RR_coverage$estimator[grepl("AUC",old_sim_res_v3_RR_coverage$filenames)] <- paste0(old_sim_res_v3_RR_coverage$estimator[grepl("AUC",old_sim_res_v3_RR_coverage$filenames)],", AUC fit")
@@ -243,9 +258,10 @@ old_sim_res_v3_diff_var <- old_sim_res_v3_diff_var %>% mutate(variance_estimator
   filenames=="DetQ" ~ "Bootstrap, Det Q function",
   filenames=="DetQ, 500 iter" ~ "Bootstrap, Det Q function, 500 iterations",
   filenames=="no DetQ" ~ "Bootstrap",
+  filenames=="Ridge" ~ "Bootstrap-Ridge",
   filenames=="no DetQ_iptw-IPTW" ~ "Bootstrap- IPTW",
   variance_estimator==variance_estimator ~variance_estimator 
-))
+)) #%>% filter(filenames!="DetQ, 500 iter")
 
 old_sim_res_v3_diff_var <- old_sim_res_v3_diff_var %>% select(variance_estimator, coverage, mean_ci_width, power, bias_se_ratio_emp)
 
@@ -271,10 +287,11 @@ old_sim_res_v3_RR_var$variance_estimator[grepl("_DetQ",old_sim_res_v3_RR_var$fil
 old_sim_res_v3_RR_var <- old_sim_res_v3_RR_var %>% mutate(variance_estimator=case_when(
   filenames=="DetQ" ~ "Bootstrap, Det Q function",
   filenames=="DetQ, 500 iter" ~ "Bootstrap, Det Q function, 500 iterations",
+  filenames=="Ridge" ~ "Bootstrap-Ridge",
   filenames=="no DetQ" ~ "Bootstrap",
   filenames=="no DetQ_iptw-IPTW" ~ "Bootstrap- IPTW",
   variance_estimator==variance_estimator ~variance_estimator 
-))
+)) #%>% filter(filenames!="DetQ, 500 iter")
 
 old_sim_res_v3_RR_var <- old_sim_res_v3_RR_var %>% select(variance_estimator, coverage, mean_ci_width, power, bias_se_ratio_emp)
 
