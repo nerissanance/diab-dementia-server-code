@@ -110,12 +110,7 @@ clean_sim_data <- function(d, N_time=10){
 
 
  seed <- 3457347
- nsamp=3000000
-<<<<<<< HEAD
- nsamp=1000000
-=======
  nsamp=5000000
->>>>>>> cb5cc528a441ac763303e163149458975335a362
 
   set.seed(seed)
   # u <- synthesizeDD(cc)
@@ -148,31 +143,30 @@ clean_sim_data <- function(d, N_time=10){
   d.never <- clean_sim_data(d.never.full, 10)
 
 
-  mean(d.always$event_dementia_1,na.rm=T)/mean(d.never$event_dementia_1,na.rm=T)
-  mean(d.always$event_dementia_2,na.rm=T)/mean(d.never$event_dementia_2,na.rm=T)
-  mean(d.always$event_dementia_3,na.rm=T)/mean(d.never$event_dementia_3,na.rm=T)
-  mean(d.always$event_dementia_4,na.rm=T)/mean(d.never$event_dementia_4,na.rm=T)
-  mean(d.always$event_dementia_5,na.rm=T)/mean(d.never$event_dementia_5,na.rm=T)
-  mean(d.always$event_dementia_6,na.rm=T)/mean(d.never$event_dementia_6,na.rm=T)
-  mean(d.always$event_dementia_7,na.rm=T)/mean(d.never$event_dementia_7,na.rm=T)
-  mean(d.always$event_dementia_8,na.rm=T)/mean(d.never$event_dementia_8,na.rm=T)
-  mean(d.always$event_dementia_9,na.rm=T)/mean(d.never$event_dementia_9,na.rm=T)
-  mean(d.always$event_dementia_10,na.rm=T)/mean(d.never$event_dementia_10,na.rm=T)
+ tRR1 <- mean(d.always$event_dementia_1,na.rm=T)/mean(d.never$event_dementia_1,na.rm=T)
+ tRR2 <- mean(d.always$event_dementia_2,na.rm=T)/mean(d.never$event_dementia_2,na.rm=T)
+ tRR3 <- mean(d.always$event_dementia_3,na.rm=T)/mean(d.never$event_dementia_3,na.rm=T)
+ tRR4 <- mean(d.always$event_dementia_4,na.rm=T)/mean(d.never$event_dementia_4,na.rm=T)
+ tRR5 <- mean(d.always$event_dementia_5,na.rm=T)/mean(d.never$event_dementia_5,na.rm=T)
+ tRR6 <- mean(d.always$event_dementia_6,na.rm=T)/mean(d.never$event_dementia_6,na.rm=T)
+ tRR7 <- mean(d.always$event_dementia_7,na.rm=T)/mean(d.never$event_dementia_7,na.rm=T)
+ tRR8 <- mean(d.always$event_dementia_8,na.rm=T)/mean(d.never$event_dementia_8,na.rm=T)
+ tRR9 <- mean(d.always$event_dementia_9,na.rm=T)/mean(d.never$event_dementia_9,na.rm=T)
+ tRR10 <- mean(d.always$event_dementia_10,na.rm=T)/mean(d.never$event_dementia_10,na.rm=T)
 
+ tRD1 <- mean(d.always$event_dementia_1,na.rm=T) - mean(d.never$event_dementia_1,na.rm=T)
+ tRD2 <- mean(d.always$event_dementia_2,na.rm=T) - mean(d.never$event_dementia_2,na.rm=T)
+ tRD3 <- mean(d.always$event_dementia_3,na.rm=T) - mean(d.never$event_dementia_3,na.rm=T)
+ tRD4 <- mean(d.always$event_dementia_4,na.rm=T) - mean(d.never$event_dementia_4,na.rm=T)
+ tRD5 <- mean(d.always$event_dementia_5,na.rm=T) - mean(d.never$event_dementia_5,na.rm=T)
+ tRD6 <- mean(d.always$event_dementia_6,na.rm=T) - mean(d.never$event_dementia_6,na.rm=T)
+ tRD7 <- mean(d.always$event_dementia_7,na.rm=T) - mean(d.never$event_dementia_7,na.rm=T)
+ tRD8 <- mean(d.always$event_dementia_8,na.rm=T) - mean(d.never$event_dementia_8,na.rm=T)
+ tRD9 <- mean(d.always$event_dementia_9,na.rm=T) - mean(d.never$event_dementia_9,na.rm=T)
+ tRD10 <- mean(d.always$event_dementia_10,na.rm=T) - mean(d.never$event_dementia_10,na.rm=T)
 
-
-
-  mean(d.always$event_dementia_1,na.rm=T) - mean(d.never$event_dementia_1,na.rm=T)
-  mean(d.always$event_dementia_2,na.rm=T) - mean(d.never$event_dementia_2,na.rm=T)
-  mean(d.always$event_dementia_3,na.rm=T) - mean(d.never$event_dementia_3,na.rm=T)
-  mean(d.always$event_dementia_4,na.rm=T) - mean(d.never$event_dementia_4,na.rm=T)
-  mean(d.always$event_dementia_5,na.rm=T) - mean(d.never$event_dementia_5,na.rm=T)
-  mean(d.always$event_dementia_6,na.rm=T) - mean(d.never$event_dementia_6,na.rm=T)
-  mean(d.always$event_dementia_7,na.rm=T) - mean(d.never$event_dementia_7,na.rm=T)
-  mean(d.always$event_dementia_8,na.rm=T) - mean(d.never$event_dementia_8,na.rm=T)
-  mean(d.always$event_dementia_9,na.rm=T) - mean(d.never$event_dementia_9,na.rm=T)
-  mean(d.always$event_dementia_10,na.rm=T) - mean(d.never$event_dementia_10,na.rm=T)
-
+truth_df <- data.frame(time=1:10, RR=c(tRR1,tRR2,tRR3,tRR4,tRR5,tRR6,tRR7,tRR8,tRR9,tRR10), RD=c(tRD1,tRD2,tRD3,tRD4,tRD5,tRD6,tRD7,tRD8,tRD9,tRD10))
+saveRDS(truth_df, file=paste0(here::here(),"/data/sim_res_truth.RDS"))
 
 
 
