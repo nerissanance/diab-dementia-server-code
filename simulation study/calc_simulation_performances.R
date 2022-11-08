@@ -19,10 +19,12 @@ unique(gsub("\\d","",boot_iter_files))
 
 boot_iter_files_500iter <- boot_iter_files[grepl("sim_res_boot_old_sim_cens_competing_risks_500_iter_T11",boot_iter_files)]
 boot_iter_files <- boot_iter_files[grepl("_v3",boot_iter_files)]
+#boot_iter_files <- boot_iter_files[!grepl("ridge",boot_iter_files)]
 boot_iter_files <- c(boot_iter_files, boot_iter_files_500iter)
 boot_iter_files <- data.frame(boot_file =boot_iter_files, analysis=NA)
 boot_iter_files$analysis[grepl("500_iter",boot_iter_files$boot_file)] <- "DetQ, 500 iter"
 boot_iter_files$analysis[grepl("_v3_T11_1",boot_iter_files$boot_file)] <- "DetQ"
+boot_iter_files$analysis[grepl("ridge",boot_iter_files$boot_file)] <- "Ridge"
 boot_iter_files$analysis[grepl("cens_competing_risks_v3",boot_iter_files$boot_file)] <- "no DetQ"
 table(boot_iter_files$analysis)
 
