@@ -22,14 +22,15 @@ calc_sim_performance <- function(files, boot_iter_files=NULL, trueRR, trueRD, ip
   d$analysis <- gsub(".RDS","",d$analysis)
 
 
-
-
   #transform iptw
   colnames(d)
   d.iptw <- d %>% select(analysis, starts_with("iptw.")) %>% mutate(analysis=paste0(analysis,"_iptw"))
   colnames(d.iptw) <- gsub("iptw.","",colnames(d.iptw))
-  d.iptw <- d.iptw %>% rename(CI.2.5.=ci.lb, CI.97.5.=ci.ub) %>% mutate(IPTW=T)
-  d <- d %>% select(!starts_with("iptw.")) %>% mutate(IPTW=F)
+  d.iptw <- d.iptw %>% rename(CI.2.5.=ci.lb, CI.97.5.=ci.ub) %>% mutate(IPTW="Yes")
+  d <- d %>% select(!starts_with("iptw.")) %>% mutate(IPTW="No")
+
+  summary(d$ate)
+  summary(d.iptw$ate)
 
   if(iptw){
     d <- bind_rows(d, d.iptw)
@@ -38,22 +39,21 @@ calc_sim_performance <- function(files, boot_iter_files=NULL, trueRR, trueRD, ip
   d$true.RR <- trueRR
   d$true.RD <- trueRD
 
+  # head(d)
   perf_tab_RR <- d %>% group_by(analysis) %>%
-    mutate(variance=mean((log(estimate)-mean(log(estimate)))^2),
-           o.ci.lb = log(estimate) - 1.96 * sqrt(variance),
-           o.ci.ub = log(estimate) + 1.96 * sqrt(variance),
-           abs.variance=mean(((estimate)-mean((estimate)))^2),
-           abs.o.ci.lb = (estimate) - 1.96 * sqrt(abs.variance),
-           abs.o.ci.ub = (estimate) + 1.96 * sqrt(abs.variance)) %>%
+    mutate(variance=mean(((estimate)-mean((estimate)))^2),
+           o.ci.lb = (estimate) - 1.96 * sqrt(variance),
+           o.ci.ub = (estimate) + 1.96 * sqrt(variance)) %>%
+    group_by(analysis) %>%
     summarize(
       bias=mean(log(estimate))-log(true.RR),
       variance=mean((mean(log(estimate))-log(estimate))^2),
       mse = bias^2 + variance,
       bias_se_ratio= bias/sqrt(variance),
+      bias_se_ratio_emp= bias/mean(std.dev),
       coverage=mean(CI.2.5.<=true.RR & true.RR<=CI.97.5.)*100,
       #oracle coverage
-      o.coverage=mean(o.ci.lb<=log(true.RR) & log(true.RR)<= o.ci.ub)*100,
-      abs.o.coverage=mean(abs.o.ci.lb<=(true.RR) & (true.RR)<= abs.o.ci.ub)*100,
+      o.coverage=mean(o.ci.lb<=(true.RR) & (true.RR)<= o.ci.ub)*100,
       mean_ci_width=mean(log(CI.97.5.)-log(CI.2.5.)),
       power=mean((CI.2.5. > 1 & CI.97.5.>1)|(CI.2.5. < 1 & CI.97.5.<1))*100
     ) %>% filter(!is.na(variance)) %>%
@@ -67,11 +67,13 @@ calc_sim_performance <- function(files, boot_iter_files=NULL, trueRR, trueRD, ip
     mutate(variance=mean((estimate-mean(estimate))^2),
            o.ci.lb = estimate - 1.96 * sqrt(variance),
            o.ci.ub = estimate + 1.96 * sqrt(variance)) %>%
+    group_by(analysis) %>%
     summarize(
       bias=mean((estimate))-(true.RD),
       variance=mean((estimate-mean(estimate))^2),
       mse = bias^2 + variance,
       bias_se_ratio= bias/sqrt(variance),
+      bias_se_ratio_emp= bias/mean(std.dev),
       coverage=mean(CI.2.5.<=true.RD & true.RD<=CI.97.5.)*100,
       #oracle coverage
       o.coverage=mean(o.ci.lb<=true.RD & true.RD<= o.ci.ub)*100,
@@ -118,7 +120,7 @@ calc_sim_performance <- function(files, boot_iter_files=NULL, trueRR, trueRD, ip
       perf_tab_RR_boot <- boot_CIs %>% group_by(analysis) %>%
         summarize(
           coverage = mean(CI1 <= d$true.RR[1] &  CI2 >= d$true.RR[1])*100,
-          mean_ci_width_logRR=mean(log(CI2)-log(CI1)),
+          mean_ci_width=mean(log(CI2)-log(CI1)),
           power=mean((CI1 > 1 & CI2>1)|(CI1 < 1 & CI2<1))*100
         ) %>% as.data.frame()
 
@@ -158,6 +160,8 @@ calc_sim_performance <- function(files, boot_iter_files=NULL, trueRR, trueRD, ip
     perf_tab_RR <- bind_rows(perf_tab_RR, perf_tab_RR_boot)
     perf_tab_diff <- bind_rows(perf_tab_diff, perf_tab_diff_boot)
   }
+
+  perf_tab_diff <- perf_tab_diff %>% filter(!grepl("iptw",analysis))
 
   perf_tab_RR <- clean_sim_results(perf_tab_RR)
   perf_tab_diff <- clean_sim_results(perf_tab_diff)
@@ -219,9 +223,9 @@ clean_sim_results <- function(d){
   #d <- d %>% select(analysis)
 
   d <- d[,which(colnames(d) %in% c("simulated_data", "estimator", "variance_estimator", "Qint","DetQ",
-                                   "censoring_in_data","bias","variance","mse","bias_se_ratio",
+                                   "censoring_in_data","bias","variance","mse","bias_se_ratio","bias_se_ratio_emp",
                                    "coverage",        'o.coverage',  "abs.o.coverage",       'mean_ci_width',
-                                   "power", "filenames"))]
+                                   "power", "filenames", "IPTW"))]
 
   d <- d %>% arrange(o.coverage)
 
