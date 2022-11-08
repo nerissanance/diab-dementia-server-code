@@ -371,10 +371,20 @@ results</h1>
 </div>
 
 
-<div id="scenario-1-simple-simulation" class="section level2">
-<h2>Scenario 1: Simple simulation</h2>
+<div id="scenario-1-simple-simulation" class="section level1">
+<h1>Scenario 1: Simple simulation</h1>
 <p>True RR: 0.57</p>
 <p>True RD: -0.3</p>
+<p><strong>Notes:</strong></p>
+<ul>
+<li>Both the GLM and LASSO estimators perform well, a sanity check on
+the ltmle LASSO implementation.</li>
+<li>All variance estimators perform well, with IC, TMLE, IPTW and
+1000-iteration bootstrap perform similarly</li>
+<li>Increasing bootstrap iterations from 200 to 1000 increased coverage
+closer to 95% in the RR estimation. 200 iterations was sufficient for
+RD.</li>
+</ul>
 <div id="relative-risk-performance" class="section level3">
 <h3>Relative risk performance</h3>
 <table style="width:100%;">
@@ -504,6 +514,698 @@ results</h1>
 </tr>
 </tbody>
 </table>
+</div>
+</div>
+<div id="scenario-2-realistic-simulation-null-outcome" class="section level1">
+<h1>Scenario 2: Realistic simulation, null outcome</h1>
+<p>True RR: 1</p>
+<p>True RD: 0</p>
+<p><strong>Notes:</strong></p>
+<ul>
+<li>Outcome, death and censoring all jointly scrambled</li>
+<li>Oracle coverage is good for all estimators, but GLM estimators have
+more variance</li>
+</ul>
+<div id="rd-oracle-coverage-of-different-estimators" class="section level3">
+<h3>RD oracle coverage of different estimators</h3>
+<table>
+<colgroup>
+<col width="14%" />
+<col width="7%" />
+<col width="7%" />
+<col width="13%" />
+<col width="13%" />
+<col width="8%" />
+<col width="20%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">estimator</th>
+<th align="left">Qint</th>
+<th align="left">DetQ</th>
+<th align="right">bias</th>
+<th align="right">variance</th>
+<th align="right">mse</th>
+<th align="right">bias_se_ratio</th>
+<th align="right">o.coverage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">LASSO</td>
+<td align="left">No</td>
+<td align="left">No</td>
+<td align="right">-0.00006</td>
+<td align="right">2e-05</td>
+<td align="right">2e-05</td>
+<td align="right">-0.01181</td>
+<td align="right">96.0</td>
+</tr>
+<tr class="even">
+<td align="left">LASSO</td>
+<td align="left">Yes</td>
+<td align="left">No</td>
+<td align="right">-0.00005</td>
+<td align="right">2e-05</td>
+<td align="right">2e-05</td>
+<td align="right">-0.01101</td>
+<td align="right">96.5</td>
+</tr>
+<tr class="odd">
+<td align="left">GLM</td>
+<td align="left">Yes</td>
+<td align="left">No</td>
+<td align="right">-0.00004</td>
+<td align="right">2e-05</td>
+<td align="right">2e-05</td>
+<td align="right">-0.00754</td>
+<td align="right">96.5</td>
+</tr>
+<tr class="even">
+<td align="left">GLM</td>
+<td align="left">No</td>
+<td align="left">Yes</td>
+<td align="right">0.00061</td>
+<td align="right">3e-05</td>
+<td align="right">3e-05</td>
+<td align="right">0.10875</td>
+<td align="right">97.0</td>
+</tr>
+<tr class="odd">
+<td align="left">GLM</td>
+<td align="left">No</td>
+<td align="left">No</td>
+<td align="right">0.00103</td>
+<td align="right">9e-05</td>
+<td align="right">9e-05</td>
+<td align="right">0.10823</td>
+<td align="right">98.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="rr-oracle-coverage-of-different-estimators" class="section level3">
+<h3>RR oracle coverage of different estimators</h3>
+<table>
+<colgroup>
+<col width="14%" />
+<col width="7%" />
+<col width="7%" />
+<col width="10%" />
+<col width="13%" />
+<col width="8%" />
+<col width="20%" />
+<col width="16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">estimator</th>
+<th align="left">Qint</th>
+<th align="left">DetQ</th>
+<th align="right">bias</th>
+<th align="right">variance</th>
+<th align="right">mse</th>
+<th align="right">bias_se_ratio</th>
+<th align="right">o.coverage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">LASSO</td>
+<td align="left">No</td>
+<td align="left">No</td>
+<td align="right">-0.053</td>
+<td align="right">0.114</td>
+<td align="right">0.117</td>
+<td align="right">-0.156</td>
+<td align="right">13.5</td>
+</tr>
+<tr class="even">
+<td align="left">LASSO</td>
+<td align="left">Yes</td>
+<td align="left">No</td>
+<td align="right">-0.053</td>
+<td align="right">0.114</td>
+<td align="right">0.117</td>
+<td align="right">-0.156</td>
+<td align="right">14.0</td>
+</tr>
+<tr class="odd">
+<td align="left">GLM</td>
+<td align="left">Yes</td>
+<td align="left">No</td>
+<td align="right">-0.053</td>
+<td align="right">0.116</td>
+<td align="right">0.119</td>
+<td align="right">-0.155</td>
+<td align="right">14.5</td>
+</tr>
+<tr class="even">
+<td align="left">GLM</td>
+<td align="left">No</td>
+<td align="left">Yes</td>
+<td align="right">-0.013</td>
+<td align="right">0.126</td>
+<td align="right">0.126</td>
+<td align="right">-0.038</td>
+<td align="right">46.0</td>
+</tr>
+<tr class="odd">
+<td align="left">GLM</td>
+<td align="left">No</td>
+<td align="left">No</td>
+<td align="right">-0.023</td>
+<td align="right">0.168</td>
+<td align="right">0.169</td>
+<td align="right">-0.057</td>
+<td align="right">74.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="performance-of-difference-variance-estimators-on-null-data" class="section level2">
+<h2>Performance of difference variance estimators on null data</h2>
+<p><strong>Notes:</strong></p>
+<ul>
+<li>Only showing LASSO estimator results-all estimator performances
+assessed in the realistic simulated data below</li>
+<li>Sanity-check on estimation performance on data with a known null
+association between GLP1 and dementia</li>
+<li>The IC variance estimator is anti-conservative and the TMLE variance
+estimator is conservative</li>
+<li>The bootstrap is anti-conservative but less so than the IC variance
+estimator</li>
+<li>The IPTW estimator is uniformly biased with overly-wide confidence
+intervals in all simulations (not shown)</li>
+</ul>
+<div id="risk-difference-performance-1" class="section level3">
+<h3>Risk difference performance</h3>
+<table>
+<thead>
+<tr class="header">
+<th align="left">variance_estimator</th>
+<th align="right">coverage</th>
+<th align="right">mean_ci_width</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">ic</td>
+<td align="right">51.00000</td>
+<td align="right">0.00722</td>
+</tr>
+<tr class="even">
+<td align="left">tmle</td>
+<td align="right">100.00000</td>
+<td align="right">0.11535</td>
+</tr>
+<tr class="odd">
+<td align="left">bootstrap</td>
+<td align="right">90.85366</td>
+<td align="right">0.01300</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="relative-risk-performance-1" class="section level3">
+<h3>Relative risk performance</h3>
+<table>
+<thead>
+<tr class="header">
+<th align="left">variance_estimator</th>
+<th align="right">coverage</th>
+<th align="right">mean_ci_width</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">ic</td>
+<td align="right">51.50000</td>
+<td align="right">0.50639</td>
+</tr>
+<tr class="even">
+<td align="left">tmle</td>
+<td align="right">100.00000</td>
+<td align="right">8.38962</td>
+</tr>
+<tr class="odd">
+<td align="left">bootstrap</td>
+<td align="right">90.85366</td>
+<td align="right">1.14126</td>
+</tr>
+</tbody>
+</table>
+<p>Note CI width on the log scale.</p>
+</div>
+</div>
+</div>
+<div id="scenario-3-realistic-simulation-protective-effect-of-glp1-on-dementia" class="section level1">
+<h1>Scenario 3: Realistic simulation, protective effect of GLP1 on
+dementia</h1>
+<p>True RD: -0.009683665</p>
+<p>True RR: 0.5148661</p>
+<div id="comparison-of-different-estimators-performance" class="section level2">
+<h2>Comparison of different estimators’ performance</h2>
+<p><strong>Notes:</strong></p>
+<ul>
+<li>Based on these results, we chose the LASSO estimator with
+Q-prediction and no deterministic Q function</li>
+<li>Several of the estimators have comparable performance, but the
+chosen estimator performs best in both RR and RD estimation</li>
+<li>Ridge regressions have lower MSE but not perfect 95% oracle
+coverage</li>
+<li>Including the deterministic Q function marginally decreases
+bias/variance, so we should use in the bootstrap estimator</li>
+</ul>
+<div id="risk-difference" class="section level3">
+<h3>Risk difference</h3>
+<table>
+<colgroup>
+<col width="45%" />
+<col width="14%" />
+<col width="12%" />
+<col width="11%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">estimator</th>
+<th align="right">bias</th>
+<th align="right">variance</th>
+<th align="right">mse</th>
+<th align="right">o.coverage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">LASSO, Det-Q, AUC fit</td>
+<td align="right">-0.002080</td>
+<td align="right">6.0e-06</td>
+<td align="right">1.0e-05</td>
+<td align="right">84.50000</td>
+</tr>
+<tr class="even">
+<td align="left">LASSO, AUC fit</td>
+<td align="right">-0.002080</td>
+<td align="right">6.0e-06</td>
+<td align="right">1.0e-05</td>
+<td align="right">84.50000</td>
+</tr>
+<tr class="odd">
+<td align="left">LASSO, Lambda: 1se</td>
+<td align="right">-0.001631</td>
+<td align="right">1.0e-05</td>
+<td align="right">1.3e-05</td>
+<td align="right">91.50000</td>
+</tr>
+<tr class="even">
+<td align="left">Elastic Net, Lambda: 1se</td>
+<td align="right">-0.001450</td>
+<td align="right">9.0e-06</td>
+<td align="right">1.2e-05</td>
+<td align="right">92.00000</td>
+</tr>
+<tr class="odd">
+<td align="left">GLM, LASSO prescreen</td>
+<td align="right">0.002793</td>
+<td align="right">4.9e-05</td>
+<td align="right">5.7e-05</td>
+<td align="right">92.78351</td>
+</tr>
+<tr class="even">
+<td align="left">LASSO, Q-intercept</td>
+<td align="right">-0.001583</td>
+<td align="right">1.1e-05</td>
+<td align="right">1.3e-05</td>
+<td align="right">93.00000</td>
+</tr>
+<tr class="odd">
+<td align="left">LASSO, Det-Q, Lambda: 1se</td>
+<td align="right">-0.001109</td>
+<td align="right">8.0e-06</td>
+<td align="right">9.0e-06</td>
+<td align="right">93.50000</td>
+</tr>
+<tr class="even">
+<td align="left">GLM</td>
+<td align="right">0.002819</td>
+<td align="right">5.6e-05</td>
+<td align="right">6.4e-05</td>
+<td align="right">93.50000</td>
+</tr>
+<tr class="odd">
+<td align="left">GLM, LASSO prescreen, Det-Q</td>
+<td align="right">0.002795</td>
+<td align="right">5.1e-05</td>
+<td align="right">5.9e-05</td>
+<td align="right">93.87755</td>
+</tr>
+<tr class="even">
+<td align="left">Ridge, Det-Q</td>
+<td align="right">0.000446</td>
+<td align="right">1.1e-05</td>
+<td align="right">1.1e-05</td>
+<td align="right">94.00000</td>
+</tr>
+<tr class="odd">
+<td align="left">Elastic Net, Det-Q, Lambda: 1se</td>
+<td align="right">-0.000899</td>
+<td align="right">8.0e-06</td>
+<td align="right">8.0e-06</td>
+<td align="right">94.50000</td>
+</tr>
+<tr class="even">
+<td align="left">LASSO, Det-Q</td>
+<td align="right">0.000267</td>
+<td align="right">1.4e-05</td>
+<td align="right">1.4e-05</td>
+<td align="right">94.50000</td>
+</tr>
+<tr class="odd">
+<td align="left">Ridge, Lambda: 1se</td>
+<td align="right">-0.000978</td>
+<td align="right">8.0e-06</td>
+<td align="right">9.0e-06</td>
+<td align="right">94.50000</td>
+</tr>
+<tr class="even">
+<td align="left">Ridge</td>
+<td align="right">-0.000118</td>
+<td align="right">1.3e-05</td>
+<td align="right">1.3e-05</td>
+<td align="right">94.50000</td>
+</tr>
+<tr class="odd">
+<td align="left">LASSO, AUC fit</td>
+<td align="right">-0.001365</td>
+<td align="right">1.2e-05</td>
+<td align="right">1.4e-05</td>
+<td align="right">95.00000</td>
+</tr>
+<tr class="even">
+<td align="left">LASSO</td>
+<td align="right">-0.000265</td>
+<td align="right">1.7e-05</td>
+<td align="right">1.7e-05</td>
+<td align="right">95.00000</td>
+</tr>
+<tr class="odd">
+<td align="left">Ridge, Det-Q, Lambda: 1se</td>
+<td align="right">-0.000536</td>
+<td align="right">6.0e-06</td>
+<td align="right">7.0e-06</td>
+<td align="right">95.50000</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="relative-risk" class="section level3">
+<h3>Relative Risk</h3>
+<table>
+<thead>
+<tr class="header">
+<th align="left">estimator</th>
+<th align="right">bias</th>
+<th align="right">variance</th>
+<th align="right">mse</th>
+<th align="right">o.coverage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">LASSO, Lambda: 1se</td>
+<td align="right">-0.569</td>
+<td align="right">0.268</td>
+<td align="right">0.592</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">LASSO, AUC fit</td>
+<td align="right">-0.465</td>
+<td align="right">0.282</td>
+<td align="right">0.498</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">LASSO, Det-Q, Lambda: 1se</td>
+<td align="right">-0.594</td>
+<td align="right">0.250</td>
+<td align="right">0.603</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">LASSO, Det-Q, AUC fit</td>
+<td align="right">-0.762</td>
+<td align="right">0.209</td>
+<td align="right">0.790</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">Elastic Net, Det-Q, Lambda: 1se</td>
+<td align="right">-0.580</td>
+<td align="right">0.250</td>
+<td align="right">0.585</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">Ridge, Det-Q, Lambda: 1se</td>
+<td align="right">-0.574</td>
+<td align="right">0.228</td>
+<td align="right">0.558</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">Ridge, Det-Q</td>
+<td align="right">-0.315</td>
+<td align="right">0.263</td>
+<td align="right">0.362</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">LASSO, AUC fit</td>
+<td align="right">-0.762</td>
+<td align="right">0.209</td>
+<td align="right">0.790</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">LASSO, Det-Q</td>
+<td align="right">-0.326</td>
+<td align="right">0.308</td>
+<td align="right">0.414</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">Elastic Net, Lambda: 1se</td>
+<td align="right">-0.561</td>
+<td align="right">0.265</td>
+<td align="right">0.579</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">LASSO</td>
+<td align="right">-0.341</td>
+<td align="right">0.328</td>
+<td align="right">0.445</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">LASSO, Q-intercept</td>
+<td align="right">-0.577</td>
+<td align="right">0.287</td>
+<td align="right">0.619</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">Ridge, Lambda: 1se</td>
+<td align="right">-0.558</td>
+<td align="right">0.239</td>
+<td align="right">0.550</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">Ridge</td>
+<td align="right">-0.337</td>
+<td align="right">0.278</td>
+<td align="right">0.392</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">GLM, LASSO prescreen</td>
+<td align="right">-0.022</td>
+<td align="right">0.459</td>
+<td align="right">0.459</td>
+<td align="right">1.031</td>
+</tr>
+<tr class="even">
+<td align="left">GLM</td>
+<td align="right">-0.005</td>
+<td align="right">0.469</td>
+<td align="right">0.469</td>
+<td align="right">2.000</td>
+</tr>
+<tr class="odd">
+<td align="left">GLM, LASSO prescreen, Det-Q</td>
+<td align="right">-0.025</td>
+<td align="right">0.443</td>
+<td align="right">0.443</td>
+<td align="right">2.551</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="comparison-of-different-variance-estimators" class="section level2">
+<h2>Comparison of different variance estimators</h2>
+<p><strong>Notes:</strong></p>
+<ul>
+<li>Showing LASSO estimator results with modeled Q (rather than
+intercept-only)</li>
+<li>The IC variance estimator is anti-conservative and the TMLE variance
+estimator is conservative</li>
+<li>The bootstrap is anti-conservative but less so than the IC variance
+estimator</li>
+<li>The IPTW estimator is uniformly biased with overly-wide confidence
+intervals in all simulations (not shown)</li>
+</ul>
+<div id="risk-difference-coverage" class="section level3">
+<h3>Risk difference coverage</h3>
+<table>
+<colgroup>
+<col width="46%" />
+<col width="9%" />
+<col width="15%" />
+<col width="8%" />
+<col width="19%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">variance_estimator</th>
+<th align="right">coverage</th>
+<th align="right">mean_ci_width</th>
+<th align="right">power</th>
+<th align="right">bias_se_ratio_emp</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">ic, Det-Q</td>
+<td align="right">67.00000</td>
+<td align="right">0.00736</td>
+<td align="right">92.0000</td>
+<td align="right">0.14223</td>
+</tr>
+<tr class="even">
+<td align="left">tmle</td>
+<td align="right">99.50000</td>
+<td align="right">0.02129</td>
+<td align="right">49.0000</td>
+<td align="right">-0.05020</td>
+</tr>
+<tr class="odd">
+<td align="left">ic</td>
+<td align="right">62.00000</td>
+<td align="right">0.00737</td>
+<td align="right">91.0000</td>
+<td align="right">-0.14089</td>
+</tr>
+<tr class="even">
+<td align="left">Bootstrap, Det Q function</td>
+<td align="right">90.62500</td>
+<td align="right">0.01743</td>
+<td align="right">50.0000</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">Bootstrap, Det Q function, 500 iterations</td>
+<td align="right">89.00000</td>
+<td align="right">0.01338</td>
+<td align="right">69.5000</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">Bootstrap</td>
+<td align="right">85.32609</td>
+<td align="right">0.01461</td>
+<td align="right">67.3913</td>
+<td align="right">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="relative-risk-coverage" class="section level3">
+<h3>Relative risk coverage</h3>
+<table>
+<colgroup>
+<col width="46%" />
+<col width="10%" />
+<col width="15%" />
+<col width="7%" />
+<col width="20%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">variance_estimator</th>
+<th align="right">coverage</th>
+<th align="right">mean_ci_width</th>
+<th align="right">power</th>
+<th align="right">bias_se_ratio_emp</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">ic, Det-Q</td>
+<td align="right">55.000</td>
+<td align="right">0.866</td>
+<td align="right">92.000</td>
+<td align="right">-1.475</td>
+</tr>
+<tr class="even">
+<td align="left">ic</td>
+<td align="right">48.500</td>
+<td align="right">0.841</td>
+<td align="right">90.500</td>
+<td align="right">-1.591</td>
+</tr>
+<tr class="odd">
+<td align="left">tmle</td>
+<td align="right">100.000</td>
+<td align="right">3.579</td>
+<td align="right">0.500</td>
+<td align="right">-0.374</td>
+</tr>
+<tr class="even">
+<td align="left">Bootstrap, Det Q function</td>
+<td align="right">84.375</td>
+<td align="right">2.002</td>
+<td align="right">50.000</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">Bootstrap, Det Q function, 500 iterations</td>
+<td align="right">77.500</td>
+<td align="right">1.955</td>
+<td align="right">69.500</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">Bootstrap</td>
+<td align="right">76.630</td>
+<td align="right">1.985</td>
+<td align="right">67.391</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">Bootstrap- IPTW</td>
+<td align="right">100.000</td>
+<td align="right">17.908</td>
+<td align="right">0.000</td>
+<td align="right">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 
