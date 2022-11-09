@@ -406,18 +406,18 @@ RD.</li>
 </ul>
 <div id="relative-risk-performance" class="section level3">
 <h3>Relative risk performance</h3>
-<table style="width:100%;">
+<table>
 <colgroup>
 <col width="6%" />
 <col width="4%" />
 <col width="5%" />
 <col width="3%" />
 <col width="8%" />
-<col width="6%" />
+<col width="9%" />
 <col width="7%" />
 <col width="8%" />
 <col width="10%" />
-<col width="16%" />
+<col width="15%" />
 <col width="8%" />
 <col width="11%" />
 </colgroup>
@@ -428,7 +428,7 @@ RD.</li>
 <th align="right">variance</th>
 <th align="right">mse</th>
 <th align="right">bias_se_ratio</th>
-<th align="right">o.coverage</th>
+<th align="right">oracle.coverage</th>
 <th align="right">coverage_ic</th>
 <th align="right">coverage_tmle</th>
 <th align="right">coverage_cv_boot</th>
@@ -471,20 +471,20 @@ RD.</li>
 </div>
 <div id="risk-difference-performance" class="section level3">
 <h3>Risk difference performance</h3>
-<table>
+<table style="width:100%;">
 <colgroup>
 <col width="5%" />
 <col width="4%" />
 <col width="5%" />
 <col width="4%" />
-<col width="8%" />
+<col width="7%" />
+<col width="9%" />
 <col width="6%" />
 <col width="7%" />
-<col width="8%" />
 <col width="9%" />
+<col width="14%" />
+<col width="7%" />
 <col width="15%" />
-<col width="8%" />
-<col width="16%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -493,7 +493,7 @@ RD.</li>
 <th align="right">variance</th>
 <th align="right">mse</th>
 <th align="right">bias_se_ratio</th>
-<th align="right">o.coverage</th>
+<th align="right">oracle.coverage</th>
 <th align="right">coverage_ic</th>
 <th align="right">coverage_tmle</th>
 <th align="right">coverage_cv_boot</th>
@@ -549,14 +549,14 @@ estimators, but GLM estimators have more variance</li>
 <h3>RD oracle coverage of different estimators</h3>
 <table>
 <colgroup>
-<col width="14%" />
-<col width="7%" />
-<col width="7%" />
 <col width="13%" />
-<col width="13%" />
+<col width="6%" />
+<col width="6%" />
+<col width="12%" />
+<col width="12%" />
 <col width="8%" />
-<col width="20%" />
-<col width="15%" />
+<col width="18%" />
+<col width="21%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -567,7 +567,7 @@ estimators, but GLM estimators have more variance</li>
 <th align="right">variance</th>
 <th align="right">mse</th>
 <th align="right">bias_se_ratio</th>
-<th align="right">o.coverage</th>
+<th align="right">oracle.coverage</th>
 </tr>
 </thead>
 <tbody>
@@ -628,14 +628,14 @@ estimators, but GLM estimators have more variance</li>
 <h3>RR oracle coverage of different estimators</h3>
 <table>
 <colgroup>
-<col width="14%" />
-<col width="7%" />
-<col width="7%" />
-<col width="10%" />
 <col width="13%" />
+<col width="6%" />
+<col width="6%" />
+<col width="9%" />
+<col width="12%" />
 <col width="8%" />
-<col width="20%" />
-<col width="16%" />
+<col width="19%" />
+<col width="22%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -646,7 +646,7 @@ estimators, but GLM estimators have more variance</li>
 <th align="right">variance</th>
 <th align="right">mse</th>
 <th align="right">bias_se_ratio</th>
-<th align="right">o.coverage</th>
+<th align="right">oracle.coverage</th>
 </tr>
 </thead>
 <tbody>
@@ -777,7 +777,7 @@ intervals in all simulations (not shown).</li>
 </tr>
 </tbody>
 </table>
-<p>Note CI width on the log scale.</p>
+<p>Note CI width on the log scale for relative risks.</p>
 </div>
 </div>
 </div>
@@ -803,11 +803,11 @@ bias/variance, so we should use in the bootstrap estimator</li>
 <h3>Risk difference</h3>
 <table>
 <colgroup>
-<col width="45%" />
-<col width="14%" />
+<col width="42%" />
+<col width="13%" />
 <col width="12%" />
-<col width="11%" />
-<col width="15%" />
+<col width="10%" />
+<col width="21%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -815,7 +815,7 @@ bias/variance, so we should use in the bootstrap estimator</li>
 <th align="right">bias</th>
 <th align="right">variance</th>
 <th align="right">mse</th>
-<th align="right">o.coverage</th>
+<th align="right">oracle.coverage</th>
 </tr>
 </thead>
 <tbody>
@@ -944,13 +944,20 @@ bias/variance, so we should use in the bootstrap estimator</li>
 <div id="relative-risk" class="section level3">
 <h3>Relative Risk</h3>
 <table>
+<colgroup>
+<col width="45%" />
+<col width="10%" />
+<col width="12%" />
+<col width="8%" />
+<col width="22%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th align="left">estimator</th>
 <th align="right">bias</th>
 <th align="right">variance</th>
 <th align="right">mse</th>
-<th align="right">o.coverage</th>
+<th align="right">oracle.coverage</th>
 </tr>
 </thead>
 <tbody>
@@ -1094,11 +1101,11 @@ intervals in all simulations (not shown)</li>
 <h3>Risk difference coverage</h3>
 <table>
 <colgroup>
-<col width="34%" />
-<col width="11%" />
-<col width="18%" />
-<col width="11%" />
-<col width="23%" />
+<col width="45%" />
+<col width="9%" />
+<col width="15%" />
+<col width="9%" />
+<col width="19%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -1139,17 +1146,24 @@ intervals in all simulations (not shown)</li>
 <td align="right">NA</td>
 </tr>
 <tr class="odd">
+<td align="left">Bootstrap, Det Q function, 500 iterations</td>
+<td align="right">89.00000</td>
+<td align="right">0.01338</td>
+<td align="right">69.50000</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
 <td align="left">Bootstrap</td>
 <td align="right">85.32609</td>
 <td align="right">0.01461</td>
 <td align="right">67.39130</td>
 <td align="right">NA</td>
 </tr>
-<tr class="even">
-<td align="left">NA</td>
-<td align="right">87.17949</td>
-<td align="right">0.01432</td>
-<td align="right">56.41026</td>
+<tr class="odd">
+<td align="left">Bootstrap-Ridge</td>
+<td align="right">88.60759</td>
+<td align="right">0.01352</td>
+<td align="right">64.55696</td>
 <td align="right">NA</td>
 </tr>
 </tbody>
@@ -1157,13 +1171,13 @@ intervals in all simulations (not shown)</li>
 </div>
 <div id="relative-risk-coverage" class="section level3">
 <h3>Relative risk coverage</h3>
-<table style="width:100%;">
+<table>
 <colgroup>
-<col width="35%" />
-<col width="12%" />
-<col width="18%" />
-<col width="9%" />
-<col width="24%" />
+<col width="46%" />
+<col width="10%" />
+<col width="15%" />
+<col width="7%" />
+<col width="20%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -1204,25 +1218,377 @@ intervals in all simulations (not shown)</li>
 <td align="right">NA</td>
 </tr>
 <tr class="odd">
+<td align="left">Bootstrap, Det Q function, 500 iterations</td>
+<td align="right">77.500</td>
+<td align="right">1.955</td>
+<td align="right">69.500</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
 <td align="left">Bootstrap</td>
 <td align="right">76.630</td>
 <td align="right">1.985</td>
 <td align="right">67.391</td>
 <td align="right">NA</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">Bootstrap- IPTW</td>
 <td align="right">100.000</td>
 <td align="right">17.908</td>
 <td align="right">0.000</td>
 <td align="right">NA</td>
 </tr>
-<tr class="odd">
-<td align="left">NA</td>
-<td align="right">79.487</td>
-<td align="right">1.876</td>
-<td align="right">56.410</td>
+<tr class="even">
+<td align="left">Bootstrap-Ridge</td>
+<td align="right">77.215</td>
+<td align="right">1.888</td>
+<td align="right">64.557</td>
 <td align="right">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="comparison-of-variance-estimator-performance-over-time" class="section level2">
+<h2>Comparison of variance estimator performance over time</h2>
+<p>The primary analysis examined the effect of continuous GLP1 usage on
+dementia risk after 5 years, with longitudinal data discretized into 6
+month time nodes. The imperfect performance of estimators in simulations
+may arise from the rare outcome (~2% prevalence after 5 years),
+positivity issues in the long-term followup (with increasingly small
+number of individuals continuously on GLP1), or high degrees of
+administrative censoring (~50% after 5 years). We ran simulations for
+all length of followup time from 6 months (time=1) to 5 years (time=10).
+Oracle coverage is good at all times, while IC coverage is increasingly
+anti-conservative and TMLE coverage is increasingly conservative over
+time. Interestingly, variance in RD estimates increases more over time
+while bias increases more in RR estimates.</p>
+<div id="risk-difference-1" class="section level3">
+<h3>Risk difference</h3>
+<table style="width:100%;">
+<colgroup>
+<col width="3%" />
+<col width="6%" />
+<col width="6%" />
+<col width="4%" />
+<col width="10%" />
+<col width="12%" />
+<col width="11%" />
+<col width="8%" />
+<col width="10%" />
+<col width="12%" />
+<col width="13%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">time</th>
+<th align="right">bias</th>
+<th align="right">variance</th>
+<th align="right">mse</th>
+<th align="right">bias_se_ratio</th>
+<th align="right">bias_se_ratio_emp</th>
+<th align="right">oracle.coverage</th>
+<th align="right">IC_coverage</th>
+<th align="right">TMLE_coverage</th>
+<th align="right">IC_mean_ci_width</th>
+<th align="right">TMLE_mean_ci_width</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">-0.00021</td>
+<td align="right">0e+00</td>
+<td align="right">0e+00</td>
+<td align="right">-0.24209</td>
+<td align="right">-0.35093</td>
+<td align="right">96.0</td>
+<td align="right">71.0</td>
+<td align="right">85.0</td>
+<td align="right">0.00232</td>
+<td align="right">0.00285</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="right">-0.00021</td>
+<td align="right">0e+00</td>
+<td align="right">0e+00</td>
+<td align="right">-0.17300</td>
+<td align="right">-0.23397</td>
+<td align="right">95.5</td>
+<td align="right">77.5</td>
+<td align="right">77.5</td>
+<td align="right">0.00357</td>
+<td align="right">0.00357</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="right">0.00019</td>
+<td align="right">0e+00</td>
+<td align="right">0e+00</td>
+<td align="right">0.11499</td>
+<td align="right">0.17473</td>
+<td align="right">96.5</td>
+<td align="right">76.5</td>
+<td align="right">96.5</td>
+<td align="right">0.00426</td>
+<td align="right">0.00655</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="right">0.00070</td>
+<td align="right">0e+00</td>
+<td align="right">0e+00</td>
+<td align="right">0.37575</td>
+<td align="right">0.56369</td>
+<td align="right">95.5</td>
+<td align="right">78.5</td>
+<td align="right">99.0</td>
+<td align="right">0.00487</td>
+<td align="right">0.00838</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="right">0.00027</td>
+<td align="right">1e-05</td>
+<td align="right">1e-05</td>
+<td align="right">0.11295</td>
+<td align="right">0.18745</td>
+<td align="right">96.0</td>
+<td align="right">78.5</td>
+<td align="right">98.5</td>
+<td align="right">0.00569</td>
+<td align="right">0.01069</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="right">0.00064</td>
+<td align="right">1e-05</td>
+<td align="right">1e-05</td>
+<td align="right">0.25730</td>
+<td align="right">0.41259</td>
+<td align="right">95.0</td>
+<td align="right">78.0</td>
+<td align="right">99.5</td>
+<td align="right">0.00607</td>
+<td align="right">0.01228</td>
+</tr>
+<tr class="odd">
+<td align="right">7</td>
+<td align="right">-0.00019</td>
+<td align="right">1e-05</td>
+<td align="right">1e-05</td>
+<td align="right">-0.06014</td>
+<td align="right">-0.11447</td>
+<td align="right">95.5</td>
+<td align="right">72.5</td>
+<td align="right">97.0</td>
+<td align="right">0.00656</td>
+<td align="right">0.01434</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="right">-0.00114</td>
+<td align="right">1e-05</td>
+<td align="right">1e-05</td>
+<td align="right">-0.33070</td>
+<td align="right">-0.65342</td>
+<td align="right">93.5</td>
+<td align="right">64.5</td>
+<td align="right">97.5</td>
+<td align="right">0.00685</td>
+<td align="right">0.01649</td>
+</tr>
+<tr class="odd">
+<td align="right">9</td>
+<td align="right">-0.00072</td>
+<td align="right">1e-05</td>
+<td align="right">1e-05</td>
+<td align="right">-0.19364</td>
+<td align="right">-0.39991</td>
+<td align="right">94.0</td>
+<td align="right">64.0</td>
+<td align="right">98.0</td>
+<td align="right">0.00710</td>
+<td align="right">0.01844</td>
+</tr>
+<tr class="even">
+<td align="right">10</td>
+<td align="right">-0.00045</td>
+<td align="right">2e-05</td>
+<td align="right">2e-05</td>
+<td align="right">-0.11002</td>
+<td align="right">-0.24138</td>
+<td align="right">94.5</td>
+<td align="right">61.5</td>
+<td align="right">99.5</td>
+<td align="right">0.00737</td>
+<td align="right">0.02129</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="relative-risk-1" class="section level3">
+<h3>Relative risk</h3>
+<table>
+<colgroup>
+<col width="3%" />
+<col width="5%" />
+<col width="6%" />
+<col width="4%" />
+<col width="10%" />
+<col width="13%" />
+<col width="11%" />
+<col width="8%" />
+<col width="10%" />
+<col width="12%" />
+<col width="13%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">time</th>
+<th align="right">bias</th>
+<th align="right">variance</th>
+<th align="right">mse</th>
+<th align="right">bias_se_ratio</th>
+<th align="right">bias_se_ratio_emp</th>
+<th align="right">oracle.coverage</th>
+<th align="right">IC_coverage</th>
+<th align="right">TMLE_coverage</th>
+<th align="right">IC_mean_ci_width</th>
+<th align="right">TMLE_mean_ci_width</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">-0.289</td>
+<td align="right">0.383</td>
+<td align="right">0.467</td>
+<td align="right">-0.467</td>
+<td align="right">-0.717</td>
+<td align="right">96.0</td>
+<td align="right">75.5</td>
+<td align="right">96.0</td>
+<td align="right">1.581</td>
+<td align="right">2.199</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="right">-0.207</td>
+<td align="right">0.244</td>
+<td align="right">0.287</td>
+<td align="right">-0.419</td>
+<td align="right">-0.616</td>
+<td align="right">96.5</td>
+<td align="right">78.5</td>
+<td align="right">78.5</td>
+<td align="right">1.319</td>
+<td align="right">1.319</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="right">-0.151</td>
+<td align="right">0.284</td>
+<td align="right">0.306</td>
+<td align="right">-0.283</td>
+<td align="right">-0.475</td>
+<td align="right">98.0</td>
+<td align="right">73.0</td>
+<td align="right">97.5</td>
+<td align="right">1.243</td>
+<td align="right">2.351</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="right">-0.076</td>
+<td align="right">0.274</td>
+<td align="right">0.280</td>
+<td align="right">-0.144</td>
+<td align="right">-0.246</td>
+<td align="right">97.0</td>
+<td align="right">74.0</td>
+<td align="right">98.0</td>
+<td align="right">1.205</td>
+<td align="right">2.720</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="right">-0.194</td>
+<td align="right">0.269</td>
+<td align="right">0.307</td>
+<td align="right">-0.374</td>
+<td align="right">-0.740</td>
+<td align="right">96.0</td>
+<td align="right">71.0</td>
+<td align="right">98.5</td>
+<td align="right">1.029</td>
+<td align="right">2.517</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="right">-0.161</td>
+<td align="right">0.259</td>
+<td align="right">0.285</td>
+<td align="right">-0.317</td>
+<td align="right">-0.621</td>
+<td align="right">95.0</td>
+<td align="right">72.0</td>
+<td align="right">99.5</td>
+<td align="right">1.019</td>
+<td align="right">2.852</td>
+</tr>
+<tr class="odd">
+<td align="right">7</td>
+<td align="right">-0.312</td>
+<td align="right">0.304</td>
+<td align="right">0.401</td>
+<td align="right">-0.566</td>
+<td align="right">-1.287</td>
+<td align="right">95.0</td>
+<td align="right">62.5</td>
+<td align="right">98.5</td>
+<td align="right">0.950</td>
+<td align="right">2.892</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="right">-0.407</td>
+<td align="right">0.317</td>
+<td align="right">0.482</td>
+<td align="right">-0.724</td>
+<td align="right">-1.791</td>
+<td align="right">93.5</td>
+<td align="right">52.5</td>
+<td align="right">99.0</td>
+<td align="right">0.891</td>
+<td align="right">3.030</td>
+</tr>
+<tr class="odd">
+<td align="right">9</td>
+<td align="right">-0.369</td>
+<td align="right">0.321</td>
+<td align="right">0.458</td>
+<td align="right">-0.651</td>
+<td align="right">-1.659</td>
+<td align="right">94.0</td>
+<td align="right">53.0</td>
+<td align="right">99.0</td>
+<td align="right">0.873</td>
+<td align="right">3.300</td>
+</tr>
+<tr class="even">
+<td align="right">10</td>
+<td align="right">-0.352</td>
+<td align="right">0.328</td>
+<td align="right">0.452</td>
+<td align="right">-0.614</td>
+<td align="right">-1.639</td>
+<td align="right">94.5</td>
+<td align="right">48.0</td>
+<td align="right">100.0</td>
+<td align="right">0.841</td>
+<td align="right">3.579</td>
 </tr>
 </tbody>
 </table>

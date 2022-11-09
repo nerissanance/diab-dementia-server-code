@@ -2,9 +2,11 @@
 title: "Diabetes-dementia updated simulation results"
 author: "Andrew Mertens"
 date: "2022-11-17"
-output: html_document
-editor_options: 
-  markdown: 
+output:
+  pdf_document: default
+  html_document: default
+editor_options:
+  markdown:
     wrap: 72
 ---
 
@@ -24,6 +26,7 @@ try(source(paste0(here::here(),"/simulation study/0_simulation_functions.R")))
 load(paste0(here::here(),"/results/sim_performance_results_simple.Rdata"))
 load(paste0(here::here(),"/results/sim_performance_results_original.Rdata"))
 load(paste0(here::here(),"/results/sim_performance_results_original_null.Rdata"))
+load(paste0(here::here(),"/results/performance_over_time.Rdata"))
 
 library(knitr)
 ```
@@ -51,6 +54,7 @@ True RD: -0.3
 
 ```{r, echo=FALSE}
 #res <- sim_res_null_T4$perf_tab_RR %>% arrange(coverage) %>% filter(grepl("no_cens",filenames)) %>% subset(., select=-c(simulated_data, filenames, censoring_in_data, power))
+perf_tab_RR <- perf_tab_RR %>% rename(oracle.coverage=o.coverage)
 knitr::kable(perf_tab_RR, digits =3)
 
 ```
@@ -59,6 +63,7 @@ knitr::kable(perf_tab_RR, digits =3)
 
 ```{r, echo=FALSE}
 #res_diff <- sim_res_null_T4$perf_tab_diff %>% arrange(coverage)  %>% arrange(coverage) %>% filter(grepl("no_cens",filenames)) %>% subset(., select=-c(simulated_data, filenames, censoring_in_data, power))
+perf_tab_RD <- perf_tab_RD %>% rename(oracle.coverage=o.coverage)
 knitr::kable(perf_tab_RD, digits =5)
 ```
 
@@ -84,7 +89,7 @@ True RD: 0
 #unique(old_sim_res_null_diff$filenames)
 old_sim_res_null_diff_coverage <- old_sim_res_null_diff %>% #filter(variance_estimator=="ic") %>%
   filter(filenames %in% c("old_null_sim_res_noDetQ_ic_T11","old_null_sim_res_noDetQ_Qint_ic_T11","old_null_sim_res_ic_glm_T11","old_null_sim_res_noDetQ_ic_glm_T11","old_null_sim_res_Qint_noDetQ_glm_tmle_T11")) %>%
-  select(estimator, Qint, DetQ,bias,variance,mse,bias_se_ratio,o.coverage)
+  select(estimator, Qint, DetQ,bias,variance,mse,bias_se_ratio,o.coverage) %>% rename(oracle.coverage=o.coverage)
 
 knitr::kable(old_sim_res_null_diff_coverage, digits =5)
 
@@ -96,7 +101,7 @@ knitr::kable(old_sim_res_null_diff_coverage, digits =5)
 
 old_sim_res_null_RR_coverage <- old_sim_res_null_RR %>% #filter(variance_estimator=="ic") %>%
   filter(filenames %in% c("old_null_sim_res_noDetQ_ic_T11","old_null_sim_res_noDetQ_Qint_ic_T11","old_null_sim_res_ic_glm_T11","old_null_sim_res_noDetQ_ic_glm_T11","old_null_sim_res_Qint_noDetQ_glm_tmle_T11")) %>%
-  select(estimator, Qint, DetQ,bias,variance,mse,bias_se_ratio,o.coverage)
+  select(estimator, Qint, DetQ,bias,variance,mse,bias_se_ratio,o.coverage) %>% rename(oracle.coverage=o.coverage)
 
 knitr::kable(old_sim_res_null_RR_coverage, digits = 3)
 
@@ -143,7 +148,7 @@ knitr::kable(old_sim_res_null_RR_coverage, digits =5)
 
 ```
 
-Note CI width on the log scale.
+Note CI width on the log scale for relative risks.
 
 
 
@@ -191,7 +196,7 @@ old_sim_res_v3_diff_coverage$estimator[grepl("1se",old_sim_res_v3_diff_coverage$
 old_sim_res_v3_diff_coverage$estimator[grepl("AUC",old_sim_res_v3_diff_coverage$filenames)] <- paste0(old_sim_res_v3_diff_coverage$estimator[grepl("AUC",old_sim_res_v3_diff_coverage$filenames)],", AUC fit")
 
 old_sim_res_v3_diff_coverage <- old_sim_res_v3_diff_coverage %>% 
-  select(estimator, bias, variance, mse, o.coverage) %>% arrange(o.coverage)
+  select(estimator, bias, variance, mse, o.coverage) %>% arrange(o.coverage)  %>% rename(oracle.coverage=o.coverage)
 
 knitr::kable(old_sim_res_v3_diff_coverage, digits =6)
 
@@ -224,7 +229,7 @@ old_sim_res_v3_RR_coverage$estimator[grepl("1se",old_sim_res_v3_RR_coverage$file
 old_sim_res_v3_RR_coverage$estimator[grepl("AUC",old_sim_res_v3_RR_coverage$filenames)] <- paste0(old_sim_res_v3_RR_coverage$estimator[grepl("AUC",old_sim_res_v3_RR_coverage$filenames)],", AUC fit")
 
 old_sim_res_v3_RR_coverage <- old_sim_res_v3_RR_coverage %>% 
-  select(estimator, bias, variance, mse, o.coverage) %>% arrange(o.coverage)
+  select(estimator, bias, variance, mse, o.coverage) %>% arrange(o.coverage) %>% rename(oracle.coverage=o.coverage)
 
 knitr::kable(old_sim_res_v3_RR_coverage, digits =3)
 
@@ -300,3 +305,29 @@ old_sim_res_v3_RR_var <- old_sim_res_v3_RR_var %>% select(variance_estimator, co
 knitr::kable(old_sim_res_v3_RR_var, digits =3)
 
 ```
+
+
+
+## Comparison of variance estimator performance over time
+
+The primary analysis examined the effect of continuous GLP1 usage on dementia risk after 5 years, with longitudinal data discretized into 6 month time nodes. The imperfect performance of estimators in simulations may arise from the rare outcome (~2% prevalence after 5 years), positivity issues in the long-term followup (with increasingly small number of individuals continuously on GLP1), or high degrees of administrative censoring (~50% after 5 years). We ran simulations for all length of followup time from 6 months (time=1) to 5 years (time=10). Oracle coverage is good at all times, while IC coverage is increasingly anti-conservative and TMLE coverage is increasingly conservative over time. Interestingly, variance in RD estimates increases more over time while bias increases more in RR estimates.
+
+
+### Risk difference
+
+```{r, echo=FALSE}
+
+perf_tab_over_time_diff <- perf_tab_over_time_diff %>% rename(oracle.coverage=o.coverage)
+knitr::kable(perf_tab_over_time_diff, digits =5)
+
+```
+
+### Relative risk 
+
+```{r, echo=FALSE}
+
+perf_tab_over_time_RR <- perf_tab_over_time_RR %>% rename(oracle.coverage=o.coverage)
+knitr::kable(perf_tab_over_time_RR, digits =3)
+
+```
+
