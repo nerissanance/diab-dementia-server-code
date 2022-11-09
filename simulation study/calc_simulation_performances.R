@@ -29,7 +29,10 @@ boot_iter_files$analysis[grepl("cens_competing_risks_v3",boot_iter_files$boot_fi
 table(boot_iter_files$analysis)
 
 #Note the DetQ boot results
-#get iptw boot results
+
+setwd(paste0(here::here(),"/sim_res/"))
+d <- readRDS("sim_res_RF_ic_v3.RDS")
+head(d)
 
 #make df:
 
