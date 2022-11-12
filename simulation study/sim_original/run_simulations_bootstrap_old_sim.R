@@ -10,7 +10,6 @@ library(parallel)
 library(doParallel)
 registerDoParallel(cores=50)
 
-rm(list=ls())
 gc()
 d_wide_list <- readRDS(file=here("data/simulated_data_list.RDS"))
 d_wide_list <- d_wide_list[1:200]
@@ -21,7 +20,7 @@ resdf_boot = NULL
 #for(i in 1:length(d_wide_list)){
 #temp rerun
 int.start.time <- Sys.time()
-for(i in 1:200){
+for(i in 33:200){
   #for(i in 1:length(d_wide_list)){
 
   cat(i,"\n")
