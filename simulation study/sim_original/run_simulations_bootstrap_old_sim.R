@@ -20,7 +20,7 @@ resdf_boot = NULL
 #for(i in 1:length(d_wide_list)){
 #temp rerun
 int.start.time <- Sys.time()
-for(i in 33:200){
+for(i in 1:200){
   #for(i in 1:length(d_wide_list)){
 
   cat(i,"\n")
@@ -44,7 +44,7 @@ for(i in 33:200){
     # #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
     res <- NULL
-    try(res <- run_ltmle_glmnet(dboot, N_time = 11, resdf=NULL, Qint=FALSE, det.Q=TRUE, varmethod = "ic", id=dboot$id), silent=TRUE)
+    try(res <- run_ltmle_glmnet_test(dboot, N_time = 11, resdf=NULL, Qint=FALSE, det.Q=TRUE, varmethod = "ic", id=dboot$id), silent=TRUE)
     return(res)
   }
   res_df
@@ -52,7 +52,7 @@ for(i in 33:200){
   gc()
   res_df$iteration <- i
   resdf_boot <- bind_rows(resdf_boot, res_df)
-  saveRDS(res_df, paste0(here::here(),"/data/bootstrap/sim_res_boot_old_sim_cens_competing_risks_T11_",i,".RDS"))
+  saveRDS(res_df, paste0(here::here(),"/data/bootstrap/sim_res_boot_old_sim_detQ_T11_",i,".RDS"))
 
 }
 int.end.time <- Sys.time()
