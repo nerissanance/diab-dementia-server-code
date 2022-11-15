@@ -19,8 +19,8 @@ gc()
 
 
 
-
-for(i in 1:200){
+resdf_boot<-NULL
+for(i in 185:200){
 
   cat(i,"\n")
   d <- d_wide_list[[i]]
@@ -38,7 +38,7 @@ for(i in 1:200){
     dboot <- d[sample(.N, nrow(d),replace=TRUE)]
 
     res <- NULL
-    try(res <- run_ltmle_glmnet_test(d=dboot,  N_time=11))
+    try(res <- run_ltmle_glmnet_test(d=dboot, det.Q=F,  N_time=11))
     return(res)
   }
   res_df
