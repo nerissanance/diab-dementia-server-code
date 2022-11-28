@@ -3,8 +3,8 @@ title: "Diabetes-dementia updated simulation results"
 author: "Andrew Mertens"
 date: "2022-11-17"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 editor_options:
   markdown:
     wrap: 72
@@ -100,8 +100,10 @@ knitr::kable(old_sim_res_null_diff_coverage, digits =5)
 ```{r, echo=FALSE}
 
 old_sim_res_null_RR_coverage <- old_sim_res_null_RR %>% #filter(variance_estimator=="ic") %>%
-  filter(filenames %in% c("old_null_sim_res_noDetQ_ic_T11","old_null_sim_res_noDetQ_Qint_ic_T11","old_null_sim_res_ic_glm_T11","old_null_sim_res_noDetQ_ic_glm_T11","old_null_sim_res_Qint_noDetQ_glm_tmle_T11")) %>%
-  select(estimator, Qint, DetQ,bias,variance,mse,bias_se_ratio,o.coverage) %>% rename(oracle.coverage=o.coverage)
+  filter(filenames %in% c("old_null_sim_res_noDetQ_ic_T11","old_null_sim_res_noDetQ_Qint_ic_T11","old_null_sim_res_ic_glm_T11","old_null_sim_res_noDetQ_ic_glm_T11","old_null_sim_res_Qint_noDetQ_glm_tmle_T11",
+                          "old_null_sim_res_noDetQ_ic_T11_iptw","old_null_sim_res_noDetQ_Qint_ic_T11_iptw","old_null_sim_res_ic_glm_T11_iptw","old_null_sim_res_noDetQ_ic_glm_T11_iptw","old_null_sim_res_Qint_noDetQ_glm_tmle_T11_iptw")) %>%
+  mutate(iptw=ifelse(grepl("_iptw",filenames),"yes","no")) %>%
+  select(estimator, Qint, DetQ, iptw, bias,variance,mse,bias_se_ratio,o.coverage) %>% rename(oracle.coverage=o.coverage)
 
 knitr::kable(old_sim_res_null_RR_coverage, digits = 3)
 
