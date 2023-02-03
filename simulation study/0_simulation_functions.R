@@ -481,8 +481,8 @@ run_ltmle_glmnet <- function(d,
                               Yvars=c("event_dementia_"),
                               Cvars=c("censor_"))
   abar_spec = list(rep(1,N_time-1),rep(0,N_time-1))
+  spec_ltmle$data <- spec_ltmle$data %>% select(ie_type,age_base,sex,code5txt,quartile_income,id, everything() )
 
-  # #Drop the baseline events
 
   set.seed(12345)
   fit = NULL
