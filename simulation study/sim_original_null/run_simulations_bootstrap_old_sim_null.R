@@ -20,7 +20,7 @@ i<-j<-165
 resdf_boot = NULL
 #for(i in 1:length(d_wide_list)){
 #temp rerun
-for(i in 165:200){
+for(i in 3){
   #for(i in 1:length(d_wide_list)){
 
   cat(i,"\n")
