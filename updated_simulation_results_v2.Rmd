@@ -3,8 +3,8 @@ title: "Diabetes-dementia updated simulation results"
 author: "Andrew Mertens"
 date: "2022-11-17"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 editor_options:
   markdown:
     wrap: 72
