@@ -65,7 +65,7 @@ spec_analysis <- function(data, long_covariates, baseline_vars, N_time, Avars, Y
 
 
 
-d <- readRDS(here("data/example_simulated_data.RDS"))
+d <- readRDS(here::here("data/example_simulated_data.RDS"))
 
 
 baseline_vars = c("ie_type","age_base","sex", "code5txt", "quartile_income")
@@ -279,7 +279,6 @@ res$effect.measures$RR$CI
 
 ```
 
-
 ## 4) Contrast of 2 dual treatment regimes with treatment holiday but no 3rd drug usages
 
 Start on GLP1 and SGLT2 drugs
@@ -334,7 +333,6 @@ abar_spec
 #I think the rule argument shouldn't be used as it allows for dynamic treatment
 
 # stochastic intervention to allow for treatment holidays
-#NOTE! This might need to be modified to match the previous Anode of the same drug with a grepl function
 SI_function2 <- function(data, current.node, nodes) {
   # if not an A node, then skip
   # if there is no previous node, then treat as usual
@@ -360,8 +358,6 @@ SI_function2 <- function(data, current.node, nodes) {
 
 
 ```
-
-
 
 #### Run analysis for TCP- dual treatment:
 

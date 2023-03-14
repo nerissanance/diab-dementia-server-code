@@ -1,0 +1,253 @@
+---
+title: "Danish registry analyses LTMLE specifications - treatment gap"
+author: "Andrew Mertens"
+format: html
+editor: visual
+---
+
+```{r, include=F}
+
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+
+library(tidyverse)
+library(data.table)
+library(ltmle)
+library(here)
+
+
+spec_nodes <- function(baseline_vars, longitudinal_vars, num_time){
+  node_names <- c(baseline_vars, expand.grid(longitudinal_vars, num_time) %>%
+                    apply(1, function(row) paste0(row, collapse = "")))
+  node_names <- gsub(" ","",node_names)
+  return(node_names)
+}
+
+
+spec_analysis <- function(data, long_covariates, baseline_vars, N_time, Avars, Yvars, Cvars){
+
+  node_names <- spec_nodes(baseline_vars=(baseline_vars),
+                           longitudinal_vars=c(Avars, Cvars,Yvars,long_covariates),
+                           num_time=0:(N_time-1))
+  node_names <- node_names[!(node_names %in% c(paste0(Yvars,0),paste0(Cvars,0),paste0(Avars,0),"event_death_0"))]
+  #Drop final timepoint
+  for(i in long_covariates){
+    node_names <- node_names[!(grepl(paste0(i,(N_time-1)),node_names))]
+  }
+
+  Lnode_names <- c(baseline_vars, expand.grid(long_covariates,0:(N_time-1)) %>% apply(1, function(row) paste0(row, collapse = "")))
+  Lnode_names <- gsub(" ","", Lnode_names)
+  #Drop final timepoint
+  Lnode_names <- Lnode_names[!(grepl(paste0("_",(N_time-1)),Lnode_names))]
+  Lnode_names <- Lnode_names[!(Lnode_names %in% c("event_death_0"))]
+
+
+  #subset to analysis columns and arrange
+  d_ltmle <- data %>% dplyr::select(!!(node_names))
+  #colnames(d_ltmle)
+
+  #clean censoring nodes to right format
+  Cnode_names = node_names[grep(paste0("^",Cvars), node_names)]
+  for(i in Cnode_names){
+    d_ltmle[[i]] <- BinaryToCensoring(is.censored=d_ltmle[[i]])
+  }
+
+
+
+  return(list(
+    data=d_ltmle,
+    node_names=node_names,
+    Anodes = node_names[sort(grep(paste("^",Avars, collapse="|", sep=""), node_names))],
+    Cnodes = Cnode_names,
+    Lnodes = Lnode_names,
+    Ynodes = node_names[sort(grep(paste("^",Yvars, collapse="|", sep=""), node_names))]
+  ))
+}
+
+
+
+d <- readRDS(here::here("data/example_simulated_data.RDS"))
+
+
+baseline_vars = c("ie_type","age_base","sex", "code5txt", "quartile_income")
+
+
+```
+
+## Example data discription
+
+Simulated data, simplified L, shortened followup, high administrative censoring, GLM estimation
+
+Data:
+
+```{r, echo=FALSE}
+
+head(d, 3)
+
+```
+
+#### Baseline covariates:
+
+`baseline_vars = c("ie_type","age_base","sex","code5txt","quartile_income")`
+
+#### Longitudinal covariates:
+
+Insulin, hypertension, and 2nd line diabetes drugs not a part of the Also including death as a competing risk by including it in $L$. Note we specify a deterministic Q Function
+
+
+## 2) Target Causal Parameter 2
+
+In our second target causal parameter, we additionally intervene on an active comparator: $$E[Y_{\bar{a}_1=1,\bar{a}_2=0, c=0}]-E[Y_{\bar{a}_1=0,\bar{a}_2=1, c=0}]$$
+
+Here, we are contrasting full GLP-RA use, no active comparator use and no administrative censoring throughout follow up, compared to full active comparator use (eg. SGLT2), no GLP1-RA use and no administrative censoring throughout follow up.
+
+#### Analysis setup:
+
+```{r}
+#-------------------------------------------------------------------------------
+#  Contrasting if everyone had glp1 versus if everyone was on sglt2
+#-------------------------------------------------------------------------------
+
+long_covariates = c("insulin_","hypertension_","other_drugs_", "event_death_")
+
+
+#specify LTMLE analysis
+spec_ltmle <- spec_analysis(data=d, long_covariates, baseline_vars,
+                            N_time=4,
+                            Avars=c("glp1_","sglt2_inhib_"),
+                            Yvars=c("event_dementia_"),
+                            Cvars=c("censor_"))
+#A Nodes
+spec_ltmle$Anodes
+
+#C Nodes
+spec_ltmle$Cnodes
+
+#L Nodes
+spec_ltmle$Lnodes
+
+#Y Nodes
+spec_ltmle$Ynodes
+
+#specify the intervened treatment
+abar_spec = list(rep(c(1,0),3),rep(c(0,1),3))
+abar_spec
+
+```
+
+#### Run analysis for TCP2:
+
+```{r}
+
+   res_RR <- ltmle(data=spec_ltmle$data,
+                  Anodes = spec_ltmle$Anodes,
+                  Cnodes = spec_ltmle$Cnodes,
+                  Lnodes = spec_ltmle$Lnodes,
+                  Ynodes = spec_ltmle$Ynodes,
+                  survivalOutcome = T,
+                  abar = abar_spec,
+                  SL.library = "glm",
+                  variance.method = "ic" )
+
+res<-summary(res_RR)
+res$effect.measures$RR$estimate
+res$effect.measures$RR$CI
+
+```
+
+#### 3) Run analysis for TCP2 with treatment holidays:
+
+```{r}
+
+SI_function1 <- function(data, current.node, nodes) {
+  # if not an A node, then skip
+  # if there is no previous node, then treat as usual
+  Anodes <- nodes$A
+  if (!(current.node %in% Anodes)) return(NULL)
+  if (!(any(Anodes < current.node))) return(NULL)
+
+  # if t-1 for the specific A node is treated, then deterministically set to be the observed value; (when observed value is not NA)
+  # prob1 is the prob of being 1, equal to obs value here: observed 1, set a^d_t = obs value with prob 1; observed 0, set a^d_t = obs value with prob 0
+  # if t-1 is not treated, then treat as usual (not deterministic)
+  #note that t-1 for a specific type of A is t-4 when there are 4 types of treatments (-3 from the max index of previous Anodes)
+
+  #get Anodes prior to current.node
+  prev.a.node <- max(Anodes[Anodes < current.node])
+  is.deterministic <- ifelse(!is.na(data[, current.node]) & !is.na(prev.a.node), data[, prev.a.node] == 1, F)
+  prob1 <- data[, current.node][is.deterministic]
+
+  return(list(is.deterministic=is.deterministic, prob1=prob1))
+}
+
+   res_RR <- ltmle(data=spec_ltmle$data,
+                  Anodes = spec_ltmle$Anodes,
+                  Cnodes = spec_ltmle$Cnodes,
+                  Lnodes = spec_ltmle$Lnodes,
+                  Ynodes = spec_ltmle$Ynodes,
+                  survivalOutcome = T,
+                  abar = abar_spec,
+                  deterministic.g.function = SI_function1,
+                  SL.library = "glm",
+                  variance.method = "ic" )
+
+res<-summary(res_RR)
+res$effect.measures$RR$estimate
+res$effect.measures$RR$CI
+
+```
+
+## 4) Treatment gaps in abar
+
+
+
+```{r}
+
+A_df <- spec_ltmle$data %>% select(!!(spec_ltmle$Anodes)) %>% as.data.frame()
+
+
+abar_gap1 <- matrix(NA,nrow=nrow(A_df),ncol=ncol(A_df))
+abar_gap1[,1] <- 1
+abar_gap1[,c(2,4,6)] <- 0
+abar_gap1[,3] = A_df[,3]
+
+#Observed if previously treated
+abar_gap1[abar_gap1[,3]==1,5] = A_df[abar_gap1[,3]==1,5]
+
+#Treat if previous gap
+abar_gap1[abar_gap1[,3]==0,5] = 1
+
+abar_gap2 <- matrix(NA,nrow=nrow(A_df),ncol=ncol(A_df))
+abar_gap2[,2] <- 1
+abar_gap2[,c(1,3,5)] <- 0
+abar_gap2[,4] = A_df[,4]
+
+#Observed if previously treated
+abar_gap2[abar_gap2[,4]==1,6] = A_df[abar_gap2[,4]==1,6]
+
+#Treat if previous gap
+abar_gap2[abar_gap2[,4]==0,6] = 1
+
+abar_gap=list(abar_gap1, abar_gap2)
+abar_gap
+
+```
+
+#### Run analysis 
+
+```{r}
+
+   res_RR <- ltmle(data=spec_ltmle$data,
+                  Anodes = spec_ltmle$Anodes,
+                  Cnodes = spec_ltmle$Cnodes,
+                  Lnodes = spec_ltmle$Lnodes,
+                  Ynodes = spec_ltmle$Ynodes,
+                  survivalOutcome = T,
+                  abar = abar_gap,
+                  SL.library = "glm",
+                  variance.method = "ic" )
+
+res<-summary(res_RR)
+res$effect.measures$RR$estimate
+res$effect.measures$RR$CI
+
+```
+

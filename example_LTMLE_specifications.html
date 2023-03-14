@@ -484,14 +484,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb38-25"><a href="#cb38-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">is.deterministic=</span>is.deterministic, <span class="at">prob1=</span>prob1))  </span>
 <span id="cb38-26"><a href="#cb38-26" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>i Andrew,</p>
-<p>what I did is a little worse and affects more than just the treatment holiday analysis, because I also set A_k=0 in all patients who start with A_0=0.</p>
-<p>your example of a dynamic rule does not yet explain how to implement treatment holidays and censoring due to third drug. these do not seem to be dynamic treatment rules …</p>
-<p>1/ Treatment holidays:</p>
-<p>I can create a dynamic rule that allows treatment holidays, but when should such a treatment holiday start? right now I am thinking that changing the actually observed data still makes sense for treatment holidays: we assume that the drug is still active in the body for up to 2 intervals. but, I could also censor patients when their treatment holidays get too long by alterning the C_nodes. I am still confused …</p>
-<p>2/ Censoring due to third drug</p>
-<p>This is not a treatment rule. I could of course artificially censor these patients when this happens, i.e., modify the C_nodes.</p>
-<p>thanks, Thomas</p>
 </section>
 <section id="run-analysis-for-tcp--dual-treatment" class="level4">
 <h4 class="anchored" data-anchor-id="run-analysis-for-tcp--dual-treatment">Run analysis for TCP- dual treatment:</h4>
