@@ -131,98 +131,307 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </header>
 
-<section id="example-data-discription" class="level2">
-<h2 class="anchored" data-anchor-id="example-data-discription">Example data discription</h2>
-<p>Simulated data, simplified L, shortened followup, high administrative censoring, GLM estimation</p>
-<p>Data:</p>
+<section id="the-research-question" class="level3">
+<h3 class="anchored" data-anchor-id="the-research-question">1) The Research Question</h3>
+<p>What is the effect of the 5 year usage of the 2nd line diabetes drug GLP1 (with imperfect adherence) on dementia cumulative incidence, compared to the 5 year usage of the 2nd line diabetes drug SGLT2 (with imperfect adherence) on dementia cumulative incidence</p>
+</section>
+<section id="the-causal-model" class="level3">
+<h3 class="anchored" data-anchor-id="the-causal-model">2) The Causal Model</h3>
+<ul>
+<li>Baseline covariates <span class="math inline">\(W_{baseline}\)</span>: age, sex, wealth</li>
+<li>Longitudinal covariates <span class="math inline">\(L\)</span> (subset of <span class="math inline">\(W\)</span>: Insulin, hypertension, and 2nd line diabetes drugs not a part of the treatment regime, death</li>
+</ul>
+<p><span class="math display">\[
+W=f_W(U_W)
+\]</span></p>
+<ul>
+<li>Treatment <span class="math inline">\(A\)</span>: GlP1 usage (A1_t=1) with one-node gaps allowed (treatment holiday) vs SGLT2 usage (A2_t=1) with one-node gaps allowed (treatment holiday)</li>
+</ul>
+<p><span class="math display">\[
+A=f_A(W, U_A)
+\]</span></p>
+<ul>
+<li>Outcome <span class="math inline">\(Y\)</span>: dementia incidence</li>
+</ul>
+<p><span class="math display">\[
+Y=f_Y(W,A,U_Y)
+\]</span></p>
+</section>
+<section id="the-causal-parameter" class="level3">
+<h3 class="anchored" data-anchor-id="the-causal-parameter">3) The Causal Parameter</h3>
+<p>The relative 5-year risk in dementia between GLP1 users and SGLT2 users:</p>
+<p><span class="math display">\[\frac{E[Y_{\bar{a}_1=1,\bar{a}_2=0, c=0}]}{E[Y_{\bar{a}_1=0,\bar{a}_2=1, c=0}]}\]</span></p>
+</section>
+<section id="observed-data-and-statistical-model" class="level3">
+<h3 class="anchored" data-anchor-id="observed-data-and-statistical-model">4) Observed Data and Statistical Model</h3>
+<p>Data from this cohort can be described by a general longitudinal data structure, denoted as:</p>
+<p><span class="math display">\[ O = (W, A(1), ..., L(K), A(K), L(K+1)) \sim  P_0 \in  M   \]</span></p>
+<p>where W denotes baseline (time-invariant) covariate information, and <span class="math inline">\(A(1)\)</span> is exposure status at the beginning of the first node or time interval (i.e.&nbsp;index date). <span class="math inline">\(A\)</span> nodes also include an administrative censoring mechanism, C, which denotes censoring during the time interval. For ease of notation above, we refer to the treatment and censoring processes together as <span class="math inline">\(A(t)=(A_1(t), A_2(t), C(t))\)</span>. We refer to the covariate and outcome nodes collectively as <span class="math inline">\(L(t)=(L(t), Y(t))\)</span>, which includes both time-varying covariate information <span class="math inline">\(L(t)\)</span> and outcome information <span class="math inline">\(Y(t)\)</span>. Death will be considered a competing risk in the primary analyses and is thus also included in <span class="math inline">\(L(t)\)</span>. Index date and baseline measurements are measured at the date of switch to second-line regimen. Here we use a 6-month time scale for time increments in the main analyses. <span class="math inline">\(K+1\)</span> is defined as the maximum follow up time.</p>
+<section id="glimpse-of-simulated-data" class="level4">
+<h4 class="anchored" data-anchor-id="glimpse-of-simulated-data">Glimpse of simulated data:</h4>
+<p>Note in the real analysis, k=10 for the full 5-year followup with 6-month time nodes, but here we use 3 time nodes for simplicity.</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>   age_base sex    ie.type   code5txt quartile_income insulin_0    ie_type
-1: 63.73899   0 -0.3260365  1.4928501       0.7032476         0 -1.2078369
-2: 85.62075   1  0.5524619 -0.2631177      -0.7747945         0 -0.3335561
-3: 64.44215   1 -0.6749438 -0.1911478      -1.0302495         0  0.9143386
-   hypertension_0 glp1_0 sglt2_inhib_0 other_drugs_0 event_dementia_0 censor_0
-1:              0      1             0             0                0        0
-2:              1      0             0             1                0        0
-3:              0      0             0             0                0        0
-   event_death_0 insulin_1 hypertension_1 renal.disease_1 glp1_1 sglt2_inhib_1
-1:             0         0              0               0      1             0
-2:             0         0              1               0      0             0
-3:             0         0              0               0      0             0
-   other_drugs_1 event_dementia_1 censor_1 event_death_1 insulin_2
-1:             0                0        0             0         0
-2:             1                0        0             0         0
-3:             0                0        0             0         0
-   hypertension_2 glp1_2 sglt2_inhib_2 other_drugs_2 event_dementia_2 censor_2
-1:              0      0             0             0                0        1
-2:              1      0             0             1                0        0
-3:              0      0             0             0                0        0
-   event_death_2 insulin_3 hypertension_3 glp1_3 sglt2_inhib_3 other_drugs_3
-1:             0         0              0      0             0             0
-2:             0         0              1      0             0             1
-3:             0         0              0      0             0             0
-   event_dementia_3 censor_3 event_death_3 event_dementia_4
-1:                0        1             0                0
-2:                0        0             0                0
-3:                0        1             0                0</code></pre>
+<pre><code>   age_base sex    ie.type quartile_income insulin_0 hypertension_0 glp1_0
+1: 63.73899   0 -0.3260365       0.7032476         0              0      1
+2: 85.62075   1  0.5524619      -0.7747945         0              1      0
+3: 64.44215   1 -0.6749438      -1.0302495         0              0      0
+   sglt2_inhib_0 other_drugs_0 event_dementia_0 censor_0 event_death_0
+1:             0             0                0        0             0
+2:             0             1                0        0             0
+3:             0             0                0        0             0
+   insulin_1 hypertension_1 renal.disease_1 glp1_1 sglt2_inhib_1 other_drugs_1
+1:         0              0               0      1             0             0
+2:         0              1               0      0             0             1
+3:         0              0               0      0             0             0
+   event_dementia_1 censor_1 event_death_1 insulin_2 hypertension_2 glp1_2
+1:                0        0             0         0              0      0
+2:                0        0             0         0              1      0
+3:                0        0             0         0              0      0
+   sglt2_inhib_2 other_drugs_2 event_dementia_2 censor_2 event_death_2
+1:             0             0                0        1             0
+2:             0             1                0        0             0
+3:             0             0                0        0             0
+   insulin_3 hypertension_3 glp1_3 sglt2_inhib_3 other_drugs_3 event_dementia_3
+1:         0              0      0             0             0                0
+2:         0              1      0             0             1                0
+3:         0              0      0             0             0                0
+   censor_3 event_death_3 event_dementia_4
+1:        1             0                0
+2:        0             0                0
+3:        1             0                0</code></pre>
 </div>
 </div>
-<section id="baseline-covariates" class="level4">
-<h4 class="anchored" data-anchor-id="baseline-covariates">Baseline covariates:</h4>
-<p><code>baseline_vars = c("ie_type","age_base","sex","code5txt","quartile_income")</code></p>
-</section>
-<section id="longitudinal-covariates" class="level4">
-<h4 class="anchored" data-anchor-id="longitudinal-covariates">Longitudinal covariates:</h4>
-<p>Insulin, hypertension, and 2nd line diabetes drugs not a part of the Also including death as a competing risk by including it in <span class="math inline">\(L\)</span>. Note we specify a deterministic Q Function</p>
 </section>
 </section>
-<section id="target-causal-parameter-2" class="level2">
-<h2 class="anchored" data-anchor-id="target-causal-parameter-2">2) Target Causal Parameter 2</h2>
-<p>In our second target causal parameter, we additionally intervene on an active comparator: <span class="math display">\[E[Y_{\bar{a}_1=1,\bar{a}_2=0, c=0}]-E[Y_{\bar{a}_1=0,\bar{a}_2=1, c=0}]\]</span></p>
-<p>Here, we are contrasting full GLP-RA use, no active comparator use and no administrative censoring throughout follow up, compared to full active comparator use (eg. SGLT2), no GLP1-RA use and no administrative censoring throughout follow up.</p>
-<section id="analysis-setup" class="level4">
-<h4 class="anchored" data-anchor-id="analysis-setup">Analysis setup:</h4>
+<section id="identification-assumptions" class="level3">
+<h3 class="anchored" data-anchor-id="identification-assumptions">5) Identification assumptions</h3>
+<ul>
+<li>temporality</li>
+<li>no interference</li>
+<li>consistency</li>
+</ul>
+</section>
+<section id="statistical-estimation-and-inference" class="level3">
+<h3 class="anchored" data-anchor-id="statistical-estimation-and-inference">6) Statistical Estimation and Inference</h3>
+<ul>
+<li>GLM for estimation</li>
+</ul>
+<section id="specification-of-the-nodes-passed-to-the-lmtle-call" class="level4">
+<h4 class="anchored" data-anchor-id="specification-of-the-nodes-passed-to-the-lmtle-call">Specification of the nodes passed to the LMTLE call:</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-------------------------------------------------------------------------------</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#  Contrasting if everyone had glp1 versus if everyone was on sglt2</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#-------------------------------------------------------------------------------</span></span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>baseline_vars <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"age_base"</span>,<span class="st">"sex"</span>, <span class="st">"quartile_income"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>long_covariates <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"insulin_"</span>,<span class="st">"hypertension_"</span>,<span class="st">"other_drugs_"</span>, <span class="st">"event_death_"</span>)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>long_covariates <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"insulin_"</span>,<span class="st">"hypertension_"</span>,<span class="st">"other_drugs_"</span>, <span class="st">"event_death_"</span>)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">#specify LTMLE analysis</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>spec_ltmle <span class="ot">&lt;-</span> <span class="fu">spec_analysis</span>(<span class="at">data=</span>d, long_covariates, baseline_vars,</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>                            <span class="at">N_time=</span><span class="dv">4</span>,</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>                            <span class="at">Avars=</span><span class="fu">c</span>(<span class="st">"glp1_"</span>,<span class="st">"sglt2_inhib_"</span>),</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>                            <span class="at">Yvars=</span><span class="fu">c</span>(<span class="st">"event_dementia_"</span>),</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>                            <span class="at">Cvars=</span><span class="fu">c</span>(<span class="st">"censor_"</span>))</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">#A Nodes</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>spec_ltmle<span class="sc">$</span>Anodes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "glp1_1"        "sglt2_inhib_1" "glp1_2"        "sglt2_inhib_2"
-[5] "glp1_3"        "sglt2_inhib_3"</code></pre>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>spec_ltmle <span class="ot">&lt;-</span> <span class="fu">spec_analysis</span>(<span class="at">data=</span>d, long_covariates, baseline_vars,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">N_time=</span><span class="dv">4</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>                            <span class="at">Avars=</span><span class="fu">c</span>(<span class="st">"glp1_"</span>,<span class="st">"sglt2_inhib_"</span>),</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                            <span class="at">Yvars=</span><span class="fu">c</span>(<span class="st">"event_dementia_"</span>),</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>                            <span class="at">Cvars=</span><span class="fu">c</span>(<span class="st">"censor_"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#C Nodes</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>spec_ltmle<span class="sc">$</span>Cnodes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "censor_1" "censor_2" "censor_3"</code></pre>
+<p><strong>Specifying {A} to allow 1-node treatment gaps:</strong></p>
+<p>Below is an R function to add treatment gaps in {A} specification, where <span class="math inline">\(A_1(k)\)</span> (the intervention arm of GLP1) is intervened upon to start on GLP1 (<span class="math inline">\(A_1(1)==1\)</span>) and individuals remain on the drug but allowing for small treatment gaps and remaining n In the reference arm, the specification is reversed, where <span class="math inline">\(A_2(k)\)</span> is set to allow small gaps and <span class="math inline">\(A_1(k)\)</span> is set to 0.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>spec_Abar_with_treatment_holiday <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">data=</span>spec_ltmle<span class="sc">$</span>data, <span class="at">A_nodes=</span>spec_ltmle<span class="sc">$</span>Anodes, <span class="at">intervention_nodes=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">5</span>), <span class="at">control_nodes=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">6</span>)){</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  A_df <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">!!</span>(A_nodes)) <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>()</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Make matrices of size A_nodes X N_subjects for the intervention and control regimes</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  abar_gap1 <span class="ot">=</span> abar_gap2 <span class="ot">=</span> <span class="fu">matrix</span>(<span class="cn">NA</span>,<span class="at">nrow=</span><span class="fu">nrow</span>(A_df),<span class="at">ncol=</span><span class="fu">ncol</span>(A_df))</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#set first intervention node to one for all: hypothetical trial where all start on drug</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  abar_gap1[,intervention_nodes[<span class="dv">1</span>]] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="co">#set all control arm drug nodes to 0</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  abar_gap1[,control_nodes] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">#set 2nd intervention node to the observed: hypothetical trial where all start on drug (1st node)</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="co">#but gaps up to one node are allowed so the 2nd node can be the observed value of A</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  abar_gap1[,<span class="dv">3</span>] <span class="ot">=</span> A_df[,<span class="dv">3</span>]</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="co">#for the third node onward, set to: </span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">3</span><span class="sc">:</span><span class="fu">length</span>(intervention_nodes)){</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 1) observed if previously treated (A_t=a|A_(t-1)=1)</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>      abar_gap1[abar_gap1[,intervention_nodes[i<span class="dv">-1</span>]]<span class="sc">==</span><span class="dv">1</span>, intervention_nodes[i]] <span class="ot">=</span> A_df[abar_gap1[,intervention_nodes[i<span class="dv">-1</span>]]<span class="sc">==</span><span class="dv">1</span>, intervention_nodes[i]]</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2) treated if previously not treated (A_t=1|A_(t-1)=0) </span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>      abar_gap1[abar_gap1[,intervention_nodes[i<span class="dv">-1</span>]]<span class="sc">==</span><span class="dv">0</span>, intervention_nodes[i]] <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  <span class="co">#now repeat the process for the control regime</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  abar_gap2[,control_nodes[<span class="dv">1</span>]] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  abar_gap2[,intervention_nodes] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  abar_gap2[,control_nodes[<span class="dv">2</span>]] <span class="ot">=</span> A_df[,control_nodes[<span class="dv">2</span>]]</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">3</span><span class="sc">:</span><span class="fu">length</span>(control_nodes)){</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 1) observed if previously treated (A_t=a|A_(t-1)=1)</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>      abar_gap2[abar_gap2[,control_nodes[i<span class="dv">-1</span>]]<span class="sc">==</span><span class="dv">1</span>, control_nodes[i]] <span class="ot">=</span> A_df[abar_gap2[,control_nodes[i<span class="dv">-1</span>]]<span class="sc">==</span><span class="dv">1</span>, control_nodes[i]]</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2) treated if previously not treated (A_t=1|A_(t-1)=0) </span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>      abar_gap2[abar_gap2[,control_nodes[i<span class="dv">-1</span>]]<span class="sc">==</span><span class="dv">0</span>, control_nodes[i]] <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>  abar_gap<span class="ot">=</span><span class="fu">list</span>(abar_gap1, abar_gap2)</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>   <span class="fu">return</span>(abar_gap)</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#L Nodes</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>spec_ltmle<span class="sc">$</span>Lnodes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code> [1] "ie_type"         "age_base"        "sex"             "code5txt"       
- [5] "quartile_income" "insulin_0"       "hypertension_0"  "other_drugs_0"  
- [9] "insulin_1"       "hypertension_1"  "other_drugs_1"   "event_death_1"  
-[13] "insulin_2"       "hypertension_2"  "other_drugs_2"   "event_death_2"  </code></pre>
+</section>
+<section id="set-up-contrast-between-glp1-usage-with-gaps-and-no-sglt2-usage-vs.-sglt2-usage-with-gaps-and-no-glp1-usage" class="level4">
+<h4 class="anchored" data-anchor-id="set-up-contrast-between-glp1-usage-with-gaps-and-no-sglt2-usage-vs.-sglt2-usage-with-gaps-and-no-glp1-usage">Set up contrast between GLP1 usage with gaps and no SGLT2 usage VS. SGLT2 usage with gaps and no GLP1 usage</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>abar_gap<span class="ot">=</span> <span class="fu">spec_Abar_with_treatment_holiday</span>(<span class="at">data=</span>spec_ltmle<span class="sc">$</span>data, </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                                           <span class="at">A_nodes=</span>spec_ltmle<span class="sc">$</span>Anodes, </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                                           <span class="at">intervention_nodes=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">5</span>), </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                                           <span class="at">control_nodes=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">6</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Y Nodes</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>spec_ltmle<span class="sc">$</span>Ynodes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Examine examples of 2 different intervention regimes, comparing observed data and treatment regimes that match the observed data as close as possible while intervening to start on the GLP1 drug of interest, intervening to avoid gaps in treatment longer than 1 node (6 months), and intervening to prevent SGLT2 use:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>spec_ltmle<span class="sc">$</span>data  <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">!!</span>(spec_ltmle<span class="sc">$</span>Anodes)) <span class="sc">%&gt;%</span> <span class="fu">slice</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">9</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "event_dementia_1" "event_dementia_2" "event_dementia_3"</code></pre>
+<pre><code>   glp1_1 sglt2_inhib_1 glp1_2 sglt2_inhib_2 glp1_3 sglt2_inhib_3
+1:      1             0      0             0      0             0
+2:      0             0      0             0      0             0
+3:      0             0      1             0      0             0
+4:      1             0      1             0      1             0</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#specify the intervened treatment</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>abar_spec <span class="ot">=</span> <span class="fu">list</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>),<span class="dv">3</span>),<span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>),<span class="dv">3</span>))</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>abar_spec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>abar_gap[[<span class="dv">1</span>]][<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">9</span>),]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3] [,4] [,5] [,6]
+[1,]    1    0    0    0    1    0
+[2,]    1    0    0    0    1    0
+[3,]    1    0    1    0    0    0
+[4,]    1    0    1    0    1    0</code></pre>
+</div>
+</div>
+<p>Example reference regime (SGLT2 use with gaps, no GLP1 use):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(abar_gap[[<span class="dv">2</span>]],<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3] [,4] [,5] [,6]
+[1,]    0    1    0    0    0    1
+[2,]    0    1    0    0    0    1
+[3,]    0    1    0    0    0    1</code></pre>
+</div>
+</div>
+</section>
+<section id="run-analysis" class="level4">
+<h4 class="anchored" data-anchor-id="run-analysis">Run analysis</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>   res_RR <span class="ot">&lt;-</span> <span class="fu">ltmle</span>(<span class="at">data=</span>spec_ltmle<span class="sc">$</span>data,</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Anodes =</span> spec_ltmle<span class="sc">$</span>Anodes,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Cnodes =</span> spec_ltmle<span class="sc">$</span>Cnodes,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Lnodes =</span> spec_ltmle<span class="sc">$</span>Lnodes,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Ynodes =</span> spec_ltmle<span class="sc">$</span>Ynodes,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                  <span class="at">survivalOutcome =</span> T,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>                  <span class="at">abar =</span> abar_gap,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>                  <span class="at">SL.library =</span> <span class="st">"glm"</span>,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                  <span class="at">variance.method =</span> <span class="st">"ic"</span> )</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>res<span class="ot">&lt;-</span><span class="fu">summary</span>(res_RR)</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>res<span class="sc">$</span>effect.measures<span class="sc">$</span>RR<span class="sc">$</span>estimate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.5837859</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>res<span class="sc">$</span>effect.measures<span class="sc">$</span>RR<span class="sc">$</span>CI</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            2.5%    97.5%
+[1,] 0.009310536 36.60434</code></pre>
+</div>
+</div>
+</section>
+<section id="alternative-1-setting-a_bar-to-continious-usage-except-for-when-the-observed-data-has-small-allowable-gaps" class="level4">
+<h4 class="anchored" data-anchor-id="alternative-1-setting-a_bar-to-continious-usage-except-for-when-the-observed-data-has-small-allowable-gaps">Alternative 1: Setting A_bar to continious usage, except for when the observed data has small, allowable gaps</h4>
+<p>Above, we set <span class="math inline">\(\bar{A}\)</span> as close as possible to the observed data for</p>
+<p>If observed GLP1 is for t=1,2,3 is 0,0,0, then <span class="math inline">\(\bar{A}\)</span> is set to 1,0,1</p>
+<p>In the real analysis (10 time nodes), where the majority of people are not using GLP1, that means the majority of <span class="math inline">\(\bar{A} = 1,0,1,0,1,0,1,0,1,0\)</span></p>
+<p>Does it make more sense to set <span class="math inline">\(\bar{A} = 1,1,1,1,1,1,1,1,1,1\)</span> for all individuals whose observed data does not match a regime with allowable (1-node) gaps in GLP1 usage, and set <span class="math inline">\(\bar{A}\)</span> to the observed <span class="math inline">\(A\)</span> when the observed <span class="math inline">\(A\)</span> fits an allowable regime?</p>
+<p>This would then use more GLP1 users’ data in estimating dementia risk, while still emulating an ideal trial where individuals continiously use the drug but adherence is imperfect.</p>
+<p>I’ve implemented this below to compare effect of the estimated relative risk.</p>
+<p>But maybe I’m not understanding what LTMLE is doing when each individual has a different <span class="math inline">\(\bar{A}\)</span>?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>spec_Abar_with_treatment_holiday_alt <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">data=</span>spec_ltmle<span class="sc">$</span>data, <span class="at">A_nodes=</span>spec_ltmle<span class="sc">$</span>Anodes, <span class="at">intervention_nodes=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">5</span>), <span class="at">control_nodes=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">6</span>)){</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  A_df <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">!!</span>(A_nodes)) <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>()</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Make matrices of size A_nodes X N_subjects for the intervention and control regimes using observed data</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  abar_gap1 <span class="ot">=</span> abar_gap2 <span class="ot">=</span> A_df</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#set first intervention node to one for all: hypothetical trial where all start on drug</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  abar_gap1[,intervention_nodes[<span class="dv">1</span>]] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  abar_gap2[,control_nodes[<span class="dv">1</span>]] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  <span class="co">#set all control arm drug nodes to 0</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  abar_gap1[,control_nodes] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  abar_gap2[,intervention_nodes] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>   <span class="co">#Set intervention nodes to 1, unless observed data matches the ideal treatment regimes (continious usage with short gaps)</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>  is_following_regime<span class="ot">=</span><span class="fu">rep</span>(<span class="cn">TRUE</span>, <span class="fu">nrow</span>(abar_gap1))</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="fu">length</span>(intervention_nodes)){</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>    is_following_regime<span class="ot">=</span><span class="fu">ifelse</span>(A_df[intervention_nodes[<span class="dv">1</span>]]<span class="sc">==</span><span class="dv">1</span> <span class="sc">&amp;</span> <span class="sc">!</span>(A_df[,intervention_nodes[i<span class="dv">-1</span>]]<span class="sc">==</span><span class="dv">0</span> <span class="sc">&amp;</span> A_df[,intervention_nodes[i]]<span class="sc">==</span><span class="dv">0</span>), is_following_regime,F)</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>  abar_gap1[is_following_regime, intervention_nodes] <span class="ot">&lt;-</span> A_df[is_following_regime, intervention_nodes]</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>  abar_gap1[<span class="sc">!</span>is_following_regime, intervention_nodes] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>  is_following_control<span class="ot">=</span><span class="fu">rep</span>(<span class="cn">TRUE</span>, <span class="fu">nrow</span>(abar_gap2))</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="fu">length</span>(control_nodes)){</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>    is_following_control<span class="ot">=</span><span class="fu">ifelse</span>(A_df[control_nodes[<span class="dv">1</span>]]<span class="sc">==</span><span class="dv">1</span> <span class="sc">&amp;</span> <span class="sc">!</span>(A_df[,control_nodes[i<span class="dv">-1</span>]]<span class="sc">==</span><span class="dv">0</span> <span class="sc">&amp;</span> A_df[,control_nodes[i]]<span class="sc">==</span><span class="dv">0</span>), is_following_control,F)</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>  abar_gap2[is_following_control, control_nodes] <span class="ot">&lt;-</span> A_df[is_following_control, control_nodes]</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>  abar_gap2[<span class="sc">!</span>is_following_control, control_nodes] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>  abar_gap<span class="ot">=</span><span class="fu">list</span>(<span class="fu">as.matrix</span>(abar_gap1), <span class="fu">as.matrix</span>(abar_gap2))</span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>   <span class="fu">return</span>(abar_gap)</span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>abar_spec_alt <span class="ot">=</span> <span class="fu">spec_Abar_with_treatment_holiday_alt</span>()</span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a><span class="co">#show a few different regimes, compared to real data:</span></span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>spec_ltmle<span class="sc">$</span>data <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">!!</span>(spec_ltmle<span class="sc">$</span>Anodes)) <span class="sc">%&gt;%</span> <span class="fu">slice</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">100</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   glp1_1 sglt2_inhib_1 glp1_2 sglt2_inhib_2 glp1_3 sglt2_inhib_3
+1:      1             0      0             0      0             0
+2:      0             0      0             0      0             0
+3:      1             0      1             0      0             0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>abar_spec_alt[[<span class="dv">1</span>]][<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">100</span>),]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     glp1_1 sglt2_inhib_1 glp1_2 sglt2_inhib_2 glp1_3 sglt2_inhib_3
+[1,]      1             0      1             0      1             0
+[2,]      1             0      1             0      1             0
+[3,]      1             0      1             0      0             0</code></pre>
+</div>
+</div>
+</section>
+<section id="run-analysis-1" class="level4">
+<h4 class="anchored" data-anchor-id="run-analysis-1">Run analysis</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>   res_RR <span class="ot">&lt;-</span> <span class="fu">ltmle</span>(<span class="at">data=</span>spec_ltmle<span class="sc">$</span>data,</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Anodes =</span> spec_ltmle<span class="sc">$</span>Anodes,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Cnodes =</span> spec_ltmle<span class="sc">$</span>Cnodes,</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Lnodes =</span> spec_ltmle<span class="sc">$</span>Lnodes,</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Ynodes =</span> spec_ltmle<span class="sc">$</span>Ynodes,</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>                  <span class="at">survivalOutcome =</span> T,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>                  <span class="at">abar =</span> abar_spec_alt,</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>                  <span class="at">SL.library =</span> <span class="st">"glm"</span>,</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>                  <span class="at">variance.method =</span> <span class="st">"ic"</span> )</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>res<span class="ot">&lt;-</span><span class="fu">summary</span>(res_RR)</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>res<span class="sc">$</span>effect.measures<span class="sc">$</span>RR<span class="sc">$</span>estimate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.5811694</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>res<span class="sc">$</span>effect.measures<span class="sc">$</span>RR<span class="sc">$</span>CI</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            2.5%    97.5%
+[1,] 0.009394263 35.95363</code></pre>
+</div>
+</div>
+</section>
+<section id="alternative-2-deterministic-g-function" class="level4">
+<h4 class="anchored" data-anchor-id="alternative-2-deterministic-g-function">Alternative 2: deterministic g function</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co">#specify the intervened treatment</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>abar_spec <span class="ot">=</span> <span class="fu">list</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>),<span class="dv">3</span>),<span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>),<span class="dv">3</span>))</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>abar_spec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[[1]]
 [1] 1 0 1 0 1 0
@@ -231,2141 +440,203 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 [1] 0 1 0 1 0 1</code></pre>
 </div>
 </div>
-</section>
-<section id="run-analysis-for-tcp2" class="level4">
-<h4 class="anchored" data-anchor-id="run-analysis-for-tcp2">Run analysis for TCP2:</h4>
+<p>This deterministic g function is the equivalent logic of the spec_Abar_with_treatment_holiday() function, but applied as determistic knowledge (which feels wrong to me, but was the approach recommended by Zeyi):</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>   res_RR <span class="ot">&lt;-</span> <span class="fu">ltmle</span>(<span class="at">data=</span>spec_ltmle<span class="sc">$</span>data,</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Anodes =</span> spec_ltmle<span class="sc">$</span>Anodes,</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Cnodes =</span> spec_ltmle<span class="sc">$</span>Cnodes,</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Lnodes =</span> spec_ltmle<span class="sc">$</span>Lnodes,</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Ynodes =</span> spec_ltmle<span class="sc">$</span>Ynodes,</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>                  <span class="at">survivalOutcome =</span> T,</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>                  <span class="at">abar =</span> abar_spec,</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>                  <span class="at">SL.library =</span> <span class="st">"glm"</span>,</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>                  <span class="at">variance.method =</span> <span class="st">"ic"</span> )</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>res<span class="ot">&lt;-</span><span class="fu">summary</span>(res_RR)</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>res<span class="sc">$</span>effect.measures<span class="sc">$</span>RR<span class="sc">$</span>estimate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>SI_function1 <span class="ot">&lt;-</span> <span class="cf">function</span>(data, current.node, nodes) {</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># if not an A node, then skip</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># if there is no previous node, then treat as usual</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  Anodes <span class="ot">&lt;-</span> nodes<span class="sc">$</span>A</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span>(current.node <span class="sc">%in%</span> Anodes)) <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span>(<span class="fu">any</span>(Anodes <span class="sc">&lt;</span> current.node))) <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># if t-1 for the specific A node is treated, then deterministically set to be the observed value; (when observed value is not NA)</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># prob1 is the prob of being 1, equal to obs value here: observed 1, set a^d_t = obs value with prob 1; observed 0, set a^d_t = obs value with prob 0</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># if t-1 is not treated, then treat as usual (not deterministic)</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  <span class="co">#note that t-1 for a specific type of A is t-4 when there are 4 types of treatments (-3 from the max index of previous Anodes)</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">#get Anodes prior to current.node</span></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>  prev.a.node <span class="ot">&lt;-</span> <span class="fu">max</span>(Anodes[Anodes <span class="sc">&lt;</span> current.node])</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>  is.deterministic <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="sc">!</span><span class="fu">is.na</span>(data[, current.node]) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(prev.a.node), data[, prev.a.node] <span class="sc">==</span> <span class="dv">1</span>, F)</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>  prob1 <span class="ot">&lt;-</span> data[, current.node][is.deterministic]</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">is.deterministic=</span>is.deterministic, <span class="at">prob1=</span>prob1))</span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>   res_RR <span class="ot">&lt;-</span> <span class="fu">ltmle</span>(<span class="at">data=</span>spec_ltmle<span class="sc">$</span>data,</span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Anodes =</span> spec_ltmle<span class="sc">$</span>Anodes,</span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Cnodes =</span> spec_ltmle<span class="sc">$</span>Cnodes,</span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Lnodes =</span> spec_ltmle<span class="sc">$</span>Lnodes,</span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Ynodes =</span> spec_ltmle<span class="sc">$</span>Ynodes,</span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>                  <span class="at">survivalOutcome =</span> T,</span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>                  <span class="at">abar =</span> abar_spec,</span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>                  <span class="at">deterministic.g.function =</span> SI_function1,</span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a>                  <span class="at">SL.library =</span> <span class="st">"glm"</span>,</span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>                  <span class="at">variance.method =</span> <span class="st">"ic"</span> )</span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>res<span class="ot">&lt;-</span><span class="fu">summary</span>(res_RR)</span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>res<span class="sc">$</span>effect.measures<span class="sc">$</span>RR<span class="sc">$</span>estimate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.8653406</code></pre>
+<pre><code>[1] 0.6693092</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>res<span class="sc">$</span>effect.measures<span class="sc">$</span>RR<span class="sc">$</span>CI</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>res<span class="sc">$</span>effect.measures<span class="sc">$</span>RR<span class="sc">$</span>CI</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>          2.5%   97.5%
-[1,] 0.3232554 2.31648</code></pre>
+<pre><code>           2.5%    97.5%
+[1,] 0.01614784 27.74208</code></pre>
 </div>
 </div>
 </section>
-<section id="run-analysis-for-tcp2-with-treatment-holidays" class="level4">
-<h4 class="anchored" data-anchor-id="run-analysis-for-tcp2-with-treatment-holidays">3) Run analysis for TCP2 with treatment holidays:</h4>
+<section id="sensitivity-analysis-continious-usage-no-treatment-holidays" class="level4">
+<h4 class="anchored" data-anchor-id="sensitivity-analysis-continious-usage-no-treatment-holidays">Sensitivity analysis: continious usage (no treatment holidays)</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>SI_function1 <span class="ot">&lt;-</span> <span class="cf">function</span>(data, current.node, nodes) {</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># if not an A node, then skip</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># if there is no previous node, then treat as usual</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  Anodes <span class="ot">&lt;-</span> nodes<span class="sc">$</span>A</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span>(current.node <span class="sc">%in%</span> Anodes)) <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span>(<span class="fu">any</span>(Anodes <span class="sc">&lt;</span> current.node))) <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># if t-1 for the specific A node is treated, then deterministically set to be the observed value; (when observed value is not NA)</span></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># prob1 is the prob of being 1, equal to obs value here: observed 1, set a^d_t = obs value with prob 1; observed 0, set a^d_t = obs value with prob 0</span></span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># if t-1 is not treated, then treat as usual (not deterministic)</span></span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="co">#note that t-1 for a specific type of A is t-4 when there are 4 types of treatments (-3 from the max index of previous Anodes)</span></span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">#get Anodes prior to current.node</span></span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  prev.a.node <span class="ot">&lt;-</span> <span class="fu">max</span>(Anodes[Anodes <span class="sc">&lt;</span> current.node])</span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  is.deterministic <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="sc">!</span><span class="fu">is.na</span>(data[, current.node]) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(prev.a.node), data[, prev.a.node] <span class="sc">==</span> <span class="dv">1</span>, F)</span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>  prob1 <span class="ot">&lt;-</span> data[, current.node][is.deterministic]</span>
-<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">is.deterministic=</span>is.deterministic, <span class="at">prob1=</span>prob1))</span>
-<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>   res_RR <span class="ot">&lt;-</span> <span class="fu">ltmle</span>(<span class="at">data=</span>spec_ltmle<span class="sc">$</span>data,</span>
-<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Anodes =</span> spec_ltmle<span class="sc">$</span>Anodes,</span>
-<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Cnodes =</span> spec_ltmle<span class="sc">$</span>Cnodes,</span>
-<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Lnodes =</span> spec_ltmle<span class="sc">$</span>Lnodes,</span>
-<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Ynodes =</span> spec_ltmle<span class="sc">$</span>Ynodes,</span>
-<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>                  <span class="at">survivalOutcome =</span> T,</span>
-<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>                  <span class="at">abar =</span> abar_spec,</span>
-<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>                  <span class="at">deterministic.g.function =</span> SI_function1,</span>
-<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>                  <span class="at">SL.library =</span> <span class="st">"glm"</span>,</span>
-<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>                  <span class="at">variance.method =</span> <span class="st">"ic"</span> )</span>
-<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>res<span class="ot">&lt;-</span><span class="fu">summary</span>(res_RR)</span>
-<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>res<span class="sc">$</span>effect.measures<span class="sc">$</span>RR<span class="sc">$</span>estimate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>   res_RR <span class="ot">&lt;-</span> <span class="fu">ltmle</span>(<span class="at">data=</span>spec_ltmle<span class="sc">$</span>data,</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Anodes =</span> spec_ltmle<span class="sc">$</span>Anodes,</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Cnodes =</span> spec_ltmle<span class="sc">$</span>Cnodes,</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Lnodes =</span> spec_ltmle<span class="sc">$</span>Lnodes,</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Ynodes =</span> spec_ltmle<span class="sc">$</span>Ynodes,</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>                  <span class="at">survivalOutcome =</span> T,</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>                  <span class="at">abar =</span> abar_spec,</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>                  <span class="at">SL.library =</span> <span class="st">"glm"</span>,</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>                  <span class="at">variance.method =</span> <span class="st">"ic"</span> )</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>res<span class="ot">&lt;-</span><span class="fu">summary</span>(res_RR)</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>res<span class="sc">$</span>effect.measures<span class="sc">$</span>RR<span class="sc">$</span>estimate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.9775708</code></pre>
+<pre><code>[1] 0.57511</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>res<span class="sc">$</span>effect.measures<span class="sc">$</span>RR<span class="sc">$</span>CI</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>res<span class="sc">$</span>effect.measures<span class="sc">$</span>RR<span class="sc">$</span>CI</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>         2.5%   97.5%
-[1,] 0.388281 2.46122</code></pre>
+<pre><code>            2.5%    97.5%
+[1,] 0.009630054 34.34576</code></pre>
 </div>
 </div>
 </section>
 </section>
-<section id="treatment-gaps-in-abar" class="level2">
-<h2 class="anchored" data-anchor-id="treatment-gaps-in-abar">4) Treatment gaps in abar</h2>
+<section id="interpretation-of-results" class="level3">
+<h3 class="anchored" data-anchor-id="interpretation-of-results">7) Interpretation of Results</h3>
+<p>The deterministic g function leads to an estimate further from the “no treatment holiday” analysis than by manually specifying <span class="math inline">\(\bar{A}\)</span> to allow gaps.</p>
+<p>Is the correct interpretation of the regime allowing gaps the following?</p>
+<p>“The cumulative risk of dementia in GLP1 users, allowing for small gaps reflective of real world usage, is 0.575 times the risk in SGLT2 users with the same realistic usage”</p>
+</section>
+<section id="appendix-more-complicated-comparison-of-dual-treatment-regimes." class="level3">
+<h3 class="anchored" data-anchor-id="appendix-more-complicated-comparison-of-dual-treatment-regimes.">Appendix: More complicated comparison of dual treatment regimes.</h3>
+<p>I think this is how to code the analysis Thomas is working on, contrasting the dual usage of two 2nd-line diabetes drugs (with treatment holidays allowed) against the dual usage of two different 2nd-line diabetes drugs (with treatment holidays allowed).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>A_df <span class="ot">&lt;-</span> spec_ltmle<span class="sc">$</span>data <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">!!</span>(spec_ltmle<span class="sc">$</span>Anodes)) <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>()</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>abar_gap1 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>,<span class="at">nrow=</span><span class="fu">nrow</span>(A_df),<span class="at">ncol=</span><span class="fu">ncol</span>(A_df))</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>abar_gap1[,<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>abar_gap1[,<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">6</span>)] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>abar_gap1[,<span class="dv">3</span>] <span class="ot">=</span> A_df[,<span class="dv">3</span>]</span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co">#Observed if previously treated</span></span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>abar_gap1[abar_gap1[,<span class="dv">3</span>]<span class="sc">==</span><span class="dv">1</span>,<span class="dv">5</span>] <span class="ot">=</span> A_df[abar_gap1[,<span class="dv">3</span>]<span class="sc">==</span><span class="dv">1</span>,<span class="dv">5</span>]</span>
-<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="co">#Treat if previous gap</span></span>
-<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>abar_gap1[abar_gap1[,<span class="dv">3</span>]<span class="sc">==</span><span class="dv">0</span>,<span class="dv">5</span>] <span class="ot">=</span> <span class="dv">1</span></span>
-<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>abar_gap2 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>,<span class="at">nrow=</span><span class="fu">nrow</span>(A_df),<span class="at">ncol=</span><span class="fu">ncol</span>(A_df))</span>
-<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>abar_gap2[,<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>abar_gap2[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">5</span>)] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>abar_gap2[,<span class="dv">4</span>] <span class="ot">=</span> A_df[,<span class="dv">4</span>]</span>
-<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a><span class="co">#Observed if previously treated</span></span>
-<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>abar_gap2[abar_gap2[,<span class="dv">4</span>]<span class="sc">==</span><span class="dv">1</span>,<span class="dv">6</span>] <span class="ot">=</span> A_df[abar_gap2[,<span class="dv">4</span>]<span class="sc">==</span><span class="dv">1</span>,<span class="dv">6</span>]</span>
-<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a><span class="co">#Treat if previous gap</span></span>
-<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>abar_gap2[abar_gap2[,<span class="dv">4</span>]<span class="sc">==</span><span class="dv">0</span>,<span class="dv">6</span>] <span class="ot">=</span> <span class="dv">1</span></span>
-<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>abar_gap<span class="ot">=</span><span class="fu">list</span>(abar_gap1, abar_gap2)</span>
-<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>abar_gap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[[1]]
-        [,1] [,2] [,3] [,4] [,5] [,6]
-   [1,]    1    0    0    0    1    0
-   [2,]    1    0    0    0    1    0
-   [3,]    1    0    0    0    1    0
-   [4,]    1    0    1    0    0    0
-   [5,]    1    0    0    0    1    0
-   [6,]    1    0    0    0    1    0
-   [7,]    1    0    0    0    1    0
-   [8,]    1    0    0    0    1    0
-   [9,]    1    0    1    0    1    0
-  [10,]    1    0    0    0    1    0
-  [11,]    1    0    0    0    1    0
-  [12,]    1    0    0    0    1    0
-  [13,]    1    0    0    0    1    0
-  [14,]    1    0    0    0    1    0
-  [15,]    1    0    0    0    1    0
-  [16,]    1    0    0    0    1    0
-  [17,]    1    0    0    0    1    0
-  [18,]    1    0    1    0    1    0
-  [19,]    1    0    1    0    1    0
-  [20,]    1    0    0    0    1    0
-  [21,]    1    0    0    0    1    0
-  [22,]    1    0    0    0    1    0
-  [23,]    1    0    0    0    1    0
-  [24,]    1    0    0    0    1    0
-  [25,]    1    0    0    0    1    0
-  [26,]    1    0    0    0    1    0
-  [27,]    1    0    0    0    1    0
-  [28,]    1    0    0    0    1    0
-  [29,]    1    0    1    0    0    0
-  [30,]    1    0    1    0    0    0
-  [31,]    1    0    0    0    1    0
-  [32,]    1    0    0    0    1    0
-  [33,]    1    0    0    0    1    0
-  [34,]    1    0    0    0    1    0
-  [35,]    1    0    0    0    1    0
-  [36,]    1    0    0    0    1    0
-  [37,]    1    0    0    0    1    0
-  [38,]    1    0    1    0    1    0
-  [39,]    1    0    0    0    1    0
-  [40,]    1    0    0    0    1    0
-  [41,]    1    0    0    0    1    0
-  [42,]    1    0    1    0    1    0
-  [43,]    1    0    1    0    1    0
-  [44,]    1    0    1    0    0    0
-  [45,]    1    0    0    0    1    0
-  [46,]    1    0    0    0    1    0
-  [47,]    1    0    0    0    1    0
-  [48,]    1    0    1    0    1    0
-  [49,]    1    0    0    0    1    0
-  [50,]    1    0    0    0    1    0
-  [51,]    1    0    0    0    1    0
-  [52,]    1    0    1    0    0    0
-  [53,]    1    0    0    0    1    0
-  [54,]    1    0    0    0    1    0
-  [55,]    1    0    0    0    1    0
-  [56,]    1    0    0    0    1    0
-  [57,]    1    0    1    0    1    0
-  [58,]    1    0    0    0    1    0
-  [59,]    1    0    1    0    1    0
-  [60,]    1    0    0    0    1    0
-  [61,]    1    0    0    0    1    0
-  [62,]    1    0    0    0    1    0
-  [63,]    1    0    0    0    1    0
-  [64,]    1    0    0    0    1    0
-  [65,]    1    0    0    0    1    0
-  [66,]    1    0    0    0    1    0
-  [67,]    1    0    0    0    1    0
-  [68,]    1    0    0    0    1    0
-  [69,]    1    0    0    0    1    0
-  [70,]    1    0    0    0    1    0
-  [71,]    1    0    0    0    1    0
-  [72,]    1    0    0    0    1    0
-  [73,]    1    0    1    0    1    0
-  [74,]    1    0    0    0    1    0
-  [75,]    1    0    0    0    1    0
-  [76,]    1    0    0    0    1    0
-  [77,]    1    0    0    0    1    0
-  [78,]    1    0    0    0    1    0
-  [79,]    1    0    0    0    1    0
-  [80,]    1    0    1    0    1    0
-  [81,]    1    0    0    0    1    0
-  [82,]    1    0    0    0    1    0
-  [83,]    1    0    0    0    1    0
-  [84,]    1    0    0    0    1    0
-  [85,]    1    0    0    0    1    0
-  [86,]    1    0    1    0    1    0
-  [87,]    1    0    0    0    1    0
-  [88,]    1    0    1    0    1    0
-  [89,]    1    0    0    0    1    0
-  [90,]    1    0    0    0    1    0
-  [91,]    1    0    0    0    1    0
-  [92,]    1    0    0    0    1    0
-  [93,]    1    0    0    0    1    0
-  [94,]    1    0    1    0    1    0
-  [95,]    1    0    0    0    1    0
-  [96,]    1    0    0    0    1    0
-  [97,]    1    0    0    0    1    0
-  [98,]    1    0    0    0    1    0
-  [99,]    1    0    0    0    1    0
- [100,]    1    0    1    0    0    0
- [101,]    1    0    0    0    1    0
- [102,]    1    0    1    0    0    0
- [103,]    1    0    0    0    1    0
- [104,]    1    0    0    0    1    0
- [105,]    1    0    0    0    1    0
- [106,]    1    0    0    0    1    0
- [107,]    1    0    0    0    1    0
- [108,]    1    0    1    0    1    0
- [109,]    1    0    0    0    1    0
- [110,]    1    0    0    0    1    0
- [111,]    1    0    0    0    1    0
- [112,]    1    0    0    0    1    0
- [113,]    1    0    0    0    1    0
- [114,]    1    0    0    0    1    0
- [115,]    1    0    0    0    1    0
- [116,]    1    0    0    0    1    0
- [117,]    1    0    0    0    1    0
- [118,]    1    0    0    0    1    0
- [119,]    1    0    0    0    1    0
- [120,]    1    0    0    0    1    0
- [121,]    1    0    0    0    1    0
- [122,]    1    0    0    0    1    0
- [123,]    1    0    1    0    1    0
- [124,]    1    0    0    0    1    0
- [125,]    1    0    0    0    1    0
- [126,]    1    0    0    0    1    0
- [127,]    1    0    1    0    0    0
- [128,]    1    0    0    0    1    0
- [129,]    1    0    0    0    1    0
- [130,]    1    0    0    0    1    0
- [131,]    1    0    0    0    1    0
- [132,]    1    0    0    0    1    0
- [133,]    1    0    0    0    1    0
- [134,]    1    0    0    0    1    0
- [135,]    1    0    0    0    1    0
- [136,]    1    0    0    0    1    0
- [137,]    1    0    1    0    0    0
- [138,]    1    0    0    0    1    0
- [139,]    1    0    0    0    1    0
- [140,]    1    0    0    0    1    0
- [141,]    1    0    0    0    1    0
- [142,]    1    0    0    0    1    0
- [143,]    1    0    0    0    1    0
- [144,]    1    0    0    0    1    0
- [145,]    1    0    0    0    1    0
- [146,]    1    0    0    0    1    0
- [147,]    1    0    0    0    1    0
- [148,]    1    0    1    0    0    0
- [149,]    1    0    0    0    1    0
- [150,]    1    0    0    0    1    0
- [151,]    1    0    1    0    1    0
- [152,]    1    0    0    0    1    0
- [153,]    1    0    0    0    1    0
- [154,]    1    0    0    0    1    0
- [155,]    1    0    0    0    1    0
- [156,]    1    0    0    0    1    0
- [157,]    1    0    0    0    1    0
- [158,]    1    0    1    0    1    0
- [159,]    1    0    0    0    1    0
- [160,]    1    0    0    0    1    0
- [161,]    1    0    1    0    1    0
- [162,]    1    0    0    0    1    0
- [163,]    1    0    0    0    1    0
- [164,]    1    0    0    0    1    0
- [165,]    1    0    0    0    1    0
- [166,]    1    0    0    0    1    0
- [167,]    1    0    0    0    1    0
- [168,]    1    0    0    0    1    0
- [169,]    1    0    0    0    1    0
- [170,]    1    0    0    0    1    0
- [171,]    1    0    0    0    1    0
- [172,]    1    0    1    0    1    0
- [173,]    1    0    0    0    1    0
- [174,]    1    0    0    0    1    0
- [175,]    1    0    0    0    1    0
- [176,]    1    0    0    0    1    0
- [177,]    1    0    0    0    1    0
- [178,]    1    0    0    0    1    0
- [179,]    1    0    0    0    1    0
- [180,]    1    0    0    0    1    0
- [181,]    1    0    0    0    1    0
- [182,]    1    0    0    0    1    0
- [183,]    1    0    0    0    1    0
- [184,]    1    0    0    0    1    0
- [185,]    1    0    0    0    1    0
- [186,]    1    0    0    0    1    0
- [187,]    1    0    0    0    1    0
- [188,]    1    0    0    0    1    0
- [189,]    1    0    0    0    1    0
- [190,]    1    0    0    0    1    0
- [191,]    1    0    0    0    1    0
- [192,]    1    0    0    0    1    0
- [193,]    1    0    0    0    1    0
- [194,]    1    0    0    0    1    0
- [195,]    1    0    0    0    1    0
- [196,]    1    0    0    0    1    0
- [197,]    1    0    0    0    1    0
- [198,]    1    0    0    0    1    0
- [199,]    1    0    0    0    1    0
- [200,]    1    0    1    0    1    0
- [201,]    1    0    0    0    1    0
- [202,]    1    0    0    0    1    0
- [203,]    1    0    0    0    1    0
- [204,]    1    0    0    0    1    0
- [205,]    1    0    0    0    1    0
- [206,]    1    0    0    0    1    0
- [207,]    1    0    0    0    1    0
- [208,]    1    0    1    0    0    0
- [209,]    1    0    1    0    1    0
- [210,]    1    0    0    0    1    0
- [211,]    1    0    0    0    1    0
- [212,]    1    0    0    0    1    0
- [213,]    1    0    0    0    1    0
- [214,]    1    0    1    0    1    0
- [215,]    1    0    0    0    1    0
- [216,]    1    0    0    0    1    0
- [217,]    1    0    0    0    1    0
- [218,]    1    0    0    0    1    0
- [219,]    1    0    0    0    1    0
- [220,]    1    0    0    0    1    0
- [221,]    1    0    0    0    1    0
- [222,]    1    0    0    0    1    0
- [223,]    1    0    0    0    1    0
- [224,]    1    0    0    0    1    0
- [225,]    1    0    0    0    1    0
- [226,]    1    0    0    0    1    0
- [227,]    1    0    0    0    1    0
- [228,]    1    0    0    0    1    0
- [229,]    1    0    0    0    1    0
- [230,]    1    0    0    0    1    0
- [231,]    1    0    0    0    1    0
- [232,]    1    0    0    0    1    0
- [233,]    1    0    0    0    1    0
- [234,]    1    0    0    0    1    0
- [235,]    1    0    0    0    1    0
- [236,]    1    0    0    0    1    0
- [237,]    1    0    0    0    1    0
- [238,]    1    0    0    0    1    0
- [239,]    1    0    0    0    1    0
- [240,]    1    0    0    0    1    0
- [241,]    1    0    1    0    1    0
- [242,]    1    0    0    0    1    0
- [243,]    1    0    0    0    1    0
- [244,]    1    0    0    0    1    0
- [245,]    1    0    0    0    1    0
- [246,]    1    0    0    0    1    0
- [247,]    1    0    0    0    1    0
- [248,]    1    0    0    0    1    0
- [249,]    1    0    0    0    1    0
- [250,]    1    0    0    0    1    0
- [251,]    1    0    0    0    1    0
- [252,]    1    0    0    0    1    0
- [253,]    1    0    0    0    1    0
- [254,]    1    0    1    0    1    0
- [255,]    1    0    0    0    1    0
- [256,]    1    0    0    0    1    0
- [257,]    1    0    0    0    1    0
- [258,]    1    0    1    0    1    0
- [259,]    1    0    0    0    1    0
- [260,]    1    0    0    0    1    0
- [261,]    1    0    0    0    1    0
- [262,]    1    0    0    0    1    0
- [263,]    1    0    0    0    1    0
- [264,]    1    0    0    0    1    0
- [265,]    1    0    0    0    1    0
- [266,]    1    0    0    0    1    0
- [267,]    1    0    0    0    1    0
- [268,]    1    0    0    0    1    0
- [269,]    1    0    0    0    1    0
- [270,]    1    0    0    0    1    0
- [271,]    1    0    1    0    1    0
- [272,]    1    0    0    0    1    0
- [273,]    1    0    0    0    1    0
- [274,]    1    0    1    0    1    0
- [275,]    1    0    0    0    1    0
- [276,]    1    0    0    0    1    0
- [277,]    1    0    0    0    1    0
- [278,]    1    0    0    0    1    0
- [279,]    1    0    1    0    0    0
- [280,]    1    0    0    0    1    0
- [281,]    1    0    1    0    1    0
- [282,]    1    0    0    0    1    0
- [283,]    1    0    1    0    1    0
- [284,]    1    0    0    0    1    0
- [285,]    1    0    0    0    1    0
- [286,]    1    0    0    0    1    0
- [287,]    1    0    0    0    1    0
- [288,]    1    0    0    0    1    0
- [289,]    1    0    0    0    1    0
- [290,]    1    0    0    0    1    0
- [291,]    1    0    0    0    1    0
- [292,]    1    0    0    0    1    0
- [293,]    1    0    0    0    1    0
- [294,]    1    0    0    0    1    0
- [295,]    1    0    0    0    1    0
- [296,]    1    0    1    0    1    0
- [297,]    1    0    0    0    1    0
- [298,]    1    0    0    0    1    0
- [299,]    1    0    0    0    1    0
- [300,]    1    0    0    0    1    0
- [301,]    1    0    0    0    1    0
- [302,]    1    0    1    0    0    0
- [303,]    1    0    0    0    1    0
- [304,]    1    0    0    0    1    0
- [305,]    1    0    1    0    1    0
- [306,]    1    0    0    0    1    0
- [307,]    1    0    0    0    1    0
- [308,]    1    0    0    0    1    0
- [309,]    1    0    0    0    1    0
- [310,]    1    0    0    0    1    0
- [311,]    1    0    0    0    1    0
- [312,]    1    0    0    0    1    0
- [313,]    1    0    0    0    1    0
- [314,]    1    0    0    0    1    0
- [315,]    1    0    1    0    0    0
- [316,]    1    0    0    0    1    0
- [317,]    1    0    0    0    1    0
- [318,]    1    0    0    0    1    0
- [319,]    1    0    0    0    1    0
- [320,]    1    0    0    0    1    0
- [321,]    1    0    0    0    1    0
- [322,]    1    0    1    0    1    0
- [323,]    1    0    0    0    1    0
- [324,]    1    0    0    0    1    0
- [325,]    1    0    0    0    1    0
- [326,]    1    0    1    0    1    0
- [327,]    1    0    0    0    1    0
- [328,]    1    0    0    0    1    0
- [329,]    1    0    0    0    1    0
- [330,]    1    0    0    0    1    0
- [331,]    1    0    0    0    1    0
- [332,]    1    0    1    0    0    0
- [333,]    1    0    0    0    1    0
- [334,]    1    0    0    0    1    0
- [335,]    1    0    0    0    1    0
- [336,]    1    0    1    0    0    0
- [337,]    1    0    1    0    1    0
- [338,]    1    0    0    0    1    0
- [339,]    1    0    0    0    1    0
- [340,]    1    0    0    0    1    0
- [341,]    1    0    1    0    0    0
- [342,]    1    0    0    0    1    0
- [343,]    1    0    1    0    1    0
- [344,]    1    0    1    0    1    0
- [345,]    1    0    0    0    1    0
- [346,]    1    0    0    0    1    0
- [347,]    1    0    0    0    1    0
- [348,]    1    0    0    0    1    0
- [349,]    1    0    0    0    1    0
- [350,]    1    0    0    0    1    0
- [351,]    1    0    1    0    1    0
- [352,]    1    0    0    0    1    0
- [353,]    1    0    1    0    1    0
- [354,]    1    0    0    0    1    0
- [355,]    1    0    0    0    1    0
- [356,]    1    0    0    0    1    0
- [357,]    1    0    0    0    1    0
- [358,]    1    0    0    0    1    0
- [359,]    1    0    0    0    1    0
- [360,]    1    0    0    0    1    0
- [361,]    1    0    0    0    1    0
- [362,]    1    0    0    0    1    0
- [363,]    1    0    0    0    1    0
- [364,]    1    0    0    0    1    0
- [365,]    1    0    0    0    1    0
- [366,]    1    0    1    0    1    0
- [367,]    1    0    0    0    1    0
- [368,]    1    0    0    0    1    0
- [369,]    1    0    1    0    0    0
- [370,]    1    0    0    0    1    0
- [371,]    1    0    0    0    1    0
- [372,]    1    0    0    0    1    0
- [373,]    1    0    0    0    1    0
- [374,]    1    0    0    0    1    0
- [375,]    1    0    1    0    1    0
- [376,]    1    0    0    0    1    0
- [377,]    1    0    0    0    1    0
- [378,]    1    0    0    0    1    0
- [379,]    1    0    0    0    1    0
- [380,]    1    0    0    0    1    0
- [381,]    1    0    0    0    1    0
- [382,]    1    0    0    0    1    0
- [383,]    1    0    0    0    1    0
- [384,]    1    0    1    0    1    0
- [385,]    1    0    0    0    1    0
- [386,]    1    0    0    0    1    0
- [387,]    1    0    0    0    1    0
- [388,]    1    0    0    0    1    0
- [389,]    1    0    0    0    1    0
- [390,]    1    0    0    0    1    0
- [391,]    1    0    0    0    1    0
- [392,]    1    0    0    0    1    0
- [393,]    1    0    0    0    1    0
- [394,]    1    0    0    0    1    0
- [395,]    1    0    0    0    1    0
- [396,]    1    0    0    0    1    0
- [397,]    1    0    0    0    1    0
- [398,]    1    0    0    0    1    0
- [399,]    1    0    0    0    1    0
- [400,]    1    0    0    0    1    0
- [401,]    1    0    0    0    1    0
- [402,]    1    0    0    0    1    0
- [403,]    1    0    0    0    1    0
- [404,]    1    0    0    0    1    0
- [405,]    1    0    0    0    1    0
- [406,]    1    0    0    0    1    0
- [407,]    1    0    0    0    1    0
- [408,]    1    0    0    0    1    0
- [409,]    1    0    0    0    1    0
- [410,]    1    0    0    0    1    0
- [411,]    1    0    0    0    1    0
- [412,]    1    0    0    0    1    0
- [413,]    1    0    0    0    1    0
- [414,]    1    0    0    0    1    0
- [415,]    1    0    1    0    0    0
- [416,]    1    0    1    0    1    0
- [417,]    1    0    0    0    1    0
- [418,]    1    0    1    0    1    0
- [419,]    1    0    0    0    1    0
- [420,]    1    0    0    0    1    0
- [421,]    1    0    0    0    1    0
- [422,]    1    0    0    0    1    0
- [423,]    1    0    0    0    1    0
- [424,]    1    0    0    0    1    0
- [425,]    1    0    1    0    1    0
- [426,]    1    0    1    0    1    0
- [427,]    1    0    1    0    1    0
- [428,]    1    0    0    0    1    0
- [429,]    1    0    1    0    1    0
- [430,]    1    0    0    0    1    0
- [431,]    1    0    0    0    1    0
- [432,]    1    0    0    0    1    0
- [433,]    1    0    1    0    1    0
- [434,]    1    0    0    0    1    0
- [435,]    1    0    1    0    1    0
- [436,]    1    0    0    0    1    0
- [437,]    1    0    0    0    1    0
- [438,]    1    0    0    0    1    0
- [439,]    1    0    0    0    1    0
- [440,]    1    0    0    0    1    0
- [441,]    1    0    0    0    1    0
- [442,]    1    0    0    0    1    0
- [443,]    1    0    1    0    0    0
- [444,]    1    0    0    0    1    0
- [445,]    1    0    1    0    0    0
- [446,]    1    0    0    0    1    0
- [447,]    1    0    0    0    1    0
- [448,]    1    0    0    0    1    0
- [449,]    1    0    0    0    1    0
- [450,]    1    0    0    0    1    0
- [451,]    1    0    0    0    1    0
- [452,]    1    0    0    0    1    0
- [453,]    1    0    1    0    1    0
- [454,]    1    0    1    0    1    0
- [455,]    1    0    1    0    1    0
- [456,]    1    0    1    0    1    0
- [457,]    1    0    0    0    1    0
- [458,]    1    0    0    0    1    0
- [459,]    1    0    0    0    1    0
- [460,]    1    0    0    0    1    0
- [461,]    1    0    1    0    0    0
- [462,]    1    0    0    0    1    0
- [463,]    1    0    0    0    1    0
- [464,]    1    0    0    0    1    0
- [465,]    1    0    0    0    1    0
- [466,]    1    0    0    0    1    0
- [467,]    1    0    0    0    1    0
- [468,]    1    0    0    0    1    0
- [469,]    1    0    0    0    1    0
- [470,]    1    0    0    0    1    0
- [471,]    1    0    0    0    1    0
- [472,]    1    0    0    0    1    0
- [473,]    1    0    0    0    1    0
- [474,]    1    0    0    0    1    0
- [475,]    1    0    0    0    1    0
- [476,]    1    0    0    0    1    0
- [477,]    1    0    0    0    1    0
- [478,]    1    0    0    0    1    0
- [479,]    1    0    0    0    1    0
- [480,]    1    0    0    0    1    0
- [481,]    1    0    0    0    1    0
- [482,]    1    0    0    0    1    0
- [483,]    1    0    0    0    1    0
- [484,]    1    0    0    0    1    0
- [485,]    1    0    0    0    1    0
- [486,]    1    0    0    0    1    0
- [487,]    1    0    0    0    1    0
- [488,]    1    0    0    0    1    0
- [489,]    1    0    0    0    1    0
- [490,]    1    0    0    0    1    0
- [491,]    1    0    0    0    1    0
- [492,]    1    0    0    0    1    0
- [493,]    1    0    0    0    1    0
- [494,]    1    0    0    0    1    0
- [495,]    1    0    0    0    1    0
- [496,]    1    0    1    0    1    0
- [497,]    1    0    0    0    1    0
- [498,]    1    0    0    0    1    0
- [499,]    1    0    0    0    1    0
- [500,]    1    0    0    0    1    0
- [501,]    1    0    0    0    1    0
- [502,]    1    0    0    0    1    0
- [503,]    1    0    0    0    1    0
- [504,]    1    0    0    0    1    0
- [505,]    1    0    0    0    1    0
- [506,]    1    0    0    0    1    0
- [507,]    1    0    0    0    1    0
- [508,]    1    0    0    0    1    0
- [509,]    1    0    0    0    1    0
- [510,]    1    0    1    0    0    0
- [511,]    1    0    0    0    1    0
- [512,]    1    0    0    0    1    0
- [513,]    1    0    0    0    1    0
- [514,]    1    0    0    0    1    0
- [515,]    1    0    0    0    1    0
- [516,]    1    0    0    0    1    0
- [517,]    1    0    0    0    1    0
- [518,]    1    0    1    0    1    0
- [519,]    1    0    0    0    1    0
- [520,]    1    0    0    0    1    0
- [521,]    1    0    0    0    1    0
- [522,]    1    0    1    0    0    0
- [523,]    1    0    0    0    1    0
- [524,]    1    0    0    0    1    0
- [525,]    1    0    0    0    1    0
- [526,]    1    0    0    0    1    0
- [527,]    1    0    0    0    1    0
- [528,]    1    0    0    0    1    0
- [529,]    1    0    0    0    1    0
- [530,]    1    0    0    0    1    0
- [531,]    1    0    0    0    1    0
- [532,]    1    0    1    0    1    0
- [533,]    1    0    1    0    0    0
- [534,]    1    0    0    0    1    0
- [535,]    1    0    0    0    1    0
- [536,]    1    0    0    0    1    0
- [537,]    1    0    0    0    1    0
- [538,]    1    0    0    0    1    0
- [539,]    1    0    0    0    1    0
- [540,]    1    0    0    0    1    0
- [541,]    1    0    0    0    1    0
- [542,]    1    0    0    0    1    0
- [543,]    1    0    0    0    1    0
- [544,]    1    0    0    0    1    0
- [545,]    1    0    0    0    1    0
- [546,]    1    0    0    0    1    0
- [547,]    1    0    0    0    1    0
- [548,]    1    0    0    0    1    0
- [549,]    1    0    0    0    1    0
- [550,]    1    0    0    0    1    0
- [551,]    1    0    1    0    1    0
- [552,]    1    0    0    0    1    0
- [553,]    1    0    0    0    1    0
- [554,]    1    0    1    0    0    0
- [555,]    1    0    0    0    1    0
- [556,]    1    0    1    0    1    0
- [557,]    1    0    0    0    1    0
- [558,]    1    0    0    0    1    0
- [559,]    1    0    0    0    1    0
- [560,]    1    0    0    0    1    0
- [561,]    1    0    0    0    1    0
- [562,]    1    0    0    0    1    0
- [563,]    1    0    0    0    1    0
- [564,]    1    0    0    0    1    0
- [565,]    1    0    0    0    1    0
- [566,]    1    0    0    0    1    0
- [567,]    1    0    0    0    1    0
- [568,]    1    0    0    0    1    0
- [569,]    1    0    1    0    1    0
- [570,]    1    0    0    0    1    0
- [571,]    1    0    0    0    1    0
- [572,]    1    0    1    0    0    0
- [573,]    1    0    1    0    1    0
- [574,]    1    0    0    0    1    0
- [575,]    1    0    0    0    1    0
- [576,]    1    0    0    0    1    0
- [577,]    1    0    0    0    1    0
- [578,]    1    0    0    0    1    0
- [579,]    1    0    1    0    1    0
- [580,]    1    0    0    0    1    0
- [581,]    1    0    0    0    1    0
- [582,]    1    0    0    0    1    0
- [583,]    1    0    1    0    1    0
- [584,]    1    0    0    0    1    0
- [585,]    1    0    0    0    1    0
- [586,]    1    0    0    0    1    0
- [587,]    1    0    0    0    1    0
- [588,]    1    0    0    0    1    0
- [589,]    1    0    1    0    1    0
- [590,]    1    0    0    0    1    0
- [591,]    1    0    0    0    1    0
- [592,]    1    0    0    0    1    0
- [593,]    1    0    0    0    1    0
- [594,]    1    0    0    0    1    0
- [595,]    1    0    0    0    1    0
- [596,]    1    0    0    0    1    0
- [597,]    1    0    0    0    1    0
- [598,]    1    0    0    0    1    0
- [599,]    1    0    1    0    1    0
- [600,]    1    0    0    0    1    0
- [601,]    1    0    0    0    1    0
- [602,]    1    0    0    0    1    0
- [603,]    1    0    0    0    1    0
- [604,]    1    0    0    0    1    0
- [605,]    1    0    0    0    1    0
- [606,]    1    0    1    0    0    0
- [607,]    1    0    0    0    1    0
- [608,]    1    0    1    0    1    0
- [609,]    1    0    0    0    1    0
- [610,]    1    0    1    0    1    0
- [611,]    1    0    0    0    1    0
- [612,]    1    0    0    0    1    0
- [613,]    1    0    0    0    1    0
- [614,]    1    0    1    0    1    0
- [615,]    1    0    0    0    1    0
- [616,]    1    0    0    0    1    0
- [617,]    1    0    0    0    1    0
- [618,]    1    0    1    0    1    0
- [619,]    1    0    0    0    1    0
- [620,]    1    0    1    0    1    0
- [621,]    1    0    0    0    1    0
- [622,]    1    0    0    0    1    0
- [623,]    1    0    1    0    1    0
- [624,]    1    0    1    0    1    0
- [625,]    1    0    0    0    1    0
- [626,]    1    0    1    0    0    0
- [627,]    1    0    1    0    0    0
- [628,]    1    0    1    0    1    0
- [629,]    1    0    1    0    1    0
- [630,]    1    0    0    0    1    0
- [631,]    1    0    0    0    1    0
- [632,]    1    0    0    0    1    0
- [633,]    1    0    0    0    1    0
- [634,]    1    0    0    0    1    0
- [635,]    1    0    0    0    1    0
- [636,]    1    0    0    0    1    0
- [637,]    1    0    0    0    1    0
- [638,]    1    0    0    0    1    0
- [639,]    1    0    0    0    1    0
- [640,]    1    0    0    0    1    0
- [641,]    1    0    0    0    1    0
- [642,]    1    0    0    0    1    0
- [643,]    1    0    0    0    1    0
- [644,]    1    0    0    0    1    0
- [645,]    1    0    1    0    0    0
- [646,]    1    0    0    0    1    0
- [647,]    1    0    0    0    1    0
- [648,]    1    0    0    0    1    0
- [649,]    1    0    0    0    1    0
- [650,]    1    0    0    0    1    0
- [651,]    1    0    0    0    1    0
- [652,]    1    0    0    0    1    0
- [653,]    1    0    0    0    1    0
- [654,]    1    0    0    0    1    0
- [655,]    1    0    0    0    1    0
- [656,]    1    0    1    0    1    0
- [657,]    1    0    0    0    1    0
- [658,]    1    0    0    0    1    0
- [659,]    1    0    0    0    1    0
- [660,]    1    0    0    0    1    0
- [661,]    1    0    0    0    1    0
- [662,]    1    0    0    0    1    0
- [663,]    1    0    1    0    1    0
- [664,]    1    0    0    0    1    0
- [665,]    1    0    0    0    1    0
- [666,]    1    0    0    0    1    0
- [667,]    1    0    0    0    1    0
- [668,]    1    0    0    0    1    0
- [669,]    1    0    0    0    1    0
- [670,]    1    0    1    0    1    0
- [671,]    1    0    0    0    1    0
- [672,]    1    0    0    0    1    0
- [673,]    1    0    0    0    1    0
- [674,]    1    0    0    0    1    0
- [675,]    1    0    0    0    1    0
- [676,]    1    0    0    0    1    0
- [677,]    1    0    0    0    1    0
- [678,]    1    0    0    0    1    0
- [679,]    1    0    1    0    1    0
- [680,]    1    0    0    0    1    0
- [681,]    1    0    0    0    1    0
- [682,]    1    0    0    0    1    0
- [683,]    1    0    0    0    1    0
- [684,]    1    0    0    0    1    0
- [685,]    1    0    0    0    1    0
- [686,]    1    0    0    0    1    0
- [687,]    1    0    0    0    1    0
- [688,]    1    0    0    0    1    0
- [689,]    1    0    0    0    1    0
- [690,]    1    0    0    0    1    0
- [691,]    1    0    0    0    1    0
- [692,]    1    0    0    0    1    0
- [693,]    1    0    0    0    1    0
- [694,]    1    0    1    0    0    0
- [695,]    1    0    0    0    1    0
- [696,]    1    0    0    0    1    0
- [697,]    1    0    0    0    1    0
- [698,]    1    0    0    0    1    0
- [699,]    1    0    0    0    1    0
- [700,]    1    0    1    0    1    0
- [701,]    1    0    0    0    1    0
- [702,]    1    0    0    0    1    0
- [703,]    1    0    0    0    1    0
- [704,]    1    0    0    0    1    0
- [705,]    1    0    0    0    1    0
- [706,]    1    0    0    0    1    0
- [707,]    1    0    0    0    1    0
- [708,]    1    0    1    0    1    0
- [709,]    1    0    0    0    1    0
- [710,]    1    0    1    0    1    0
- [711,]    1    0    0    0    1    0
- [712,]    1    0    0    0    1    0
- [713,]    1    0    0    0    1    0
- [714,]    1    0    0    0    1    0
- [715,]    1    0    0    0    1    0
- [716,]    1    0    0    0    1    0
- [717,]    1    0    0    0    1    0
- [718,]    1    0    0    0    1    0
- [719,]    1    0    0    0    1    0
- [720,]    1    0    0    0    1    0
- [721,]    1    0    0    0    1    0
- [722,]    1    0    0    0    1    0
- [723,]    1    0    0    0    1    0
- [724,]    1    0    0    0    1    0
- [725,]    1    0    1    0    0    0
- [726,]    1    0    0    0    1    0
- [727,]    1    0    0    0    1    0
- [728,]    1    0    0    0    1    0
- [729,]    1    0    0    0    1    0
- [730,]    1    0    0    0    1    0
- [731,]    1    0    0    0    1    0
- [732,]    1    0    0    0    1    0
- [733,]    1    0    0    0    1    0
- [734,]    1    0    1    0    1    0
- [735,]    1    0    0    0    1    0
- [736,]    1    0    1    0    0    0
- [737,]    1    0    0    0    1    0
- [738,]    1    0    0    0    1    0
- [739,]    1    0    0    0    1    0
- [740,]    1    0    0    0    1    0
- [741,]    1    0    0    0    1    0
- [742,]    1    0    0    0    1    0
- [743,]    1    0    0    0    1    0
- [744,]    1    0    0    0    1    0
- [745,]    1    0    0    0    1    0
- [746,]    1    0    0    0    1    0
- [747,]    1    0    0    0    1    0
- [748,]    1    0    1    0    1    0
- [749,]    1    0    0    0    1    0
- [750,]    1    0    1    0    1    0
- [751,]    1    0    0    0    1    0
- [752,]    1    0    0    0    1    0
- [753,]    1    0    0    0    1    0
- [754,]    1    0    0    0    1    0
- [755,]    1    0    1    0    1    0
- [756,]    1    0    0    0    1    0
- [757,]    1    0    0    0    1    0
- [758,]    1    0    0    0    1    0
- [759,]    1    0    0    0    1    0
- [760,]    1    0    0    0    1    0
- [761,]    1    0    0    0    1    0
- [762,]    1    0    0    0    1    0
- [763,]    1    0    0    0    1    0
- [764,]    1    0    1    0    1    0
- [765,]    1    0    0    0    1    0
- [766,]    1    0    0    0    1    0
- [767,]    1    0    0    0    1    0
- [768,]    1    0    0    0    1    0
- [769,]    1    0    0    0    1    0
- [770,]    1    0    0    0    1    0
- [771,]    1    0    1    0    0    0
- [772,]    1    0    0    0    1    0
- [773,]    1    0    0    0    1    0
- [774,]    1    0    0    0    1    0
- [775,]    1    0    1    0    1    0
- [776,]    1    0    0    0    1    0
- [777,]    1    0    0    0    1    0
- [778,]    1    0    0    0    1    0
- [779,]    1    0    0    0    1    0
- [780,]    1    0    1    0    1    0
- [781,]    1    0    0    0    1    0
- [782,]    1    0    0    0    1    0
- [783,]    1    0    0    0    1    0
- [784,]    1    0    0    0    1    0
- [785,]    1    0    0    0    1    0
- [786,]    1    0    0    0    1    0
- [787,]    1    0    0    0    1    0
- [788,]    1    0    0    0    1    0
- [789,]    1    0    0    0    1    0
- [790,]    1    0    0    0    1    0
- [791,]    1    0    0    0    1    0
- [792,]    1    0    1    0    1    0
- [793,]    1    0    0    0    1    0
- [794,]    1    0    0    0    1    0
- [795,]    1    0    0    0    1    0
- [796,]    1    0    0    0    1    0
- [797,]    1    0    0    0    1    0
- [798,]    1    0    0    0    1    0
- [799,]    1    0    0    0    1    0
- [800,]    1    0    0    0    1    0
- [801,]    1    0    0    0    1    0
- [802,]    1    0    0    0    1    0
- [803,]    1    0    0    0    1    0
- [804,]    1    0    0    0    1    0
- [805,]    1    0    0    0    1    0
- [806,]    1    0    0    0    1    0
- [807,]    1    0    0    0    1    0
- [808,]    1    0    1    0    1    0
- [809,]    1    0    0    0    1    0
- [810,]    1    0    0    0    1    0
- [811,]    1    0    0    0    1    0
- [812,]    1    0    0    0    1    0
- [813,]    1    0    0    0    1    0
- [814,]    1    0    0    0    1    0
- [815,]    1    0    0    0    1    0
- [816,]    1    0    0    0    1    0
- [817,]    1    0    0    0    1    0
- [818,]    1    0    0    0    1    0
- [819,]    1    0    0    0    1    0
- [820,]    1    0    0    0    1    0
- [821,]    1    0    0    0    1    0
- [822,]    1    0    0    0    1    0
- [823,]    1    0    1    0    1    0
- [824,]    1    0    1    0    1    0
- [825,]    1    0    0    0    1    0
- [826,]    1    0    0    0    1    0
- [827,]    1    0    0    0    1    0
- [828,]    1    0    0    0    1    0
- [829,]    1    0    1    0    0    0
- [830,]    1    0    1    0    0    0
- [831,]    1    0    0    0    1    0
- [832,]    1    0    1    0    0    0
- [833,]    1    0    0    0    1    0
- [834,]    1    0    0    0    1    0
- [835,]    1    0    0    0    1    0
- [836,]    1    0    0    0    1    0
- [837,]    1    0    0    0    1    0
- [838,]    1    0    0    0    1    0
- [839,]    1    0    0    0    1    0
- [840,]    1    0    0    0    1    0
- [841,]    1    0    0    0    1    0
- [842,]    1    0    1    0    1    0
- [843,]    1    0    0    0    1    0
- [844,]    1    0    0    0    1    0
- [845,]    1    0    0    0    1    0
- [846,]    1    0    0    0    1    0
- [847,]    1    0    0    0    1    0
- [848,]    1    0    0    0    1    0
- [849,]    1    0    0    0    1    0
- [850,]    1    0    0    0    1    0
- [851,]    1    0    0    0    1    0
- [852,]    1    0    0    0    1    0
- [853,]    1    0    0    0    1    0
- [854,]    1    0    0    0    1    0
- [855,]    1    0    0    0    1    0
- [856,]    1    0    0    0    1    0
- [857,]    1    0    1    0    0    0
- [858,]    1    0    0    0    1    0
- [859,]    1    0    0    0    1    0
- [860,]    1    0    0    0    1    0
- [861,]    1    0    0    0    1    0
- [862,]    1    0    0    0    1    0
- [863,]    1    0    0    0    1    0
- [864,]    1    0    0    0    1    0
- [865,]    1    0    1    0    0    0
- [866,]    1    0    0    0    1    0
- [867,]    1    0    0    0    1    0
- [868,]    1    0    0    0    1    0
- [869,]    1    0    0    0    1    0
- [870,]    1    0    0    0    1    0
- [871,]    1    0    0    0    1    0
- [872,]    1    0    0    0    1    0
- [873,]    1    0    0    0    1    0
- [874,]    1    0    0    0    1    0
- [875,]    1    0    0    0    1    0
- [876,]    1    0    0    0    1    0
- [877,]    1    0    0    0    1    0
- [878,]    1    0    0    0    1    0
- [879,]    1    0    0    0    1    0
- [880,]    1    0    0    0    1    0
- [881,]    1    0    1    0    1    0
- [882,]    1    0    0    0    1    0
- [883,]    1    0    1    0    1    0
- [884,]    1    0    1    0    1    0
- [885,]    1    0    0    0    1    0
- [886,]    1    0    0    0    1    0
- [887,]    1    0    0    0    1    0
- [888,]    1    0    0    0    1    0
- [889,]    1    0    0    0    1    0
- [890,]    1    0    0    0    1    0
- [891,]    1    0    0    0    1    0
- [892,]    1    0    0    0    1    0
- [893,]    1    0    1    0    0    0
- [894,]    1    0    0    0    1    0
- [895,]    1    0    0    0    1    0
- [896,]    1    0    0    0    1    0
- [897,]    1    0    0    0    1    0
- [898,]    1    0    0    0    1    0
- [899,]    1    0    0    0    1    0
- [900,]    1    0    0    0    1    0
- [901,]    1    0    0    0    1    0
- [902,]    1    0    0    0    1    0
- [903,]    1    0    0    0    1    0
- [904,]    1    0    0    0    1    0
- [905,]    1    0    0    0    1    0
- [906,]    1    0    1    0    1    0
- [907,]    1    0    0    0    1    0
- [908,]    1    0    0    0    1    0
- [909,]    1    0    0    0    1    0
- [910,]    1    0    0    0    1    0
- [911,]    1    0    0    0    1    0
- [912,]    1    0    0    0    1    0
- [913,]    1    0    0    0    1    0
- [914,]    1    0    0    0    1    0
- [915,]    1    0    1    0    0    0
- [916,]    1    0    0    0    1    0
- [917,]    1    0    1    0    1    0
- [918,]    1    0    0    0    1    0
- [919,]    1    0    0    0    1    0
- [920,]    1    0    0    0    1    0
- [921,]    1    0    0    0    1    0
- [922,]    1    0    1    0    1    0
- [923,]    1    0    0    0    1    0
- [924,]    1    0    0    0    1    0
- [925,]    1    0    0    0    1    0
- [926,]    1    0    0    0    1    0
- [927,]    1    0    0    0    1    0
- [928,]    1    0    1    0    0    0
- [929,]    1    0    0    0    1    0
- [930,]    1    0    0    0    1    0
- [931,]    1    0    0    0    1    0
- [932,]    1    0    0    0    1    0
- [933,]    1    0    0    0    1    0
- [934,]    1    0    1    0    1    0
- [935,]    1    0    0    0    1    0
- [936,]    1    0    0    0    1    0
- [937,]    1    0    0    0    1    0
- [938,]    1    0    0    0    1    0
- [939,]    1    0    1    0    1    0
- [940,]    1    0    1    0    1    0
- [941,]    1    0    0    0    1    0
- [942,]    1    0    0    0    1    0
- [943,]    1    0    0    0    1    0
- [944,]    1    0    0    0    1    0
- [945,]    1    0    1    0    1    0
- [946,]    1    0    1    0    1    0
- [947,]    1    0    0    0    1    0
- [948,]    1    0    0    0    1    0
- [949,]    1    0    1    0    1    0
- [950,]    1    0    0    0    1    0
- [951,]    1    0    0    0    1    0
- [952,]    1    0    0    0    1    0
- [953,]    1    0    0    0    1    0
- [954,]    1    0    0    0    1    0
- [955,]    1    0    0    0    1    0
- [956,]    1    0    0    0    1    0
- [957,]    1    0    0    0    1    0
- [958,]    1    0    0    0    1    0
- [959,]    1    0    0    0    1    0
- [960,]    1    0    0    0    1    0
- [961,]    1    0    0    0    1    0
- [962,]    1    0    0    0    1    0
- [963,]    1    0    1    0    1    0
- [964,]    1    0    0    0    1    0
- [965,]    1    0    0    0    1    0
- [966,]    1    0    0    0    1    0
- [967,]    1    0    0    0    1    0
- [968,]    1    0    0    0    1    0
- [969,]    1    0    0    0    1    0
- [970,]    1    0    0    0    1    0
- [971,]    1    0    0    0    1    0
- [972,]    1    0    1    0    0    0
- [973,]    1    0    0    0    1    0
- [974,]    1    0    0    0    1    0
- [975,]    1    0    0    0    1    0
- [976,]    1    0    0    0    1    0
- [977,]    1    0    0    0    1    0
- [978,]    1    0    1    0    0    0
- [979,]    1    0    0    0    1    0
- [980,]    1    0    0    0    1    0
- [981,]    1    0    0    0    1    0
- [982,]    1    0    1    0    1    0
- [983,]    1    0    0    0    1    0
- [984,]    1    0    1    0    1    0
- [985,]    1    0    1    0    1    0
- [986,]    1    0    0    0    1    0
- [987,]    1    0    0    0    1    0
- [988,]    1    0    0    0    1    0
- [989,]    1    0    1    0    0    0
- [990,]    1    0    0    0    1    0
- [991,]    1    0    0    0    1    0
- [992,]    1    0    0    0    1    0
- [993,]    1    0    1    0    0    0
- [994,]    1    0    1    0    1    0
- [995,]    1    0    0    0    1    0
- [996,]    1    0    0    0    1    0
- [997,]    1    0    0    0    1    0
- [998,]    1    0    0    0    1    0
- [999,]    1    0    0    0    1    0
-[1000,]    1    0    0    0    1    0
-
-[[2]]
-        [,1] [,2] [,3] [,4] [,5] [,6]
-   [1,]    0    1    0    0    0    1
-   [2,]    0    1    0    0    0    1
-   [3,]    0    1    0    0    0    1
-   [4,]    0    1    0    0    0    1
-   [5,]    0    1    0    0    0    1
-   [6,]    0    1    0    0    0    1
-   [7,]    0    1    0    0    0    1
-   [8,]    0    1    0    1    0    1
-   [9,]    0    1    0    0    0    1
-  [10,]    0    1    0    0    0    1
-  [11,]    0    1    0    0    0    1
-  [12,]    0    1    0    0    0    1
-  [13,]    0    1    0    0    0    1
-  [14,]    0    1    0    0    0    1
-  [15,]    0    1    0    0    0    1
-  [16,]    0    1    0    0    0    1
-  [17,]    0    1    0    0    0    1
-  [18,]    0    1    0    0    0    1
-  [19,]    0    1    0    0    0    1
-  [20,]    0    1    0    0    0    1
-  [21,]    0    1    0    0    0    1
-  [22,]    0    1    0    0    0    1
-  [23,]    0    1    0    0    0    1
-  [24,]    0    1    0    0    0    1
-  [25,]    0    1    0    0    0    1
-  [26,]    0    1    0    0    0    1
-  [27,]    0    1    0    0    0    1
-  [28,]    0    1    0    0    0    1
-  [29,]    0    1    0    1    0    0
-  [30,]    0    1    0    0    0    1
-  [31,]    0    1    0    0    0    1
-  [32,]    0    1    0    0    0    1
-  [33,]    0    1    0    0    0    1
-  [34,]    0    1    0    0    0    1
-  [35,]    0    1    0    0    0    1
-  [36,]    0    1    0    0    0    1
-  [37,]    0    1    0    0    0    1
-  [38,]    0    1    0    0    0    1
-  [39,]    0    1    0    0    0    1
-  [40,]    0    1    0    0    0    1
-  [41,]    0    1    0    0    0    1
-  [42,]    0    1    0    0    0    1
-  [43,]    0    1    0    0    0    1
-  [44,]    0    1    0    1    0    0
-  [45,]    0    1    0    0    0    1
-  [46,]    0    1    0    0    0    1
-  [47,]    0    1    0    0    0    1
-  [48,]    0    1    0    0    0    1
-  [49,]    0    1    0    0    0    1
-  [50,]    0    1    0    0    0    1
-  [51,]    0    1    0    0    0    1
-  [52,]    0    1    0    0    0    1
-  [53,]    0    1    0    1    0    1
-  [54,]    0    1    0    0    0    1
-  [55,]    0    1    0    0    0    1
-  [56,]    0    1    0    0    0    1
-  [57,]    0    1    0    0    0    1
-  [58,]    0    1    0    0    0    1
-  [59,]    0    1    0    0    0    1
-  [60,]    0    1    0    0    0    1
-  [61,]    0    1    0    0    0    1
-  [62,]    0    1    0    0    0    1
-  [63,]    0    1    0    0    0    1
-  [64,]    0    1    0    0    0    1
-  [65,]    0    1    0    0    0    1
-  [66,]    0    1    0    0    0    1
-  [67,]    0    1    0    0    0    1
-  [68,]    0    1    0    0    0    1
-  [69,]    0    1    0    0    0    1
-  [70,]    0    1    0    0    0    1
-  [71,]    0    1    0    0    0    1
-  [72,]    0    1    0    0    0    1
-  [73,]    0    1    0    0    0    1
-  [74,]    0    1    0    0    0    1
-  [75,]    0    1    0    0    0    1
-  [76,]    0    1    0    0    0    1
-  [77,]    0    1    0    0    0    1
-  [78,]    0    1    0    0    0    1
-  [79,]    0    1    0    0    0    1
-  [80,]    0    1    0    0    0    1
-  [81,]    0    1    0    0    0    1
-  [82,]    0    1    0    0    0    1
-  [83,]    0    1    0    0    0    1
-  [84,]    0    1    0    0    0    1
-  [85,]    0    1    0    0    0    1
-  [86,]    0    1    0    0    0    1
-  [87,]    0    1    0    0    0    1
-  [88,]    0    1    0    0    0    1
-  [89,]    0    1    0    0    0    1
-  [90,]    0    1    0    0    0    1
-  [91,]    0    1    0    0    0    1
-  [92,]    0    1    0    1    0    1
-  [93,]    0    1    0    0    0    1
-  [94,]    0    1    0    1    0    0
-  [95,]    0    1    0    0    0    1
-  [96,]    0    1    0    0    0    1
-  [97,]    0    1    0    0    0    1
-  [98,]    0    1    0    0    0    1
-  [99,]    0    1    0    0    0    1
- [100,]    0    1    0    0    0    1
- [101,]    0    1    0    0    0    1
- [102,]    0    1    0    0    0    1
- [103,]    0    1    0    0    0    1
- [104,]    0    1    0    0    0    1
- [105,]    0    1    0    0    0    1
- [106,]    0    1    0    0    0    1
- [107,]    0    1    0    0    0    1
- [108,]    0    1    0    1    0    0
- [109,]    0    1    0    0    0    1
- [110,]    0    1    0    0    0    1
- [111,]    0    1    0    0    0    1
- [112,]    0    1    0    0    0    1
- [113,]    0    1    0    0    0    1
- [114,]    0    1    0    0    0    1
- [115,]    0    1    0    0    0    1
- [116,]    0    1    0    0    0    1
- [117,]    0    1    0    0    0    1
- [118,]    0    1    0    0    0    1
- [119,]    0    1    0    0    0    1
- [120,]    0    1    0    0    0    1
- [121,]    0    1    0    0    0    1
- [122,]    0    1    0    0    0    1
- [123,]    0    1    0    0    0    1
- [124,]    0    1    0    0    0    1
- [125,]    0    1    0    0    0    1
- [126,]    0    1    0    0    0    1
- [127,]    0    1    0    0    0    1
- [128,]    0    1    0    0    0    1
- [129,]    0    1    0    0    0    1
- [130,]    0    1    0    0    0    1
- [131,]    0    1    0    0    0    1
- [132,]    0    1    0    0    0    1
- [133,]    0    1    0    0    0    1
- [134,]    0    1    0    1    0    1
- [135,]    0    1    0    0    0    1
- [136,]    0    1    0    0    0    1
- [137,]    0    1    0    0    0    1
- [138,]    0    1    0    0    0    1
- [139,]    0    1    0    0    0    1
- [140,]    0    1    0    0    0    1
- [141,]    0    1    0    0    0    1
- [142,]    0    1    0    0    0    1
- [143,]    0    1    0    1    0    1
- [144,]    0    1    0    0    0    1
- [145,]    0    1    0    0    0    1
- [146,]    0    1    0    0    0    1
- [147,]    0    1    0    0    0    1
- [148,]    0    1    0    1    0    0
- [149,]    0    1    0    0    0    1
- [150,]    0    1    0    0    0    1
- [151,]    0    1    0    0    0    1
- [152,]    0    1    0    0    0    1
- [153,]    0    1    0    0    0    1
- [154,]    0    1    0    0    0    1
- [155,]    0    1    0    0    0    1
- [156,]    0    1    0    0    0    1
- [157,]    0    1    0    0    0    1
- [158,]    0    1    0    0    0    1
- [159,]    0    1    0    0    0    1
- [160,]    0    1    0    0    0    1
- [161,]    0    1    0    1    0    0
- [162,]    0    1    0    0    0    1
- [163,]    0    1    0    0    0    1
- [164,]    0    1    0    0    0    1
- [165,]    0    1    0    0    0    1
- [166,]    0    1    0    0    0    1
- [167,]    0    1    0    0    0    1
- [168,]    0    1    0    0    0    1
- [169,]    0    1    0    0    0    1
- [170,]    0    1    0    0    0    1
- [171,]    0    1    0    0    0    1
- [172,]    0    1    0    0    0    1
- [173,]    0    1    0    0    0    1
- [174,]    0    1    0    0    0    1
- [175,]    0    1    0    0    0    1
- [176,]    0    1    0    0    0    1
- [177,]    0    1    0    0    0    1
- [178,]    0    1    0    0    0    1
- [179,]    0    1    0    0    0    1
- [180,]    0    1    0    0    0    1
- [181,]    0    1    0    0    0    1
- [182,]    0    1    0    1    0    1
- [183,]    0    1    0    0    0    1
- [184,]    0    1    0    0    0    1
- [185,]    0    1    0    0    0    1
- [186,]    0    1    0    0    0    1
- [187,]    0    1    0    0    0    1
- [188,]    0    1    0    0    0    1
- [189,]    0    1    0    0    0    1
- [190,]    0    1    0    0    0    1
- [191,]    0    1    0    0    0    1
- [192,]    0    1    0    0    0    1
- [193,]    0    1    0    0    0    1
- [194,]    0    1    0    0    0    1
- [195,]    0    1    0    0    0    1
- [196,]    0    1    0    0    0    1
- [197,]    0    1    0    0    0    1
- [198,]    0    1    0    0    0    1
- [199,]    0    1    0    0    0    1
- [200,]    0    1    0    0    0    1
- [201,]    0    1    0    0    0    1
- [202,]    0    1    0    0    0    1
- [203,]    0    1    0    0    0    1
- [204,]    0    1    0    0    0    1
- [205,]    0    1    0    0    0    1
- [206,]    0    1    0    0    0    1
- [207,]    0    1    0    0    0    1
- [208,]    0    1    0    0    0    1
- [209,]    0    1    0    0    0    1
- [210,]    0    1    0    0    0    1
- [211,]    0    1    0    0    0    1
- [212,]    0    1    0    1    0    0
- [213,]    0    1    0    0    0    1
- [214,]    0    1    0    0    0    1
- [215,]    0    1    0    0    0    1
- [216,]    0    1    0    0    0    1
- [217,]    0    1    0    1    0    0
- [218,]    0    1    0    1    0    0
- [219,]    0    1    0    0    0    1
- [220,]    0    1    0    0    0    1
- [221,]    0    1    0    0    0    1
- [222,]    0    1    0    0    0    1
- [223,]    0    1    0    0    0    1
- [224,]    0    1    0    0    0    1
- [225,]    0    1    0    0    0    1
- [226,]    0    1    0    0    0    1
- [227,]    0    1    0    0    0    1
- [228,]    0    1    0    0    0    1
- [229,]    0    1    0    0    0    1
- [230,]    0    1    0    0    0    1
- [231,]    0    1    0    0    0    1
- [232,]    0    1    0    0    0    1
- [233,]    0    1    0    0    0    1
- [234,]    0    1    0    0    0    1
- [235,]    0    1    0    0    0    1
- [236,]    0    1    0    1    0    1
- [237,]    0    1    0    1    0    1
- [238,]    0    1    0    0    0    1
- [239,]    0    1    0    0    0    1
- [240,]    0    1    0    0    0    1
- [241,]    0    1    0    0    0    1
- [242,]    0    1    0    0    0    1
- [243,]    0    1    0    0    0    1
- [244,]    0    1    0    0    0    1
- [245,]    0    1    0    0    0    1
- [246,]    0    1    0    0    0    1
- [247,]    0    1    0    1    0    1
- [248,]    0    1    0    0    0    1
- [249,]    0    1    0    0    0    1
- [250,]    0    1    0    0    0    1
- [251,]    0    1    0    1    0    1
- [252,]    0    1    0    0    0    1
- [253,]    0    1    0    1    0    1
- [254,]    0    1    0    0    0    1
- [255,]    0    1    0    0    0    1
- [256,]    0    1    0    0    0    1
- [257,]    0    1    0    0    0    1
- [258,]    0    1    0    1    0    1
- [259,]    0    1    0    0    0    1
- [260,]    0    1    0    0    0    1
- [261,]    0    1    0    0    0    1
- [262,]    0    1    0    0    0    1
- [263,]    0    1    0    0    0    1
- [264,]    0    1    0    0    0    1
- [265,]    0    1    0    0    0    1
- [266,]    0    1    0    0    0    1
- [267,]    0    1    0    0    0    1
- [268,]    0    1    0    0    0    1
- [269,]    0    1    0    0    0    1
- [270,]    0    1    0    0    0    1
- [271,]    0    1    0    0    0    1
- [272,]    0    1    0    0    0    1
- [273,]    0    1    0    0    0    1
- [274,]    0    1    0    0    0    1
- [275,]    0    1    0    0    0    1
- [276,]    0    1    0    0    0    1
- [277,]    0    1    0    0    0    1
- [278,]    0    1    0    0    0    1
- [279,]    0    1    0    0    0    1
- [280,]    0    1    0    0    0    1
- [281,]    0    1    0    0    0    1
- [282,]    0    1    0    0    0    1
- [283,]    0    1    0    0    0    1
- [284,]    0    1    0    0    0    1
- [285,]    0    1    0    0    0    1
- [286,]    0    1    0    1    0    1
- [287,]    0    1    0    0    0    1
- [288,]    0    1    0    0    0    1
- [289,]    0    1    0    0    0    1
- [290,]    0    1    0    0    0    1
- [291,]    0    1    0    0    0    1
- [292,]    0    1    0    0    0    1
- [293,]    0    1    0    0    0    1
- [294,]    0    1    0    0    0    1
- [295,]    0    1    0    0    0    1
- [296,]    0    1    0    0    0    1
- [297,]    0    1    0    0    0    1
- [298,]    0    1    0    0    0    1
- [299,]    0    1    0    0    0    1
- [300,]    0    1    0    1    0    0
- [301,]    0    1    0    0    0    1
- [302,]    0    1    0    1    0    0
- [303,]    0    1    0    0    0    1
- [304,]    0    1    0    0    0    1
- [305,]    0    1    0    0    0    1
- [306,]    0    1    0    0    0    1
- [307,]    0    1    0    0    0    1
- [308,]    0    1    0    0    0    1
- [309,]    0    1    0    0    0    1
- [310,]    0    1    0    0    0    1
- [311,]    0    1    0    0    0    1
- [312,]    0    1    0    0    0    1
- [313,]    0    1    0    0    0    1
- [314,]    0    1    0    0    0    1
- [315,]    0    1    0    0    0    1
- [316,]    0    1    0    0    0    1
- [317,]    0    1    0    0    0    1
- [318,]    0    1    0    0    0    1
- [319,]    0    1    0    0    0    1
- [320,]    0    1    0    0    0    1
- [321,]    0    1    0    0    0    1
- [322,]    0    1    0    0    0    1
- [323,]    0    1    0    0    0    1
- [324,]    0    1    0    0    0    1
- [325,]    0    1    0    0    0    1
- [326,]    0    1    0    0    0    1
- [327,]    0    1    0    0    0    1
- [328,]    0    1    0    0    0    1
- [329,]    0    1    0    0    0    1
- [330,]    0    1    0    0    0    1
- [331,]    0    1    0    0    0    1
- [332,]    0    1    0    0    0    1
- [333,]    0    1    0    1    0    1
- [334,]    0    1    0    0    0    1
- [335,]    0    1    0    0    0    1
- [336,]    0    1    0    0    0    1
- [337,]    0    1    0    0    0    1
- [338,]    0    1    0    0    0    1
- [339,]    0    1    0    0    0    1
- [340,]    0    1    0    1    0    1
- [341,]    0    1    0    0    0    1
- [342,]    0    1    0    0    0    1
- [343,]    0    1    0    0    0    1
- [344,]    0    1    0    0    0    1
- [345,]    0    1    0    0    0    1
- [346,]    0    1    0    0    0    1
- [347,]    0    1    0    0    0    1
- [348,]    0    1    0    0    0    1
- [349,]    0    1    0    0    0    1
- [350,]    0    1    0    1    0    0
- [351,]    0    1    0    0    0    1
- [352,]    0    1    0    0    0    1
- [353,]    0    1    0    0    0    1
- [354,]    0    1    0    0    0    1
- [355,]    0    1    0    0    0    1
- [356,]    0    1    0    0    0    1
- [357,]    0    1    0    0    0    1
- [358,]    0    1    0    0    0    1
- [359,]    0    1    0    0    0    1
- [360,]    0    1    0    0    0    1
- [361,]    0    1    0    0    0    1
- [362,]    0    1    0    0    0    1
- [363,]    0    1    0    0    0    1
- [364,]    0    1    0    1    0    1
- [365,]    0    1    0    0    0    1
- [366,]    0    1    0    1    0    0
- [367,]    0    1    0    0    0    1
- [368,]    0    1    0    0    0    1
- [369,]    0    1    0    0    0    1
- [370,]    0    1    0    0    0    1
- [371,]    0    1    0    0    0    1
- [372,]    0    1    0    0    0    1
- [373,]    0    1    0    0    0    1
- [374,]    0    1    0    0    0    1
- [375,]    0    1    0    0    0    1
- [376,]    0    1    0    0    0    1
- [377,]    0    1    0    0    0    1
- [378,]    0    1    0    0    0    1
- [379,]    0    1    0    1    0    1
- [380,]    0    1    0    0    0    1
- [381,]    0    1    0    0    0    1
- [382,]    0    1    0    0    0    1
- [383,]    0    1    0    0    0    1
- [384,]    0    1    0    0    0    1
- [385,]    0    1    0    0    0    1
- [386,]    0    1    0    0    0    1
- [387,]    0    1    0    0    0    1
- [388,]    0    1    0    0    0    1
- [389,]    0    1    0    0    0    1
- [390,]    0    1    0    0    0    1
- [391,]    0    1    0    0    0    1
- [392,]    0    1    0    0    0    1
- [393,]    0    1    0    0    0    1
- [394,]    0    1    0    0    0    1
- [395,]    0    1    0    1    0    0
- [396,]    0    1    0    0    0    1
- [397,]    0    1    0    1    0    1
- [398,]    0    1    0    0    0    1
- [399,]    0    1    0    0    0    1
- [400,]    0    1    0    1    0    1
- [401,]    0    1    0    0    0    1
- [402,]    0    1    0    0    0    1
- [403,]    0    1    0    0    0    1
- [404,]    0    1    0    0    0    1
- [405,]    0    1    0    0    0    1
- [406,]    0    1    0    0    0    1
- [407,]    0    1    0    0    0    1
- [408,]    0    1    0    0    0    1
- [409,]    0    1    0    0    0    1
- [410,]    0    1    0    0    0    1
- [411,]    0    1    0    0    0    1
- [412,]    0    1    0    0    0    1
- [413,]    0    1    0    0    0    1
- [414,]    0    1    0    0    0    1
- [415,]    0    1    0    0    0    1
- [416,]    0    1    0    0    0    1
- [417,]    0    1    0    0    0    1
- [418,]    0    1    0    1    0    0
- [419,]    0    1    0    0    0    1
- [420,]    0    1    0    0    0    1
- [421,]    0    1    0    0    0    1
- [422,]    0    1    0    0    0    1
- [423,]    0    1    0    0    0    1
- [424,]    0    1    0    0    0    1
- [425,]    0    1    0    0    0    1
- [426,]    0    1    0    0    0    1
- [427,]    0    1    0    0    0    1
- [428,]    0    1    0    0    0    1
- [429,]    0    1    0    0    0    1
- [430,]    0    1    0    0    0    1
- [431,]    0    1    0    0    0    1
- [432,]    0    1    0    0    0    1
- [433,]    0    1    0    0    0    1
- [434,]    0    1    0    0    0    1
- [435,]    0    1    0    0    0    1
- [436,]    0    1    0    0    0    1
- [437,]    0    1    0    0    0    1
- [438,]    0    1    0    0    0    1
- [439,]    0    1    0    0    0    1
- [440,]    0    1    0    0    0    1
- [441,]    0    1    0    0    0    1
- [442,]    0    1    0    0    0    1
- [443,]    0    1    0    0    0    1
- [444,]    0    1    0    0    0    1
- [445,]    0    1    0    0    0    1
- [446,]    0    1    0    0    0    1
- [447,]    0    1    0    0    0    1
- [448,]    0    1    0    0    0    1
- [449,]    0    1    0    0    0    1
- [450,]    0    1    0    0    0    1
- [451,]    0    1    0    1    0    0
- [452,]    0    1    0    1    0    0
- [453,]    0    1    0    0    0    1
- [454,]    0    1    0    0    0    1
- [455,]    0    1    0    0    0    1
- [456,]    0    1    0    1    0    0
- [457,]    0    1    0    0    0    1
- [458,]    0    1    0    0    0    1
- [459,]    0    1    0    0    0    1
- [460,]    0    1    0    0    0    1
- [461,]    0    1    0    0    0    1
- [462,]    0    1    0    0    0    1
- [463,]    0    1    0    0    0    1
- [464,]    0    1    0    1    0    0
- [465,]    0    1    0    1    0    0
- [466,]    0    1    0    0    0    1
- [467,]    0    1    0    0    0    1
- [468,]    0    1    0    0    0    1
- [469,]    0    1    0    0    0    1
- [470,]    0    1    0    0    0    1
- [471,]    0    1    0    0    0    1
- [472,]    0    1    0    0    0    1
- [473,]    0    1    0    0    0    1
- [474,]    0    1    0    0    0    1
- [475,]    0    1    0    0    0    1
- [476,]    0    1    0    1    0    0
- [477,]    0    1    0    0    0    1
- [478,]    0    1    0    0    0    1
- [479,]    0    1    0    0    0    1
- [480,]    0    1    0    0    0    1
- [481,]    0    1    0    0    0    1
- [482,]    0    1    0    0    0    1
- [483,]    0    1    0    0    0    1
- [484,]    0    1    0    0    0    1
- [485,]    0    1    0    1    0    1
- [486,]    0    1    0    0    0    1
- [487,]    0    1    0    0    0    1
- [488,]    0    1    0    0    0    1
- [489,]    0    1    0    0    0    1
- [490,]    0    1    0    0    0    1
- [491,]    0    1    0    1    0    0
- [492,]    0    1    0    0    0    1
- [493,]    0    1    0    0    0    1
- [494,]    0    1    0    0    0    1
- [495,]    0    1    0    0    0    1
- [496,]    0    1    0    0    0    1
- [497,]    0    1    0    0    0    1
- [498,]    0    1    0    0    0    1
- [499,]    0    1    0    0    0    1
- [500,]    0    1    0    1    0    0
- [501,]    0    1    0    0    0    1
- [502,]    0    1    0    0    0    1
- [503,]    0    1    0    0    0    1
- [504,]    0    1    0    0    0    1
- [505,]    0    1    0    0    0    1
- [506,]    0    1    0    0    0    1
- [507,]    0    1    0    0    0    1
- [508,]    0    1    0    0    0    1
- [509,]    0    1    0    0    0    1
- [510,]    0    1    0    0    0    1
- [511,]    0    1    0    0    0    1
- [512,]    0    1    0    0    0    1
- [513,]    0    1    0    1    0    0
- [514,]    0    1    0    0    0    1
- [515,]    0    1    0    1    0    1
- [516,]    0    1    0    1    0    0
- [517,]    0    1    0    0    0    1
- [518,]    0    1    0    0    0    1
- [519,]    0    1    0    0    0    1
- [520,]    0    1    0    0    0    1
- [521,]    0    1    0    0    0    1
- [522,]    0    1    0    0    0    1
- [523,]    0    1    0    0    0    1
- [524,]    0    1    0    0    0    1
- [525,]    0    1    0    0    0    1
- [526,]    0    1    0    0    0    1
- [527,]    0    1    0    0    0    1
- [528,]    0    1    0    0    0    1
- [529,]    0    1    0    0    0    1
- [530,]    0    1    0    0    0    1
- [531,]    0    1    0    0    0    1
- [532,]    0    1    0    0    0    1
- [533,]    0    1    0    0    0    1
- [534,]    0    1    0    0    0    1
- [535,]    0    1    0    0    0    1
- [536,]    0    1    0    0    0    1
- [537,]    0    1    0    0    0    1
- [538,]    0    1    0    0    0    1
- [539,]    0    1    0    0    0    1
- [540,]    0    1    0    0    0    1
- [541,]    0    1    0    0    0    1
- [542,]    0    1    0    1    0    0
- [543,]    0    1    0    0    0    1
- [544,]    0    1    0    0    0    1
- [545,]    0    1    0    0    0    1
- [546,]    0    1    0    1    0    0
- [547,]    0    1    0    0    0    1
- [548,]    0    1    0    0    0    1
- [549,]    0    1    0    0    0    1
- [550,]    0    1    0    0    0    1
- [551,]    0    1    0    0    0    1
- [552,]    0    1    0    1    0    1
- [553,]    0    1    0    0    0    1
- [554,]    0    1    0    0    0    1
- [555,]    0    1    0    0    0    1
- [556,]    0    1    0    0    0    1
- [557,]    0    1    0    0    0    1
- [558,]    0    1    0    0    0    1
- [559,]    0    1    0    0    0    1
- [560,]    0    1    0    0    0    1
- [561,]    0    1    0    0    0    1
- [562,]    0    1    0    0    0    1
- [563,]    0    1    0    0    0    1
- [564,]    0    1    0    0    0    1
- [565,]    0    1    0    0    0    1
- [566,]    0    1    0    0    0    1
- [567,]    0    1    0    0    0    1
- [568,]    0    1    0    0    0    1
- [569,]    0    1    0    0    0    1
- [570,]    0    1    0    0    0    1
- [571,]    0    1    0    0    0    1
- [572,]    0    1    0    0    0    1
- [573,]    0    1    0    1    0    0
- [574,]    0    1    0    0    0    1
- [575,]    0    1    0    0    0    1
- [576,]    0    1    0    0    0    1
- [577,]    0    1    0    0    0    1
- [578,]    0    1    0    1    0    0
- [579,]    0    1    0    0    0    1
- [580,]    0    1    0    0    0    1
- [581,]    0    1    0    0    0    1
- [582,]    0    1    0    0    0    1
- [583,]    0    1    0    0    0    1
- [584,]    0    1    0    0    0    1
- [585,]    0    1    0    0    0    1
- [586,]    0    1    0    0    0    1
- [587,]    0    1    0    1    0    1
- [588,]    0    1    0    0    0    1
- [589,]    0    1    0    0    0    1
- [590,]    0    1    0    0    0    1
- [591,]    0    1    0    0    0    1
- [592,]    0    1    0    0    0    1
- [593,]    0    1    0    0    0    1
- [594,]    0    1    0    0    0    1
- [595,]    0    1    0    0    0    1
- [596,]    0    1    0    0    0    1
- [597,]    0    1    0    0    0    1
- [598,]    0    1    0    0    0    1
- [599,]    0    1    0    0    0    1
- [600,]    0    1    0    0    0    1
- [601,]    0    1    0    0    0    1
- [602,]    0    1    0    0    0    1
- [603,]    0    1    0    0    0    1
- [604,]    0    1    0    0    0    1
- [605,]    0    1    0    0    0    1
- [606,]    0    1    0    1    0    1
- [607,]    0    1    0    0    0    1
- [608,]    0    1    0    0    0    1
- [609,]    0    1    0    0    0    1
- [610,]    0    1    0    0    0    1
- [611,]    0    1    0    0    0    1
- [612,]    0    1    0    0    0    1
- [613,]    0    1    0    0    0    1
- [614,]    0    1    0    0    0    1
- [615,]    0    1    0    0    0    1
- [616,]    0    1    0    0    0    1
- [617,]    0    1    0    0    0    1
- [618,]    0    1    0    0    0    1
- [619,]    0    1    0    0    0    1
- [620,]    0    1    0    0    0    1
- [621,]    0    1    0    0    0    1
- [622,]    0    1    0    0    0    1
- [623,]    0    1    0    0    0    1
- [624,]    0    1    0    0    0    1
- [625,]    0    1    0    0    0    1
- [626,]    0    1    0    0    0    1
- [627,]    0    1    0    0    0    1
- [628,]    0    1    0    0    0    1
- [629,]    0    1    0    1    0    1
- [630,]    0    1    0    0    0    1
- [631,]    0    1    0    0    0    1
- [632,]    0    1    0    0    0    1
- [633,]    0    1    0    0    0    1
- [634,]    0    1    0    0    0    1
- [635,]    0    1    0    0    0    1
- [636,]    0    1    0    0    0    1
- [637,]    0    1    0    0    0    1
- [638,]    0    1    0    0    0    1
- [639,]    0    1    0    0    0    1
- [640,]    0    1    0    0    0    1
- [641,]    0    1    0    0    0    1
- [642,]    0    1    0    0    0    1
- [643,]    0    1    0    0    0    1
- [644,]    0    1    0    0    0    1
- [645,]    0    1    0    0    0    1
- [646,]    0    1    0    1    0    1
- [647,]    0    1    0    1    0    1
- [648,]    0    1    0    0    0    1
- [649,]    0    1    0    0    0    1
- [650,]    0    1    0    0    0    1
- [651,]    0    1    0    1    0    1
- [652,]    0    1    0    0    0    1
- [653,]    0    1    0    0    0    1
- [654,]    0    1    0    0    0    1
- [655,]    0    1    0    0    0    1
- [656,]    0    1    0    0    0    1
- [657,]    0    1    0    0    0    1
- [658,]    0    1    0    0    0    1
- [659,]    0    1    0    0    0    1
- [660,]    0    1    0    0    0    1
- [661,]    0    1    0    0    0    1
- [662,]    0    1    0    0    0    1
- [663,]    0    1    0    0    0    1
- [664,]    0    1    0    0    0    1
- [665,]    0    1    0    0    0    1
- [666,]    0    1    0    0    0    1
- [667,]    0    1    0    0    0    1
- [668,]    0    1    0    0    0    1
- [669,]    0    1    0    0    0    1
- [670,]    0    1    0    0    0    1
- [671,]    0    1    0    0    0    1
- [672,]    0    1    0    0    0    1
- [673,]    0    1    0    0    0    1
- [674,]    0    1    0    0    0    1
- [675,]    0    1    0    1    0    0
- [676,]    0    1    0    0    0    1
- [677,]    0    1    0    0    0    1
- [678,]    0    1    0    0    0    1
- [679,]    0    1    0    0    0    1
- [680,]    0    1    0    0    0    1
- [681,]    0    1    0    0    0    1
- [682,]    0    1    0    1    0    1
- [683,]    0    1    0    0    0    1
- [684,]    0    1    0    0    0    1
- [685,]    0    1    0    0    0    1
- [686,]    0    1    0    0    0    1
- [687,]    0    1    0    0    0    1
- [688,]    0    1    0    0    0    1
- [689,]    0    1    0    0    0    1
- [690,]    0    1    0    0    0    1
- [691,]    0    1    0    0    0    1
- [692,]    0    1    0    0    0    1
- [693,]    0    1    0    0    0    1
- [694,]    0    1    0    0    0    1
- [695,]    0    1    0    0    0    1
- [696,]    0    1    0    0    0    1
- [697,]    0    1    0    0    0    1
- [698,]    0    1    0    0    0    1
- [699,]    0    1    0    0    0    1
- [700,]    0    1    0    0    0    1
- [701,]    0    1    0    0    0    1
- [702,]    0    1    0    0    0    1
- [703,]    0    1    0    0    0    1
- [704,]    0    1    0    0    0    1
- [705,]    0    1    0    0    0    1
- [706,]    0    1    0    0    0    1
- [707,]    0    1    0    0    0    1
- [708,]    0    1    0    0    0    1
- [709,]    0    1    0    0    0    1
- [710,]    0    1    0    0    0    1
- [711,]    0    1    0    0    0    1
- [712,]    0    1    0    0    0    1
- [713,]    0    1    0    0    0    1
- [714,]    0    1    0    0    0    1
- [715,]    0    1    0    0    0    1
- [716,]    0    1    0    0    0    1
- [717,]    0    1    0    0    0    1
- [718,]    0    1    0    0    0    1
- [719,]    0    1    0    1    0    1
- [720,]    0    1    0    0    0    1
- [721,]    0    1    0    0    0    1
- [722,]    0    1    0    0    0    1
- [723,]    0    1    0    0    0    1
- [724,]    0    1    0    0    0    1
- [725,]    0    1    0    1    0    0
- [726,]    0    1    0    0    0    1
- [727,]    0    1    0    0    0    1
- [728,]    0    1    0    0    0    1
- [729,]    0    1    0    0    0    1
- [730,]    0    1    0    0    0    1
- [731,]    0    1    0    0    0    1
- [732,]    0    1    0    0    0    1
- [733,]    0    1    0    0    0    1
- [734,]    0    1    0    0    0    1
- [735,]    0    1    0    0    0    1
- [736,]    0    1    0    0    0    1
- [737,]    0    1    0    1    0    1
- [738,]    0    1    0    0    0    1
- [739,]    0    1    0    0    0    1
- [740,]    0    1    0    1    0    0
- [741,]    0    1    0    0    0    1
- [742,]    0    1    0    0    0    1
- [743,]    0    1    0    0    0    1
- [744,]    0    1    0    0    0    1
- [745,]    0    1    0    0    0    1
- [746,]    0    1    0    0    0    1
- [747,]    0    1    0    0    0    1
- [748,]    0    1    0    0    0    1
- [749,]    0    1    0    1    0    1
- [750,]    0    1    0    0    0    1
- [751,]    0    1    0    1    0    1
- [752,]    0    1    0    0    0    1
- [753,]    0    1    0    0    0    1
- [754,]    0    1    0    1    0    1
- [755,]    0    1    0    0    0    1
- [756,]    0    1    0    0    0    1
- [757,]    0    1    0    0    0    1
- [758,]    0    1    0    0    0    1
- [759,]    0    1    0    0    0    1
- [760,]    0    1    0    0    0    1
- [761,]    0    1    0    0    0    1
- [762,]    0    1    0    0    0    1
- [763,]    0    1    0    0    0    1
- [764,]    0    1    0    0    0    1
- [765,]    0    1    0    1    0    1
- [766,]    0    1    0    0    0    1
- [767,]    0    1    0    0    0    1
- [768,]    0    1    0    0    0    1
- [769,]    0    1    0    0    0    1
- [770,]    0    1    0    0    0    1
- [771,]    0    1    0    0    0    1
- [772,]    0    1    0    0    0    1
- [773,]    0    1    0    0    0    1
- [774,]    0    1    0    0    0    1
- [775,]    0    1    0    0    0    1
- [776,]    0    1    0    0    0    1
- [777,]    0    1    0    0    0    1
- [778,]    0    1    0    0    0    1
- [779,]    0    1    0    0    0    1
- [780,]    0    1    0    0    0    1
- [781,]    0    1    0    0    0    1
- [782,]    0    1    0    0    0    1
- [783,]    0    1    0    0    0    1
- [784,]    0    1    0    0    0    1
- [785,]    0    1    0    0    0    1
- [786,]    0    1    0    0    0    1
- [787,]    0    1    0    1    0    1
- [788,]    0    1    0    1    0    1
- [789,]    0    1    0    0    0    1
- [790,]    0    1    0    0    0    1
- [791,]    0    1    0    0    0    1
- [792,]    0    1    0    1    0    1
- [793,]    0    1    0    0    0    1
- [794,]    0    1    0    0    0    1
- [795,]    0    1    0    0    0    1
- [796,]    0    1    0    0    0    1
- [797,]    0    1    0    0    0    1
- [798,]    0    1    0    0    0    1
- [799,]    0    1    0    0    0    1
- [800,]    0    1    0    0    0    1
- [801,]    0    1    0    0    0    1
- [802,]    0    1    0    0    0    1
- [803,]    0    1    0    0    0    1
- [804,]    0    1    0    0    0    1
- [805,]    0    1    0    0    0    1
- [806,]    0    1    0    0    0    1
- [807,]    0    1    0    0    0    1
- [808,]    0    1    0    1    0    0
- [809,]    0    1    0    0    0    1
- [810,]    0    1    0    0    0    1
- [811,]    0    1    0    0    0    1
- [812,]    0    1    0    0    0    1
- [813,]    0    1    0    0    0    1
- [814,]    0    1    0    0    0    1
- [815,]    0    1    0    0    0    1
- [816,]    0    1    0    0    0    1
- [817,]    0    1    0    0    0    1
- [818,]    0    1    0    0    0    1
- [819,]    0    1    0    0    0    1
- [820,]    0    1    0    1    0    1
- [821,]    0    1    0    0    0    1
- [822,]    0    1    0    0    0    1
- [823,]    0    1    0    0    0    1
- [824,]    0    1    0    0    0    1
- [825,]    0    1    0    0    0    1
- [826,]    0    1    0    0    0    1
- [827,]    0    1    0    0    0    1
- [828,]    0    1    0    0    0    1
- [829,]    0    1    0    0    0    1
- [830,]    0    1    0    0    0    1
- [831,]    0    1    0    0    0    1
- [832,]    0    1    0    0    0    1
- [833,]    0    1    0    0    0    1
- [834,]    0    1    0    0    0    1
- [835,]    0    1    0    0    0    1
- [836,]    0    1    0    1    0    1
- [837,]    0    1    0    0    0    1
- [838,]    0    1    0    1    0    1
- [839,]    0    1    0    0    0    1
- [840,]    0    1    0    0    0    1
- [841,]    0    1    0    0    0    1
- [842,]    0    1    0    1    0    0
- [843,]    0    1    0    0    0    1
- [844,]    0    1    0    0    0    1
- [845,]    0    1    0    1    0    0
- [846,]    0    1    0    1    0    1
- [847,]    0    1    0    0    0    1
- [848,]    0    1    0    0    0    1
- [849,]    0    1    0    0    0    1
- [850,]    0    1    0    0    0    1
- [851,]    0    1    0    0    0    1
- [852,]    0    1    0    0    0    1
- [853,]    0    1    0    0    0    1
- [854,]    0    1    0    0    0    1
- [855,]    0    1    0    0    0    1
- [856,]    0    1    0    0    0    1
- [857,]    0    1    0    1    0    0
- [858,]    0    1    0    1    0    0
- [859,]    0    1    0    0    0    1
- [860,]    0    1    0    0    0    1
- [861,]    0    1    0    0    0    1
- [862,]    0    1    0    0    0    1
- [863,]    0    1    0    0    0    1
- [864,]    0    1    0    0    0    1
- [865,]    0    1    0    1    0    0
- [866,]    0    1    0    1    0    1
- [867,]    0    1    0    0    0    1
- [868,]    0    1    0    0    0    1
- [869,]    0    1    0    0    0    1
- [870,]    0    1    0    0    0    1
- [871,]    0    1    0    0    0    1
- [872,]    0    1    0    0    0    1
- [873,]    0    1    0    0    0    1
- [874,]    0    1    0    1    0    0
- [875,]    0    1    0    0    0    1
- [876,]    0    1    0    0    0    1
- [877,]    0    1    0    0    0    1
- [878,]    0    1    0    0    0    1
- [879,]    0    1    0    0    0    1
- [880,]    0    1    0    0    0    1
- [881,]    0    1    0    1    0    1
- [882,]    0    1    0    0    0    1
- [883,]    0    1    0    0    0    1
- [884,]    0    1    0    0    0    1
- [885,]    0    1    0    0    0    1
- [886,]    0    1    0    0    0    1
- [887,]    0    1    0    0    0    1
- [888,]    0    1    0    0    0    1
- [889,]    0    1    0    0    0    1
- [890,]    0    1    0    0    0    1
- [891,]    0    1    0    0    0    1
- [892,]    0    1    0    1    0    0
- [893,]    0    1    0    0    0    1
- [894,]    0    1    0    1    0    1
- [895,]    0    1    0    0    0    1
- [896,]    0    1    0    0    0    1
- [897,]    0    1    0    0    0    1
- [898,]    0    1    0    0    0    1
- [899,]    0    1    0    0    0    1
- [900,]    0    1    0    0    0    1
- [901,]    0    1    0    0    0    1
- [902,]    0    1    0    0    0    1
- [903,]    0    1    0    0    0    1
- [904,]    0    1    0    0    0    1
- [905,]    0    1    0    0    0    1
- [906,]    0    1    0    0    0    1
- [907,]    0    1    0    0    0    1
- [908,]    0    1    0    0    0    1
- [909,]    0    1    0    0    0    1
- [910,]    0    1    0    0    0    1
- [911,]    0    1    0    1    0    1
- [912,]    0    1    0    0    0    1
- [913,]    0    1    0    0    0    1
- [914,]    0    1    0    0    0    1
- [915,]    0    1    0    0    0    1
- [916,]    0    1    0    0    0    1
- [917,]    0    1    0    0    0    1
- [918,]    0    1    0    0    0    1
- [919,]    0    1    0    0    0    1
- [920,]    0    1    0    0    0    1
- [921,]    0    1    0    0    0    1
- [922,]    0    1    0    0    0    1
- [923,]    0    1    0    0    0    1
- [924,]    0    1    0    0    0    1
- [925,]    0    1    0    0    0    1
- [926,]    0    1    0    0    0    1
- [927,]    0    1    0    0    0    1
- [928,]    0    1    0    0    0    1
- [929,]    0    1    0    0    0    1
- [930,]    0    1    0    0    0    1
- [931,]    0    1    0    0    0    1
- [932,]    0    1    0    0    0    1
- [933,]    0    1    0    0    0    1
- [934,]    0    1    0    0    0    1
- [935,]    0    1    0    0    0    1
- [936,]    0    1    0    0    0    1
- [937,]    0    1    0    0    0    1
- [938,]    0    1    0    0    0    1
- [939,]    0    1    0    0    0    1
- [940,]    0    1    0    1    0    1
- [941,]    0    1    0    0    0    1
- [942,]    0    1    0    0    0    1
- [943,]    0    1    0    0    0    1
- [944,]    0    1    0    0    0    1
- [945,]    0    1    0    0    0    1
- [946,]    0    1    0    0    0    1
- [947,]    0    1    0    0    0    1
- [948,]    0    1    0    0    0    1
- [949,]    0    1    0    0    0    1
- [950,]    0    1    0    0    0    1
- [951,]    0    1    0    0    0    1
- [952,]    0    1    0    0    0    1
- [953,]    0    1    0    0    0    1
- [954,]    0    1    0    0    0    1
- [955,]    0    1    0    1    0    1
- [956,]    0    1    0    0    0    1
- [957,]    0    1    0    0    0    1
- [958,]    0    1    0    0    0    1
- [959,]    0    1    0    0    0    1
- [960,]    0    1    0    0    0    1
- [961,]    0    1    0    0    0    1
- [962,]    0    1    0    0    0    1
- [963,]    0    1    0    0    0    1
- [964,]    0    1    0    0    0    1
- [965,]    0    1    0    0    0    1
- [966,]    0    1    0    0    0    1
- [967,]    0    1    0    0    0    1
- [968,]    0    1    0    0    0    1
- [969,]    0    1    0    0    0    1
- [970,]    0    1    0    0    0    1
- [971,]    0    1    0    0    0    1
- [972,]    0    1    0    0    0    1
- [973,]    0    1    0    0    0    1
- [974,]    0    1    0    1    0    1
- [975,]    0    1    0    0    0    1
- [976,]    0    1    0    0    0    1
- [977,]    0    1    0    1    0    1
- [978,]    0    1    0    0    0    1
- [979,]    0    1    0    0    0    1
- [980,]    0    1    0    0    0    1
- [981,]    0    1    0    0    0    1
- [982,]    0    1    0    0    0    1
- [983,]    0    1    0    0    0    1
- [984,]    0    1    0    0    0    1
- [985,]    0    1    0    0    0    1
- [986,]    0    1    0    0    0    1
- [987,]    0    1    0    0    0    1
- [988,]    0    1    0    0    0    1
- [989,]    0    1    0    1    0    0
- [990,]    0    1    0    0    0    1
- [991,]    0    1    0    0    0    1
- [992,]    0    1    0    0    0    1
- [993,]    0    1    0    0    0    1
- [994,]    0    1    0    0    0    1
- [995,]    0    1    0    0    0    1
- [996,]    0    1    0    0    0    1
- [997,]    0    1    0    0    0    1
- [998,]    0    1    0    0    0    1
- [999,]    0    1    0    0    0    1
-[1000,]    0    1    0    0    0    1</code></pre>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>long_covariates <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"insulin_"</span>,<span class="st">"hypertension_"</span>, <span class="st">"event_death_"</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Make mock DPP4 drug for purposes of contrasting 4 drugs</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123456</span>)</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>d<span class="sc">$</span>dpp4_0 <span class="ot">&lt;-</span> d<span class="sc">$</span>dpp4_1 <span class="ot">&lt;-</span> d<span class="sc">$</span>dpp4_2 <span class="ot">&lt;-</span> d<span class="sc">$</span>dpp4_3 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="fu">nrow</span>(d),<span class="dv">1</span>, <span class="fl">0.1</span>)</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="co">#specify LTMLE analysis</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>spec_ltmle <span class="ot">&lt;-</span> <span class="fu">spec_analysis</span>(<span class="at">data=</span>d, long_covariates, baseline_vars, </span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>                            <span class="at">N_time=</span><span class="dv">4</span>, <span class="at">Avars=</span><span class="fu">c</span>(<span class="st">"glp1_"</span>,<span class="st">"sglt2_inhib_"</span>,<span class="st">"dpp4_"</span>,<span class="st">"other_drugs_"</span>),</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>                            <span class="at">Yvars=</span><span class="fu">c</span>(<span class="st">"event_dementia_"</span>),</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>                            <span class="at">Cvars=</span><span class="fu">c</span>(<span class="st">"censor_"</span>))</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a><span class="co">#update function to allow for multiple drugs in each arm (new argument `n_drugs_per_arm`)</span></span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>spec_dual_Abar_with_treatment_holiday <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">data=</span>spec_ltmle<span class="sc">$</span>data, <span class="at">A_nodes=</span>spec_ltmle<span class="sc">$</span>Anodes, <span class="at">intervention_nodes=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">9</span>,<span class="dv">10</span>), <span class="at">control_nodes=</span><span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">7</span>,<span class="dv">8</span>,<span class="dv">11</span>,<span class="dv">12</span>), <span class="at">n_drugs_per_arm=</span><span class="dv">2</span>){</span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a> A_df <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">!!</span>(A_nodes)) <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>()</span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Make matrices of size A_nodes X N_subjects for the intervention and control regimes</span></span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>  abar_gap1 <span class="ot">=</span> abar_gap2 <span class="ot">=</span> <span class="fu">matrix</span>(<span class="cn">NA</span>,<span class="at">nrow=</span><span class="fu">nrow</span>(A_df),<span class="at">ncol=</span><span class="fu">ncol</span>(A_df))</span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a>  <span class="co">#set first intervention node to one for all: hypothetical trial where all start on drug</span></span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a>  abar_gap1[,intervention_nodes[<span class="dv">1</span><span class="sc">:</span>n_drugs_per_arm]] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>  <span class="co">#set all control arm drug nodes to 0</span></span>
+<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a>  abar_gap1[,control_nodes] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a>  <span class="co">#set 2nd intervention node to the observed: hypothetical trial where all start on drug (1st node)</span></span>
+<span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a>  <span class="co">#but gaps up to one node are allowed so the 2nd node can be the observed value of A</span></span>
+<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_drugs_per_arm){</span>
+<span id="cb33-30"><a href="#cb33-30" aria-hidden="true" tabindex="-1"></a>      abar_gap1[,intervention_nodes[i<span class="sc">+</span>n_drugs_per_arm]] <span class="ot">=</span> A_df[,intervention_nodes[i<span class="sc">+</span>n_drugs_per_arm]]</span>
+<span id="cb33-31"><a href="#cb33-31" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb33-32"><a href="#cb33-32" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb33-33"><a href="#cb33-33" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb33-34"><a href="#cb33-34" aria-hidden="true" tabindex="-1"></a>  <span class="co">#for the third node onward, set to: </span></span>
+<span id="cb33-35"><a href="#cb33-35" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> (<span class="dv">2</span><span class="sc">*</span>n_drugs_per_arm<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span><span class="fu">length</span>(intervention_nodes)){</span>
+<span id="cb33-36"><a href="#cb33-36" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 1) observed if previously treated (Aj_t=a|Aj_(t-1)=1)</span></span>
+<span id="cb33-37"><a href="#cb33-37" aria-hidden="true" tabindex="-1"></a>      abar_gap1[abar_gap1[,intervention_nodes[i<span class="sc">-</span>n_drugs_per_arm]]<span class="sc">==</span><span class="dv">1</span>, intervention_nodes[i]] <span class="ot">=</span> A_df[abar_gap1[,intervention_nodes[i<span class="sc">-</span>n_drugs_per_arm]]<span class="sc">==</span><span class="dv">1</span>, intervention_nodes[i]]</span>
+<span id="cb33-38"><a href="#cb33-38" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2) treated if previously not treated (Aj_t=1|Aj_(t-1)=0) </span></span>
+<span id="cb33-39"><a href="#cb33-39" aria-hidden="true" tabindex="-1"></a>      abar_gap1[abar_gap1[,intervention_nodes[i<span class="sc">-</span>n_drugs_per_arm]]<span class="sc">==</span><span class="dv">0</span>, intervention_nodes[i]] <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb33-40"><a href="#cb33-40" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb33-41"><a href="#cb33-41" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb33-42"><a href="#cb33-42" aria-hidden="true" tabindex="-1"></a>  <span class="co">#now repeat the process for the control regime</span></span>
+<span id="cb33-43"><a href="#cb33-43" aria-hidden="true" tabindex="-1"></a>  abar_gap2[,control_nodes[<span class="dv">1</span><span class="sc">:</span>n_drugs_per_arm]] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb33-44"><a href="#cb33-44" aria-hidden="true" tabindex="-1"></a>  abar_gap2[,intervention_nodes] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb33-45"><a href="#cb33-45" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb33-46"><a href="#cb33-46" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_drugs_per_arm){</span>
+<span id="cb33-47"><a href="#cb33-47" aria-hidden="true" tabindex="-1"></a>      abar_gap2[,control_nodes[i<span class="sc">+</span>n_drugs_per_arm]] <span class="ot">=</span> A_df[,control_nodes[i<span class="sc">+</span>n_drugs_per_arm]]</span>
+<span id="cb33-48"><a href="#cb33-48" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb33-49"><a href="#cb33-49" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb33-50"><a href="#cb33-50" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(i <span class="cf">in</span> (<span class="dv">2</span><span class="sc">*</span>n_drugs_per_arm<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span><span class="fu">length</span>(control_nodes)){</span>
+<span id="cb33-51"><a href="#cb33-51" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 1) observed if previously treated (A_t=a|A_(t-1)=1)</span></span>
+<span id="cb33-52"><a href="#cb33-52" aria-hidden="true" tabindex="-1"></a>      abar_gap2[abar_gap2[,control_nodes[i<span class="sc">-</span>n_drugs_per_arm]]<span class="sc">==</span><span class="dv">1</span>, control_nodes[i]] <span class="ot">=</span> A_df[abar_gap2[,control_nodes[i<span class="sc">-</span>n_drugs_per_arm]]<span class="sc">==</span><span class="dv">1</span>, control_nodes[i]]</span>
+<span id="cb33-53"><a href="#cb33-53" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2) treated if previously not treated (A_t=1|A_(t-1)=0) </span></span>
+<span id="cb33-54"><a href="#cb33-54" aria-hidden="true" tabindex="-1"></a>      abar_gap2[abar_gap2[,control_nodes[i<span class="sc">-</span>n_drugs_per_arm]]<span class="sc">==</span><span class="dv">0</span>, control_nodes[i]] <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb33-55"><a href="#cb33-55" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb33-56"><a href="#cb33-56" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb33-57"><a href="#cb33-57" aria-hidden="true" tabindex="-1"></a>   abar_gap<span class="ot">=</span><span class="fu">list</span>(abar_gap1, abar_gap2)</span>
+<span id="cb33-58"><a href="#cb33-58" aria-hidden="true" tabindex="-1"></a>   <span class="fu">return</span>(abar_gap)</span>
+<span id="cb33-59"><a href="#cb33-59" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb33-60"><a href="#cb33-60" aria-hidden="true" tabindex="-1"></a>}  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
-<section id="run-analysis" class="level4">
-<h4 class="anchored" data-anchor-id="run-analysis">Run analysis</h4>
+<section id="specify-dual-treatments" class="level4">
+<h4 class="anchored" data-anchor-id="specify-dual-treatments">Specify dual treatments:</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>   res_RR <span class="ot">&lt;-</span> <span class="fu">ltmle</span>(<span class="at">data=</span>spec_ltmle<span class="sc">$</span>data,</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Anodes =</span> spec_ltmle<span class="sc">$</span>Anodes,</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Cnodes =</span> spec_ltmle<span class="sc">$</span>Cnodes,</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Lnodes =</span> spec_ltmle<span class="sc">$</span>Lnodes,</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Ynodes =</span> spec_ltmle<span class="sc">$</span>Ynodes,</span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>                  <span class="at">survivalOutcome =</span> T,</span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>                  <span class="at">abar =</span> abar_gap,</span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>                  <span class="at">SL.library =</span> <span class="st">"glm"</span>,</span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>                  <span class="at">variance.method =</span> <span class="st">"ic"</span> )</span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>res<span class="ot">&lt;-</span><span class="fu">summary</span>(res_RR)</span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>res<span class="sc">$</span>effect.measures<span class="sc">$</span>RR<span class="sc">$</span>estimate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>dual_abar_gap<span class="ot">=</span> <span class="fu">spec_dual_Abar_with_treatment_holiday</span>(<span class="at">data=</span>spec_ltmle<span class="sc">$</span>data, </span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>                                           <span class="at">A_nodes=</span>spec_ltmle<span class="sc">$</span>Anodes, </span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>                                           <span class="at">intervention_nodes=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">9</span>,<span class="dv">10</span>), </span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>                                           <span class="at">control_nodes=</span><span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">7</span>,<span class="dv">8</span>,<span class="dv">11</span>,<span class="dv">12</span>), </span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>                                           <span class="at">n_drugs_per_arm=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Examine examples of 2 different regimes</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co">#intervention arm</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dual_abar_gap[[<span class="dv">1</span>]],<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.8276138</code></pre>
+<pre><code>     [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12]
+[1,]    1    1    0    0    0    0    0    0    1     1     0     0
+[2,]    1    1    0    0    0    0    0    0    1     1     0     0
+[3,]    1    1    0    0    0    0    0    0    1     1     0     0
+[4,]    1    1    0    0    1    0    0    0    0     1     0     0
+[5,]    1    1    0    0    0    0    0    0    1     1     0     0</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>res<span class="sc">$</span>effect.measures<span class="sc">$</span>RR<span class="sc">$</span>CI</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co">#reference arm</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dual_abar_gap[[<span class="dv">2</span>]],<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>          2.5%    97.5%
-[1,] 0.3032111 2.258969</code></pre>
+<pre><code>     [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12]
+[1,]    0    0    1    1    0    0    0    0    0     0     1     1
+[2,]    0    0    1    1    0    0    0    1    0     0     1     1
+[3,]    0    0    1    1    0    0    0    0    0     0     1     1
+[4,]    0    0    1    1    0    0    0    1    0     0     1     1
+[5,]    0    0    1    1    0    0    0    0    0     0     1     1</code></pre>
 </div>
 </div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>   res_dual <span class="ot">&lt;-</span> <span class="fu">ltmle</span>(<span class="at">data=</span>spec_ltmle<span class="sc">$</span>data,</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Anodes =</span> spec_ltmle<span class="sc">$</span>Anodes,</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Cnodes =</span> spec_ltmle<span class="sc">$</span>Cnodes,</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Lnodes =</span> spec_ltmle<span class="sc">$</span>Lnodes,</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Ynodes =</span> spec_ltmle<span class="sc">$</span>Ynodes,</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>                  <span class="at">survivalOutcome =</span> T,</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>                  <span class="at">abar =</span> dual_abar_gap,</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>                  <span class="at">SL.library =</span> <span class="st">"glm"</span>,</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>                  <span class="at">variance.method =</span> <span class="st">"ic"</span> )</span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>res<span class="ot">&lt;-</span><span class="fu">summary</span>(res_dual)</span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>res<span class="sc">$</span>effect.measures<span class="sc">$</span>RR<span class="sc">$</span>estimate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 6.721185</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>res<span class="sc">$</span>effect.measures<span class="sc">$</span>RR<span class="sc">$</span>CI</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             2.5%    97.5%
+[1,] 7.295275e-05 619227.2</code></pre>
+</div>
+</div>
+<p>Hopefully, extreme CI’s are from positivity issues or unrealistic data plus the rare outcome in the small (n=1000) simulated dataset used here.</p>
 </section>
 </section>
 

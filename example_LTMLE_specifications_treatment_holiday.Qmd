@@ -15,6 +15,7 @@ library(ltmle)
 library(here)
 
 
+#helper functions
 spec_nodes <- function(baseline_vars, longitudinal_vars, num_time){
   node_names <- c(baseline_vars, expand.grid(longitudinal_vars, num_time) %>%
                     apply(1, function(row) paste0(row, collapse = "")))
@@ -67,17 +68,58 @@ spec_analysis <- function(data, long_covariates, baseline_vars, N_time, Avars, Y
 
 d <- readRDS(here::here("data/example_simulated_data.RDS"))
 
+d <- d %>% subset(., select=-c(ie_type, code5txt))
 
-baseline_vars = c("ie_type","age_base","sex", "code5txt", "quartile_income")
+
 
 
 ```
 
-## Example data discription
+### 1) The Research Question
 
-Simulated data, simplified L, shortened followup, high administrative censoring, GLM estimation
+What is the effect of the 5 year usage of the 2nd line diabetes drug GLP1 (with imperfect adherence) on dementia cumulative incidence, compared to the 5 year usage of the 2nd line diabetes drug SGLT2 (with imperfect adherence) on dementia cumulative incidence
 
-Data:
+
+### 2) The Causal Model
+
+  - Baseline covariates $W_{baseline}$: age, sex, wealth
+  - Longitudinal covariates $L$ (subset of $W$: Insulin, hypertension, and 2nd line diabetes drugs not a part of the treatment regime, death
+
+$$
+W=f_W(U_W)
+$$
+
+  - Treatment $A$: GlP1 usage (A1_t=1) with one-node gaps allowed (treatment holiday) vs SGLT2 usage (A2_t=1) with one-node gaps allowed (treatment holiday)
+
+$$
+A=f_A(W, U_A)
+$$
+
+  - Outcome $Y$: dementia incidence
+
+$$
+Y=f_Y(W,A,U_Y)
+$$
+
+### 3) The Causal Parameter
+
+The relative 5-year risk in dementia between GLP1 users and SGLT2 users:
+
+$$\frac{E[Y_{\bar{a}_1=1,\bar{a}_2=0, c=0}]}{E[Y_{\bar{a}_1=0,\bar{a}_2=1, c=0}]}$$
+
+
+### 4) Observed Data and Statistical Model 
+
+Data from this cohort can be described by a general longitudinal data structure, denoted as:
+
+$$ O = (W, A(1), ..., L(K), A(K), L(K+1)) \sim  P_0 \in  M   $$
+
+where W denotes baseline (time-invariant) covariate information, and $A(1)$ is exposure status at the beginning of the first node or time interval (i.e. index date). $A$ nodes also include an administrative censoring mechanism, C, which denotes censoring during the time interval. For ease of notation above, we refer to the treatment and censoring processes together as  $A(t)=(A_1(t), A_2(t), C(t))$. We refer to the covariate and outcome nodes collectively as $L(t)=(L(t), Y(t))$, which includes both time-varying covariate information $L(t)$ and outcome information $Y(t)$. Death will be considered a competing risk in the primary analyses and is thus also included in $L(t)$. Index date and baseline measurements are measured at the date of switch to second-line regimen. Here we use a 6-month time scale for time increments in the main analyses. $K+1$ is defined as the maximum follow up time. 
+
+
+#### Glimpse of simulated data:
+
+Note in the real analysis, k=10 for the full 5-year followup with 6-month time nodes, but here we use 3 time nodes for simplicity.
 
 ```{r, echo=FALSE}
 
@@ -85,56 +127,114 @@ head(d, 3)
 
 ```
 
-#### Baseline covariates:
-
-`baseline_vars = c("ie_type","age_base","sex","code5txt","quartile_income")`
-
-#### Longitudinal covariates:
-
-Insulin, hypertension, and 2nd line diabetes drugs not a part of the Also including death as a competing risk by including it in $L$. Note we specify a deterministic Q Function
 
 
-## 2) Target Causal Parameter 2
 
-In our second target causal parameter, we additionally intervene on an active comparator: $$E[Y_{\bar{a}_1=1,\bar{a}_2=0, c=0}]-E[Y_{\bar{a}_1=0,\bar{a}_2=1, c=0}]$$
+### 5) Identification assumptions
 
-Here, we are contrasting full GLP-RA use, no active comparator use and no administrative censoring throughout follow up, compared to full active comparator use (eg. SGLT2), no GLP1-RA use and no administrative censoring throughout follow up.
+  - temporality
+  - no interference
+  - consistency
 
-#### Analysis setup:
+### 6) Statistical Estimation and Inference
+
+  - GLM for estimation
+
+#### Specification of the nodes passed to the LMTLE call:
 
 ```{r}
-#-------------------------------------------------------------------------------
-#  Contrasting if everyone had glp1 versus if everyone was on sglt2
-#-------------------------------------------------------------------------------
+
+baseline_vars = c("age_base","sex", "quartile_income")
 
 long_covariates = c("insulin_","hypertension_","other_drugs_", "event_death_")
 
-
-#specify LTMLE analysis
 spec_ltmle <- spec_analysis(data=d, long_covariates, baseline_vars,
                             N_time=4,
                             Avars=c("glp1_","sglt2_inhib_"),
                             Yvars=c("event_dementia_"),
                             Cvars=c("censor_"))
-#A Nodes
-spec_ltmle$Anodes
-
-#C Nodes
-spec_ltmle$Cnodes
-
-#L Nodes
-spec_ltmle$Lnodes
-
-#Y Nodes
-spec_ltmle$Ynodes
-
-#specify the intervened treatment
-abar_spec = list(rep(c(1,0),3),rep(c(0,1),3))
-abar_spec
 
 ```
 
-#### Run analysis for TCP2:
+**Specifying \bar{A} to allow 1-node treatment gaps:**
+
+Below is an R function to add treatment gaps in  \bar{A} specification, where  $A_1(k)$ (the intervention arm of GLP1) is intervened upon to start on GLP1 ($A_1(1)==1$) and individuals remain on the drug but allowing for small treatment gaps and remaining n In the reference arm, the specification is reversed, where $A_2(k)$ is set to allow small gaps and $A_1(k)$ is set to 0.  
+
+```{r}
+
+spec_Abar_with_treatment_holiday <- function(data=spec_ltmle$data, A_nodes=spec_ltmle$Anodes, intervention_nodes=c(1,3,5), control_nodes=c(2,4,6)){
+ 
+  A_df <- data %>% select(!!(A_nodes)) %>% as.data.frame()
+  
+  #Make matrices of size A_nodes X N_subjects for the intervention and control regimes
+  abar_gap1 = abar_gap2 = matrix(NA,nrow=nrow(A_df),ncol=ncol(A_df))
+  
+  #set first intervention node to one for all: hypothetical trial where all start on drug
+  abar_gap1[,intervention_nodes[1]] <- 1
+  #set all control arm drug nodes to 0
+  abar_gap1[,control_nodes] <- 0
+  
+  #set 2nd intervention node to the observed: hypothetical trial where all start on drug (1st node)
+  #but gaps up to one node are allowed so the 2nd node can be the observed value of A
+  abar_gap1[,3] = A_df[,3]
+  
+  #for the third node onward, set to: 
+  for(i in 3:length(intervention_nodes)){
+  # 1) observed if previously treated (A_t=a|A_(t-1)=1)
+      abar_gap1[abar_gap1[,intervention_nodes[i-1]]==1, intervention_nodes[i]] = A_df[abar_gap1[,intervention_nodes[i-1]]==1, intervention_nodes[i]]
+  # 2) treated if previously not treated (A_t=1|A_(t-1)=0) 
+      abar_gap1[abar_gap1[,intervention_nodes[i-1]]==0, intervention_nodes[i]] = 1
+  }
+  
+  #now repeat the process for the control regime
+  abar_gap2[,control_nodes[1]] <- 1
+  abar_gap2[,intervention_nodes] <- 0
+  abar_gap2[,control_nodes[2]] = A_df[,control_nodes[2]]
+    for(i in 3:length(control_nodes)){
+  # 1) observed if previously treated (A_t=a|A_(t-1)=1)
+      abar_gap2[abar_gap2[,control_nodes[i-1]]==1, control_nodes[i]] = A_df[abar_gap2[,control_nodes[i-1]]==1, control_nodes[i]]
+  # 2) treated if previously not treated (A_t=1|A_(t-1)=0) 
+      abar_gap2[abar_gap2[,control_nodes[i-1]]==0, control_nodes[i]] = 1
+  }
+  
+  abar_gap=list(abar_gap1, abar_gap2)
+   return(abar_gap)
+}
+
+```
+
+
+#### Set up contrast between GLP1 usage with gaps and no SGLT2 usage VS. SGLT2 usage with gaps and no GLP1 usage
+
+```{r}
+
+abar_gap= spec_Abar_with_treatment_holiday(data=spec_ltmle$data, 
+                                           A_nodes=spec_ltmle$Anodes, 
+                                           intervention_nodes=c(1,3,5), 
+                                           control_nodes=c(2,4,6))
+
+```
+
+
+
+Examine examples of 2 different intervention regimes, comparing observed data and treatment regimes that match the observed data as close as possible while intervening to start on the GLP1 drug of interest, intervening to avoid gaps in treatment longer than 1 node (6 months), and intervening to prevent SGLT2 use:
+
+```{r}
+
+spec_ltmle$data  %>% select(!!(spec_ltmle$Anodes)) %>% slice(c(1,2,4,9))
+
+abar_gap[[1]][c(1,2,4,9),]
+
+```
+
+Example reference regime (SGLT2 use with gaps, no GLP1 use):
+
+```{r}
+head(abar_gap[[2]],3)
+```
+
+
+#### Run analysis 
 
 ```{r}
 
@@ -144,7 +244,7 @@ abar_spec
                   Lnodes = spec_ltmle$Lnodes,
                   Ynodes = spec_ltmle$Ynodes,
                   survivalOutcome = T,
-                  abar = abar_spec,
+                  abar = abar_gap,
                   SL.library = "glm",
                   variance.method = "ic" )
 
@@ -154,7 +254,101 @@ res$effect.measures$RR$CI
 
 ```
 
-#### 3) Run analysis for TCP2 with treatment holidays:
+
+#### Alternative 1: Setting A_bar to continious usage, except for when the observed data has small, allowable gaps 
+
+Above, we set $\bar{A}$ as close as possible to the observed data for 
+
+If observed GLP1 is for t=1,2,3 is 0,0,0, then $\bar{A}$ is set to 1,0,1
+
+In the real analysis (10 time nodes), where the majority of people are not using GLP1, that means the majority of $\bar{A} = 1,0,1,0,1,0,1,0,1,0$ 
+
+Does it make more sense to set $\bar{A} = 1,1,1,1,1,1,1,1,1,1$ for all individuals whose observed data does not match a regime with allowable (1-node) gaps in GLP1 usage, and set $\bar{A}$ to the observed $A$ when the observed $A$ fits an allowable regime?
+
+This would then use more GLP1 users' data in estimating dementia risk, while still emulating an ideal trial where individuals continiously use the drug but adherence is imperfect.
+
+I've implemented this below to compare effect of the estimated relative risk.
+
+But maybe I'm not understanding what LTMLE is doing when each individual has a different $\bar{A}$? 
+
+```{r}
+
+spec_Abar_with_treatment_holiday_alt <- function(data=spec_ltmle$data, A_nodes=spec_ltmle$Anodes, intervention_nodes=c(1,3,5), control_nodes=c(2,4,6)){
+ 
+  A_df <- data %>% select(!!(A_nodes)) %>% as.data.frame()
+
+  #Make matrices of size A_nodes X N_subjects for the intervention and control regimes using observed data
+  abar_gap1 = abar_gap2 = A_df
+  
+  #set first intervention node to one for all: hypothetical trial where all start on drug
+  abar_gap1[,intervention_nodes[1]] <- 1
+  abar_gap2[,control_nodes[1]] <- 1
+  
+  #set all control arm drug nodes to 0
+  abar_gap1[,control_nodes] <- 0
+  abar_gap2[,intervention_nodes] <- 0
+  
+   #Set intervention nodes to 1, unless observed data matches the ideal treatment regimes (continious usage with short gaps)
+  is_following_regime=rep(TRUE, nrow(abar_gap1))
+  for(i in 2:length(intervention_nodes)){
+    is_following_regime=ifelse(A_df[intervention_nodes[1]]==1 & !(A_df[,intervention_nodes[i-1]]==0 & A_df[,intervention_nodes[i]]==0), is_following_regime,F)
+  }
+  abar_gap1[is_following_regime, intervention_nodes] <- A_df[is_following_regime, intervention_nodes]
+  abar_gap1[!is_following_regime, intervention_nodes] <- 1
+  
+  is_following_control=rep(TRUE, nrow(abar_gap2))
+  for(i in 2:length(control_nodes)){
+    is_following_control=ifelse(A_df[control_nodes[1]]==1 & !(A_df[,control_nodes[i-1]]==0 & A_df[,control_nodes[i]]==0), is_following_control,F)
+  }
+  abar_gap2[is_following_control, control_nodes] <- A_df[is_following_control, control_nodes]
+  abar_gap2[!is_following_control, control_nodes] <- 1
+
+
+  abar_gap=list(as.matrix(abar_gap1), as.matrix(abar_gap2))
+   return(abar_gap)
+}
+
+
+abar_spec_alt = spec_Abar_with_treatment_holiday_alt()
+
+#show a few different regimes, compared to real data:
+spec_ltmle$data %>% select(!!(spec_ltmle$Anodes)) %>% slice(c(1,2,100))
+abar_spec_alt[[1]][c(1,2,100),]
+
+
+```
+
+#### Run analysis 
+
+```{r}
+
+   res_RR <- ltmle(data=spec_ltmle$data,
+                  Anodes = spec_ltmle$Anodes,
+                  Cnodes = spec_ltmle$Cnodes,
+                  Lnodes = spec_ltmle$Lnodes,
+                  Ynodes = spec_ltmle$Ynodes,
+                  survivalOutcome = T,
+                  abar = abar_spec_alt,
+                  SL.library = "glm",
+                  variance.method = "ic" )
+
+res<-summary(res_RR)
+res$effect.measures$RR$estimate
+res$effect.measures$RR$CI
+
+```
+
+#### Alternative 2: deterministic g function
+
+```{r}
+
+#specify the intervened treatment
+abar_spec = list(rep(c(1,0),3),rep(c(0,1),3))
+abar_spec
+
+```
+
+This deterministic g function is the equivalent logic of the  spec_Abar_with_treatment_holiday() function, but applied as determistic knowledge (which feels wrong to me, but was the approach recommended by Zeyi):
 
 ```{r}
 
@@ -195,43 +389,9 @@ res$effect.measures$RR$CI
 
 ```
 
-## 4) Treatment gaps in abar
 
+#### Sensitivity analysis: continious usage (no treatment holidays)
 
-
-```{r}
-
-A_df <- spec_ltmle$data %>% select(!!(spec_ltmle$Anodes)) %>% as.data.frame()
-
-
-abar_gap1 <- matrix(NA,nrow=nrow(A_df),ncol=ncol(A_df))
-abar_gap1[,1] <- 1
-abar_gap1[,c(2,4,6)] <- 0
-abar_gap1[,3] = A_df[,3]
-
-#Observed if previously treated
-abar_gap1[abar_gap1[,3]==1,5] = A_df[abar_gap1[,3]==1,5]
-
-#Treat if previous gap
-abar_gap1[abar_gap1[,3]==0,5] = 1
-
-abar_gap2 <- matrix(NA,nrow=nrow(A_df),ncol=ncol(A_df))
-abar_gap2[,2] <- 1
-abar_gap2[,c(1,3,5)] <- 0
-abar_gap2[,4] = A_df[,4]
-
-#Observed if previously treated
-abar_gap2[abar_gap2[,4]==1,6] = A_df[abar_gap2[,4]==1,6]
-
-#Treat if previous gap
-abar_gap2[abar_gap2[,4]==0,6] = 1
-
-abar_gap=list(abar_gap1, abar_gap2)
-abar_gap
-
-```
-
-#### Run analysis 
 
 ```{r}
 
@@ -241,7 +401,7 @@ abar_gap
                   Lnodes = spec_ltmle$Lnodes,
                   Ynodes = spec_ltmle$Ynodes,
                   survivalOutcome = T,
-                  abar = abar_gap,
+                  abar = abar_spec,
                   SL.library = "glm",
                   variance.method = "ic" )
 
@@ -250,4 +410,135 @@ res$effect.measures$RR$estimate
 res$effect.measures$RR$CI
 
 ```
+
+
+### 7) Interpretation of Results
+
+The deterministic g function leads to an estimate further from the "no treatment holiday" analysis than by manually specifying $\bar{A}$ to allow gaps. 
+
+Is the correct interpretation of the regime allowing gaps the following?
+
+"The cumulative risk of dementia in GLP1 users, allowing for small gaps reflective of real world usage, is 0.575 times the risk in SGLT2 users with the same realistic usage"
+
+
+
+### Appendix: More complicated comparison of dual treatment regimes.
+
+I think this is how to code the analysis Thomas is working on, contrasting the dual usage of two 2nd-line diabetes drugs (with treatment holidays allowed) against the dual usage of two different 2nd-line diabetes drugs (with treatment holidays allowed).
+
+```{r}
+
+long_covariates = c("insulin_","hypertension_", "event_death_")
+
+#Make mock DPP4 drug for purposes of contrasting 4 drugs
+set.seed(123456)
+d$dpp4_0 <- d$dpp4_1 <- d$dpp4_2 <- d$dpp4_3 <- rbinom(nrow(d),1, 0.1)
+
+#specify LTMLE analysis
+spec_ltmle <- spec_analysis(data=d, long_covariates, baseline_vars, 
+                            N_time=4, Avars=c("glp1_","sglt2_inhib_","dpp4_","other_drugs_"),
+                            Yvars=c("event_dementia_"),
+                            Cvars=c("censor_"))
+
+
+#update function to allow for multiple drugs in each arm (new argument `n_drugs_per_arm`)
+spec_dual_Abar_with_treatment_holiday <- function(data=spec_ltmle$data, A_nodes=spec_ltmle$Anodes, intervention_nodes=c(1,2,5,6,9,10), control_nodes=c(3,4,7,8,11,12), n_drugs_per_arm=2){
+
+ A_df <- data %>% select(!!(A_nodes)) %>% as.data.frame()
+  
+  #Make matrices of size A_nodes X N_subjects for the intervention and control regimes
+  abar_gap1 = abar_gap2 = matrix(NA,nrow=nrow(A_df),ncol=ncol(A_df))
+  
+  #set first intervention node to one for all: hypothetical trial where all start on drug
+  abar_gap1[,intervention_nodes[1:n_drugs_per_arm]] <- 1
+  #set all control arm drug nodes to 0
+  abar_gap1[,control_nodes] <- 0
+  
+  #set 2nd intervention node to the observed: hypothetical trial where all start on drug (1st node)
+  #but gaps up to one node are allowed so the 2nd node can be the observed value of A
+  for(i in 1:n_drugs_per_arm){
+      abar_gap1[,intervention_nodes[i+n_drugs_per_arm]] = A_df[,intervention_nodes[i+n_drugs_per_arm]]
+  }
+  
+    
+  #for the third node onward, set to: 
+  for(i in (2*n_drugs_per_arm+1):length(intervention_nodes)){
+  # 1) observed if previously treated (Aj_t=a|Aj_(t-1)=1)
+      abar_gap1[abar_gap1[,intervention_nodes[i-n_drugs_per_arm]]==1, intervention_nodes[i]] = A_df[abar_gap1[,intervention_nodes[i-n_drugs_per_arm]]==1, intervention_nodes[i]]
+  # 2) treated if previously not treated (Aj_t=1|Aj_(t-1)=0) 
+      abar_gap1[abar_gap1[,intervention_nodes[i-n_drugs_per_arm]]==0, intervention_nodes[i]] = 1
+  }
+  
+  #now repeat the process for the control regime
+  abar_gap2[,control_nodes[1:n_drugs_per_arm]] <- 1
+  abar_gap2[,intervention_nodes] <- 0
+  
+    for(i in 1:n_drugs_per_arm){
+      abar_gap2[,control_nodes[i+n_drugs_per_arm]] = A_df[,control_nodes[i+n_drugs_per_arm]]
+  }
+  
+    for(i in (2*n_drugs_per_arm+1):length(control_nodes)){
+  # 1) observed if previously treated (A_t=a|A_(t-1)=1)
+      abar_gap2[abar_gap2[,control_nodes[i-n_drugs_per_arm]]==1, control_nodes[i]] = A_df[abar_gap2[,control_nodes[i-n_drugs_per_arm]]==1, control_nodes[i]]
+  # 2) treated if previously not treated (A_t=1|A_(t-1)=0) 
+      abar_gap2[abar_gap2[,control_nodes[i-n_drugs_per_arm]]==0, control_nodes[i]] = 1
+  }
+ 
+   abar_gap=list(abar_gap1, abar_gap2)
+   return(abar_gap)
+   
+}  
+
+
+
+
+
+
+```
+
+#### Specify dual treatments:
+
+```{r}
+
+dual_abar_gap= spec_dual_Abar_with_treatment_holiday(data=spec_ltmle$data, 
+                                           A_nodes=spec_ltmle$Anodes, 
+                                           intervention_nodes=c(1,2,5,6,9,10), 
+                                           control_nodes=c(3,4,7,8,11,12), 
+                                           n_drugs_per_arm=2)
+
+```
+
+
+
+Examine examples of 2 different regimes
+
+```{r}
+#intervention arm
+head(dual_abar_gap[[1]],5)
+#reference arm
+head(dual_abar_gap[[2]],5)
+
+```
+
+
+```{r}
+
+   res_dual <- ltmle(data=spec_ltmle$data,
+                  Anodes = spec_ltmle$Anodes,
+                  Cnodes = spec_ltmle$Cnodes,
+                  Lnodes = spec_ltmle$Lnodes,
+                  Ynodes = spec_ltmle$Ynodes,
+                  survivalOutcome = T,
+                  abar = dual_abar_gap,
+                  SL.library = "glm",
+                  variance.method = "ic" )
+
+res<-summary(res_dual)
+res$effect.measures$RR$estimate
+res$effect.measures$RR$CI
+
+```
+
+
+Hopefully, extreme CI's are from positivity issues or unrealistic data plus the rare outcome in the small (n=1000) simulated dataset used here.
 
