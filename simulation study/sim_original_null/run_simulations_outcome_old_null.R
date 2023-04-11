@@ -119,6 +119,46 @@ saveRDS(resdf_ic_T4, paste0(here::here(),"/sim_res/old_null_sim_res_noDetQ_ic_T4
 #10 year followup
 Ntime=11
 
+
+#Random forest
+int.start.time <- Sys.time()
+resdf_RF <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows') %dopar% {
+  res <- run_ltmle_glmnet(d_wide_list[[i]], varmethod = "ic", resdf=NULL, SL.library="SL.randomForest", N_time=11, override_function=SuperLearner_override_RF)
+}
+int.end.time <- Sys.time()
+difftime(int.end.time, int.start.time, units="mins")
+resdf_RF
+
+gc()
+saveRDS(resdf_RF, paste0(here::here(),"/sim_res/old_null_sim_res_rf_ic_T11.RDS"))
+
+
+#Ridge
+int.start.time <- Sys.time()
+resdf_RF <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows') %dopar% {
+  res <- run_ltmle_glmnet(d_wide_list[[i]], varmethod = "ic", resdf=NULL, SL.library="SL.glmnet", N_time=11, override_function=SuperLearner_override_ridge)
+}
+int.end.time <- Sys.time()
+difftime(int.end.time, int.start.time, units="mins")
+resdf_RF
+
+gc()
+saveRDS(resdf_RF, paste0(here::here(),"/sim_res/old_null_sim_res_ridge_ic_T11.RDS"))
+
+#Elastic Net
+int.start.time <- Sys.time()
+resdf_EN <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows') %dopar% {
+  res <- run_ltmle_glmnet(d_wide_list[[i]], varmethod = "ic", resdf=NULL, SL.library="SL.glmnet", N_time=11, override_function=SuperLearner_override_EN)
+}
+int.end.time <- Sys.time()
+difftime(int.end.time, int.start.time, units="mins")
+resdf_EN
+
+gc()
+saveRDS(resdf_EN, paste0(here::here(),"/sim_res/old_null_sim_res_EN_ic_T11.RDS"))
+
+
+
 #primary
 int.start.time <- Sys.time()
 resdf_noDetQ_tmle_T11 <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
