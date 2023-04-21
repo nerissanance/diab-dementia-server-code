@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.269">
+<meta name="generator" content="quarto-1.2.335">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -230,7 +230,7 @@ Y=f_Y(W,A,U_Y)
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                            <span class="at">Yvars=</span><span class="fu">c</span>(<span class="st">"event_dementia_"</span>),</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>                            <span class="at">Cvars=</span><span class="fu">c</span>(<span class="st">"censor_"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><strong>Specifying {A} to allow 1-node treatment gaps:</strong></p>
+<p><strong>Specifying</strong> {A} to allow 1-node treatment gaps:</p>
 <p>Below is an R function to add treatment gaps in {A} specification, where <span class="math inline">\(A_1(k)\)</span> (the intervention arm of GLP1) is intervened upon to start on GLP1 (<span class="math inline">\(A_1(1)==1\)</span>) and individuals remain on the drug but allowing for small treatment gaps and remaining n In the reference arm, the specification is reversed, where <span class="math inline">\(A_2(k)\)</span> is set to allow small gaps and <span class="math inline">\(A_1(k)\)</span> is set to 0.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>spec_Abar_with_treatment_holiday <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">data=</span>spec_ltmle<span class="sc">$</span>data, <span class="at">A_nodes=</span>spec_ltmle<span class="sc">$</span>Anodes, <span class="at">intervention_nodes=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">5</span>), <span class="at">control_nodes=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">6</span>)){</span>

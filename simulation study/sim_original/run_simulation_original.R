@@ -15,10 +15,14 @@ d_wide_list <- readRDS(file=here("data/simulated_data_list.RDS"))
 d_wide_list <- d_wide_list[1:200]
 gc()
 
+d=d_wide_list[[1]]
+head(d)
+
+
+
 res <- run_ltmle_glmnet(d_wide_list[[1]], resdf=NULL, Qint=FALSE, det.Q =FALSE, varmethod = "ic")
 res
 
-d=d_wide_list[[1]]
 N_time = 2
 SL.library = c("SL.glmnet")
 resdf=NULL
