@@ -210,6 +210,8 @@ resdf_noDetQ_ic_T11 <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows'
 }
 saveRDS(resdf_noDetQ_ic_T11, paste0(here::here(),"/sim_res/old_null_sim_res_noDetQ_ic_T11.RDS"))
 
+summary(resdf_noDetQ_ic_T11$ate)
+summary(resdf_noDetQ_ic_T11$iptw.ate)
 
 
 #primary

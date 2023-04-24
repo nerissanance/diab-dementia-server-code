@@ -103,6 +103,7 @@ difftime(int.end.time, int.start.time, units="mins")
 saveRDS(resdf_noDetQ_ic, paste0(here::here(),"/data/sim_res_noDetQ_ic_v2.RDS"))
 exp(summary(log(resdf_noDetQ_ic$estimate)))
 summary(resdf_noDetQ_ic$ate)
+summary(resdf_noDetQ_ic$iptw.ate)
 
 int.start.time <- Sys.time()
 resdf_noDetQ_tmle <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
