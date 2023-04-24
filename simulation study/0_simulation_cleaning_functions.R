@@ -161,7 +161,7 @@ calc_sim_performance <- function(files, boot_iter_files=NULL, trueRR, trueRD, ip
     perf_tab_diff <- bind_rows(perf_tab_diff, perf_tab_diff_boot)
   }
 
-  perf_tab_diff <- perf_tab_diff %>% filter(!grepl("iptw",analysis))
+  #perf_tab_diff <- perf_tab_diff %>% filter(!grepl("iptw",analysis))
 
   perf_tab_RR <- clean_sim_results(perf_tab_RR)
   perf_tab_diff <- clean_sim_results(perf_tab_diff)

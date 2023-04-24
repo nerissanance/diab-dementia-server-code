@@ -111,7 +111,7 @@ clean_sim_data <- function(d, N_time=10){
 
  seed <- 3457347
  nsamp=5000000
- nsamp=3000000
+ #nsamp=3000000
 
   set.seed(seed)
   # u <- synthesizeDD(cc)
@@ -164,6 +164,7 @@ clean_sim_data <- function(d, N_time=10){
  tRD10 <- mean(d.always$event_dementia_10,na.rm=T) - mean(d.never$event_dementia_10,na.rm=T)
 
 truth_df <- data.frame(time=1:10, RR=c(tRR1,tRR2,tRR3,tRR4,tRR5,tRR6,tRR7,tRR8,tRR9,tRR10), RD=c(tRD1,tRD2,tRD3,tRD4,tRD5,tRD6,tRD7,tRD8,tRD9,tRD10))
+truth_df
 saveRDS(truth_df, file=paste0(here::here(),"/data/sim_res_truth.RDS"))
 
 
