@@ -237,7 +237,7 @@ saveRDS(resdf_noDetQ_Qint_ic_T11, paste0(here::here(),"/sim_res/old_null_sim_res
 #primary
 resdf_noDetQ_tmle_T11_glm <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
   res <- NULL
-  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE, det.Q=FALSE, varmethod = "tmle",N_time=11, glm=T))
+  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE, det.Q=FALSE, varmethod = "tmle",N_time=11, SL.library="glm"))
   return(res)
 }
 saveRDS(resdf_noDetQ_tmle_T11_glm, paste0(here::here(),"/sim_res/old_null_sim_res_noDetQ_tmle_glm_T11.RDS"))
@@ -245,21 +245,21 @@ saveRDS(resdf_noDetQ_tmle_T11_glm, paste0(here::here(),"/sim_res/old_null_sim_re
 
 resdf_Qint_noDetQ_tmle_T11_glm <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
   res <- NULL
-  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, varmethod = "tmle",N_time=11, glm=T))
+  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, varmethod = "tmle",N_time=11, SL.library="glm"))
   return(res)
 }
 saveRDS(resdf_Qint_noDetQ_tmle_T11_glm, paste0(here::here(),"/sim_res/old_null_sim_res_Qint_noDetQ_glm_tmle_T11.RDS"))
 
 resdf_noDetQ_ic_glm_T11 <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
   res <- NULL
-  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE, det.Q=FALSE, varmethod = "ic",N_time=11, glm=T))
+  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE, det.Q=FALSE, varmethod = "ic",N_time=11, SL.library="glm"))
   return(res)
 }
 saveRDS(resdf_noDetQ_ic_glm_T11, paste0(here::here(),"/sim_res/old_null_sim_res_noDetQ_ic_glm_T11.RDS"))
 
 resdf_ic_glm_T11 <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
   res <- NULL
-  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE, det.Q=TRUE, varmethod = "ic",N_time=11, glm=T))
+  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE, det.Q=TRUE, varmethod = "ic",N_time=11, SL.library="glm"))
   return(res)
 }
 saveRDS(resdf_ic_glm_T11, paste0(here::here(),"/sim_res/old_null_sim_res_ic_glm_T11.RDS"))
