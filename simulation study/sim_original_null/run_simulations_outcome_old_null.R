@@ -213,6 +213,15 @@ saveRDS(resdf_noDetQ_ic_T11, paste0(here::here(),"/sim_res/old_null_sim_res_noDe
 summary(resdf_noDetQ_ic_T11$ate)
 summary(resdf_noDetQ_ic_T11$iptw.ate)
 
+int.start.time <- Sys.time()
+resdf_noDetQ_ic_T11 <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE, det.Q=TRUE, varmethod = "ic",N_time=11))
+  return(res)
+}
+saveRDS(resdf_noDetQ_ic_T11, paste0(here::here(),"/sim_res/old_null_sim_res_ic_T11.RDS"))
+
+
 
 #primary
 int.start.time <- Sys.time()
