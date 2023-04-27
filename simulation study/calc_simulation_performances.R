@@ -8,11 +8,81 @@ source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
 source(paste0(here::here(),"/simulation study/0_simulation_cleaning_functions.R"))
 
 
+
+
+
 #---------------------------------------------------------
-# v3
+# manuscript sim results: Null sim
 #---------------------------------------------------------
 files <- dir(path=paste0(here::here(),"/sim_res/"), pattern = "*.RDS")
-files <- files[grepl("_v3",files)]
+#files <- files[grepl("old_null_sim_res_",files)]
+files <- files[grepl("_null_",files)]
+files <- files[grepl("_T11",files)]
+
+temp <- readRDS(paste0(here::here(),"/sim_res/sim_res_RF_ic_v3.RDS"))
+head(temp)
+
+#NOTE: check which files are missing from the old pipeline:
+old_files <- dir(path=paste0(here::here(),"/sim_res_old/"), pattern = "*.RDS")
+old_files <- old_files[grepl("old_null_sim_res_",old_files)]
+old_files <- old_files[grepl("_T11",old_files)]
+
+
+files_temp <- files[!(files %in% c( "" ))]
+old_files <- old_files[!(old_files %in% c( "" ))]
+files_temp <- gsub("_T11","", files_temp)
+old_files <- gsub("_T11","", old_files)
+files_temp <- gsub("old_null_sim_res_","", files_temp)
+old_files <- gsub("old_null_sim_res_","", old_files)
+
+files_temp[!(files_temp %in% old_files)]
+old_files[!(old_files %in% files_temp)]
+
+
+#load bootstrap
+boot_iter_files <- dir(path=paste0(here::here(),"/data/bootstrap/"), pattern = "*.RDS")
+boot_iter_files <- boot_iter_files[grepl("sim_res_boot_old_sim_null_T11_",boot_iter_files)]
+length(boot_iter_files)
+
+
+trueRR=1
+trueRD=0
+iptw=T
+original_sim_res_null <- calc_sim_performance(files=files, boot_iter_files=boot_iter_files, trueRR=1, trueRD=0, iptw=T)
+original_sim_res_null$perf_tab_RR
+original_sim_res_null$perf_tab_diff
+original_sim_res_null$perf_tab_diff$filenames
+
+
+res_null_diff <- original_sim_res_null$perf_tab_diff
+res_null_RR <- original_sim_res_null$perf_tab_RR
+
+save(res_null_diff, res_null_RR,  file=paste0(here::here(),"/results/sim_performance_results_original_null.Rdata"))
+
+
+#---------------------------------------------------------
+# manuscript sim results: protective sim
+#---------------------------------------------------------
+files <- dir(path=paste0(here::here(),"/sim_res/"), pattern = "*.RDS")
+#files <- files[grepl("_v3",files)]
+files <- files[!grepl("_null_",files)]
+
+#NOTE: check which files are missing from the old pipeline:
+old_files <- dir(path=paste0(here::here(),"/sim_res_old/"), pattern = "*.RDS")
+old_files <- old_files[grepl("_v3",old_files)]
+old_files <- gsub("_v3","",old_files)
+
+
+files_temp <- files[!(files %in% c( "sim_res_1se.RDS","sim_res_AUC.RDS" ))]
+old_files <- old_files[!(old_files %in% c( "sim_res_1se_ic.RDS","sim_res_AUC_ic.RDS" ))]
+
+
+files_temp <- gsub(".RDS","", files_temp)
+old_files <- gsub("_T11","", old_files)
+
+files_temp[!(files_temp %in% old_files)]
+old_files[!(old_files %in% files_temp)]
+
 
 boot_iter_files <- dir(path=paste0(here::here(),"/data/bootstrap/"), pattern = "*.RDS")
 unique(gsub("\\d","",boot_iter_files))
@@ -30,6 +100,10 @@ table(boot_iter_files$analysis)
 
 
 
+temp <- readRDS(paste0(here::here(),"/data/sim_res_EN.RDS"))
+head(temp)
+
+
 
 trueRR=0.5148661
 trueRD= -0.009683665
@@ -41,57 +115,19 @@ trueRD= trueRD
 iptw=T
 
 
-old_sim_res_v3 <- calc_sim_performance(files=files, boot_iter_files=boot_iter_files, trueRR=trueRR, trueRD= trueRD, iptw=T )
+res_v3 <- calc_sim_performance(files=files, boot_iter_files=boot_iter_files, trueRR=trueRR, trueRD= trueRD, iptw=T )
 
 
-old_sim_res_v3_diff <- old_sim_res_v3$perf_tab_diff
-old_sim_res_v3_RR <- old_sim_res_v3$perf_tab_RR
-save(old_sim_res_v3_diff, old_sim_res_v3_RR,  file=paste0(here::here(),"/results/sim_performance_results_original.Rdata"))
+res_v3_diff <- res_v3$perf_tab_diff
+res_v3_RR <- res_v3$perf_tab_RR
+
+#remove duplicates /iptw repeats
+res_v3_diff <- res_v3_diff %>% filter(!filenames %in% c("sim_res_ridge_ic_v3_iptw","sim_res_ridge","sim_res_Qint_ic","sim_res_Qint_ic_v3_iptw",
+                                                        "sim_res_DetQ__ridge_ic_v3_iptw","sim_res_ridge_ic_v3","sim_res_DetQ_ic_v3_iptw","sim_res_ic"))
+
+save(res_v3_diff, res_v3_RR,  file=paste0(here::here(),"/results/sim_performance_results_original.Rdata"))
 
 
-
-#---------------------------------------------------------
-# Null, old sim
-#---------------------------------------------------------
-files <- dir(path=paste0(here::here(),"/sim_res/"), pattern = "*.RDS")
-files <- files[grepl("old_null_sim_res_",files)]
-files <- files[grepl("_T11",files)]
-
-temp <- readRDS(paste0(here::here(),"/sim_res/old_null_sim_res_noDetQ_ic_T11.rds"))
-head(temp)
-
-
-temp <- readRDS(paste0(here::here(),"/data/sim_res_noDetQ_ic_v2.RDS"))
-head(temp)
-
-temp <- readRDS(paste0(here::here(),"/sim_res/old_null_sim_res_noDetQ_tmle_glm_T11"))
-head(temp)
-
-
-
-summary(temp$estimate)
-summary(temp$iptw.estimate)
-summary(temp$ate)
-summary(temp$iptw.ate)
-
-#load bootstrap
-boot_iter_files <- dir(path=paste0(here::here(),"/data/bootstrap/"), pattern = "*.RDS")
-boot_iter_files <- boot_iter_files[grepl("sim_res_boot_old_sim_null_T11_",boot_iter_files)]
-length(boot_iter_files)
-
-
-trueRR=1
-trueRD=0
-iptw=T
-original_sim_res_null <- calc_sim_performance(files=files, boot_iter_files=boot_iter_files, trueRR=1, trueRD=0, iptw=T)
-original_sim_res_null$perf_tab_RR
-original_sim_res_null$perf_tab_RD
-
-
-old_sim_res_null_diff <- original_sim_res_null$perf_tab_diff
-old_sim_res_null_RR <- original_sim_res_null$perf_tab_RR
-
-save(old_sim_res_null_diff, old_sim_res_null_RR,  file=paste0(here::here(),"/results/sim_performance_results_original_null.Rdata"))
 
 # #---------------------------------------------------------
 # # Outcome blind

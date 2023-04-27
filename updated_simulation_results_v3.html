@@ -364,49 +364,26 @@ results</h1>
 </div>
 
 
-<div id="summary" class="section level1">
-<h1>Summary</h1>
-<p>A simulation study was performed to identify the best estimator
-performance for a longitudinal TMLE analysis of the effect of
-second-line diabetes drugs on dementia risk in the Danish National
-Registry data with four key features: many timepoints (10), a rare
-outcome (dementia prevalence: 1.9%), competing risks from death, and a
-high degree of administrative censoring. Three simulations were
-completed. 1) A simple simulation without positivity violations, rare
-outcomes, long-term followup, or competing risks as a sanity check that
-estimators were implemented correctly, especially as we modified the
-LTMLE package code, 2) a realistic simulation in terms of dementia
-prevalence and diabetes drug patterns, but with scrambled outcomes and
-competing risks to check estimator performance with a known null
-association, and 3) a realistic simulation with a protective effect of
-GLP1 usage on dementia and death, with the truth calculated as the
-counterfactual 5 year risk of dementia prior to death when continuously
-on GLP1 versus not, with the effect of GLP1 on death removed to remove
-the competing risk.</p>
-</div>
 <div id="scenario-1-realistic-simulation-null-outcome" class="section level1">
 <h1>Scenario 1: Realistic simulation, null outcome</h1>
 <p>True RD: 0</p>
-<p><strong>Notes:</strong></p>
-<ul>
-<li>Outcome, death and censoring all jointly scrambled</li>
-<li>Oracle coverage is pretty good but a little too high for all
-estimators, but GLM estimators have more variance</li>
-</ul>
 <table>
 <colgroup>
-<col width="13%" />
+<col width="14%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
 <col width="6%" />
 <col width="6%" />
-<col width="12%" />
-<col width="12%" />
-<col width="8%" />
-<col width="18%" />
-<col width="21%" />
+<col width="5%" />
+<col width="9%" />
+<col width="10%" />
+<col width="38%" />
 </colgroup>
 <thead>
 <tr class="header">
 <th align="left">estimator</th>
+<th align="left">iptw</th>
 <th align="left">Qint</th>
 <th align="left">DetQ</th>
 <th align="right">bias</th>
@@ -414,271 +391,223 @@ estimators, but GLM estimators have more variance</li>
 <th align="right">mse</th>
 <th align="right">bias_se_ratio</th>
 <th align="right">oracle.coverage</th>
+<th align="left">filenames</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">LASSO</td>
+<td align="left">Random Forest</td>
+<td align="left">no</td>
 <td align="left">No</td>
 <td align="left">Yes</td>
 <td align="right">-0.00364</td>
-<td align="right">0e+00</td>
-<td align="right">1e-05</td>
+<td align="right">0.00000</td>
+<td align="right">0.00001</td>
 <td align="right">-3.10176</td>
 <td align="right">12.00000</td>
+<td align="left">old_null_sim_res_rf_ic_T11</td>
 </tr>
 <tr class="even">
 <td align="left">LASSO</td>
+<td align="left">yes</td>
+<td align="left">Yes</td>
+<td align="left">No</td>
+<td align="right">0.00137</td>
+<td align="right">0.00001</td>
+<td align="right">0.00002</td>
+<td align="right">0.37858</td>
+<td align="right">91.00000</td>
+<td align="left">old_null_sim_res_noDetQ_Qint_ic_T11_iptw</td>
+</tr>
+<tr class="odd">
+<td align="left">LASSO</td>
+<td align="left">yes</td>
+<td align="left">No</td>
+<td align="left">No</td>
+<td align="right">0.00137</td>
+<td align="right">0.00001</td>
+<td align="right">0.00002</td>
+<td align="right">0.37858</td>
+<td align="right">91.00000</td>
+<td align="left">old_null_sim_res_noDetQ_ic_T11_iptw</td>
+</tr>
+<tr class="even">
+<td align="left">GLM</td>
+<td align="left">yes</td>
+<td align="left">No</td>
+<td align="left">No</td>
+<td align="right">0.00157</td>
+<td align="right">0.00001</td>
+<td align="right">0.00002</td>
+<td align="right">0.41362</td>
+<td align="right">91.00000</td>
+<td align="left">old_null_sim_res_noDetQ_ic_glm_T11_iptw</td>
+</tr>
+<tr class="odd">
+<td align="left">GLM, LASSO prescreen</td>
+<td align="left">yes</td>
 <td align="left">Yes</td>
 <td align="left">No</td>
 <td align="right">0.00149</td>
-<td align="right">1e-05</td>
-<td align="right">2e-05</td>
+<td align="right">0.00001</td>
+<td align="right">0.00002</td>
 <td align="right">0.40292</td>
 <td align="right">91.87817</td>
+<td align="left">old_null_sim_res_ic_Qint_noDetQ_lasso_prescreen_T11_iptw</td>
 </tr>
-<tr class="odd">
-<td align="left">LASSO</td>
+<tr class="even">
+<td align="left">Elastic Net</td>
+<td align="left">yes</td>
 <td align="left">No</td>
 <td align="left">Yes</td>
 <td align="right">0.00121</td>
-<td align="right">2e-05</td>
-<td align="right">2e-05</td>
+<td align="right">0.00002</td>
+<td align="right">0.00002</td>
 <td align="right">0.26019</td>
 <td align="right">92.00000</td>
+<td align="left">old_null_sim_res_EN_ic_T11_iptw</td>
 </tr>
-<tr class="even">
-<td align="left">LASSO</td>
+<tr class="odd">
+<td align="left">Random Forest</td>
+<td align="left">yes</td>
 <td align="left">No</td>
 <td align="left">Yes</td>
 <td align="right">0.00206</td>
-<td align="right">2e-05</td>
-<td align="right">2e-05</td>
+<td align="right">0.00002</td>
+<td align="right">0.00002</td>
 <td align="right">0.46894</td>
 <td align="right">92.50000</td>
+<td align="left">old_null_sim_res_rf_ic_T11_iptw</td>
 </tr>
-<tr class="odd">
-<td align="left">LASSO</td>
+<tr class="even">
+<td align="left">Ridge</td>
+<td align="left">yes</td>
 <td align="left">No</td>
 <td align="left">Yes</td>
 <td align="right">0.00094</td>
-<td align="right">2e-05</td>
-<td align="right">2e-05</td>
+<td align="right">0.00002</td>
+<td align="right">0.00002</td>
 <td align="right">0.23294</td>
 <td align="right">94.00000</td>
+<td align="left">old_null_sim_res_ridge_ic_T11_iptw</td>
+</tr>
+<tr class="odd">
+<td align="left">LASSO</td>
+<td align="left">no</td>
+<td align="left">Yes</td>
+<td align="left">No</td>
+<td align="right">-0.00005</td>
+<td align="right">0.00001</td>
+<td align="right">0.00001</td>
+<td align="right">-0.01345</td>
+<td align="right">94.50000</td>
+<td align="left">old_null_sim_res_noDetQ_Qint_ic_T11</td>
 </tr>
 <tr class="even">
 <td align="left">LASSO</td>
+<td align="left">no</td>
+<td align="left">No</td>
+<td align="left">No</td>
+<td align="right">-0.00005</td>
+<td align="right">0.00001</td>
+<td align="right">0.00001</td>
+<td align="right">-0.01345</td>
+<td align="right">94.50000</td>
+<td align="left">old_null_sim_res_noDetQ_ic_T11</td>
+</tr>
+<tr class="odd">
+<td align="left">Ridge</td>
+<td align="left">no</td>
 <td align="left">No</td>
 <td align="left">Yes</td>
 <td align="right">-0.00014</td>
-<td align="right">1e-05</td>
-<td align="right">1e-05</td>
+<td align="right">0.00001</td>
+<td align="right">0.00001</td>
 <td align="right">-0.04208</td>
 <td align="right">94.50000</td>
+<td align="left">old_null_sim_res_ridge_ic_T11</td>
 </tr>
-<tr class="odd">
-<td align="left">LASSO</td>
+<tr class="even">
+<td align="left">Elastic Net</td>
+<td align="left">no</td>
 <td align="left">No</td>
 <td align="left">Yes</td>
 <td align="right">-0.00012</td>
-<td align="right">1e-05</td>
-<td align="right">1e-05</td>
+<td align="right">0.00001</td>
+<td align="right">0.00001</td>
 <td align="right">-0.03296</td>
 <td align="right">95.00000</td>
+<td align="left">old_null_sim_res_EN_ic_T11</td>
 </tr>
-<tr class="even">
-<td align="left">LASSO</td>
+<tr class="odd">
+<td align="left">GLM, LASSO prescreen</td>
+<td align="left">no</td>
 <td align="left">Yes</td>
 <td align="left">No</td>
 <td align="right">0.00034</td>
-<td align="right">2e-05</td>
-<td align="right">2e-05</td>
+<td align="right">0.00002</td>
+<td align="right">0.00002</td>
 <td align="right">0.07576</td>
 <td align="right">95.43147</td>
+<td align="left">old_null_sim_res_ic_Qint_noDetQ_lasso_prescreen_T11</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">LASSO</td>
+<td align="left">no</td>
 <td align="left">No</td>
 <td align="left">No</td>
 <td align="right">-0.00006</td>
-<td align="right">2e-05</td>
-<td align="right">2e-05</td>
-<td align="right">-0.01181</td>
-<td align="right">96.00000</td>
-</tr>
-<tr class="even">
-<td align="left">LASSO</td>
-<td align="left">No</td>
-<td align="left">No</td>
-<td align="right">-0.00006</td>
-<td align="right">2e-05</td>
-<td align="right">2e-05</td>
-<td align="right">-0.01181</td>
-<td align="right">96.00000</td>
-</tr>
-<tr class="odd">
-<td align="left">GLM</td>
-<td align="left">Yes</td>
-<td align="left">No</td>
-<td align="right">-0.00004</td>
-<td align="right">2e-05</td>
-<td align="right">2e-05</td>
-<td align="right">-0.00754</td>
-<td align="right">96.50000</td>
-</tr>
-<tr class="even">
-<td align="left">GLM</td>
-<td align="left">Yes</td>
-<td align="left">No</td>
-<td align="right">-0.00004</td>
-<td align="right">2e-05</td>
-<td align="right">2e-05</td>
-<td align="right">-0.00754</td>
-<td align="right">96.50000</td>
-</tr>
-<tr class="odd">
-<td align="left">LASSO</td>
-<td align="left">Yes</td>
-<td align="left">No</td>
-<td align="right">-0.00005</td>
-<td align="right">2e-05</td>
-<td align="right">2e-05</td>
-<td align="right">-0.01101</td>
-<td align="right">96.50000</td>
-</tr>
-<tr class="even">
-<td align="left">LASSO</td>
-<td align="left">Yes</td>
-<td align="left">No</td>
-<td align="right">-0.00005</td>
-<td align="right">2e-05</td>
-<td align="right">2e-05</td>
-<td align="right">-0.01101</td>
-<td align="right">96.50000</td>
-</tr>
-<tr class="odd">
-<td align="left">LASSO</td>
-<td align="left">Yes</td>
-<td align="left">No</td>
-<td align="right">-0.00005</td>
-<td align="right">2e-05</td>
-<td align="right">2e-05</td>
-<td align="right">-0.01101</td>
-<td align="right">96.50000</td>
-</tr>
-<tr class="even">
-<td align="left">LASSO</td>
-<td align="left">Yes</td>
-<td align="left">No</td>
-<td align="right">-0.00005</td>
-<td align="right">2e-05</td>
-<td align="right">2e-05</td>
-<td align="right">-0.01101</td>
-<td align="right">96.50000</td>
-</tr>
-<tr class="odd">
-<td align="left">LASSO</td>
-<td align="left">No</td>
-<td align="left">No</td>
-<td align="right">-0.00006</td>
-<td align="right">2e-05</td>
-<td align="right">2e-05</td>
+<td align="right">0.00002</td>
+<td align="right">0.00002</td>
 <td align="right">-0.01158</td>
 <td align="right">96.50000</td>
+<td align="left">old_null_sim_res_noDetQ_tmle_T11</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">LASSO</td>
+<td align="left">yes</td>
 <td align="left">No</td>
 <td align="left">No</td>
 <td align="right">-0.00006</td>
-<td align="right">2e-05</td>
-<td align="right">2e-05</td>
+<td align="right">0.00002</td>
+<td align="right">0.00002</td>
 <td align="right">-0.01158</td>
 <td align="right">96.50000</td>
-</tr>
-<tr class="odd">
-<td align="left">GLM</td>
-<td align="left">No</td>
-<td align="left">Yes</td>
-<td align="right">0.00061</td>
-<td align="right">3e-05</td>
-<td align="right">3e-05</td>
-<td align="right">0.10875</td>
-<td align="right">97.00000</td>
+<td align="left">old_null_sim_res_noDetQ_tmle_T11_iptw</td>
 </tr>
 <tr class="even">
 <td align="left">GLM</td>
-<td align="left">No</td>
-<td align="left">Yes</td>
-<td align="right">0.00061</td>
-<td align="right">3e-05</td>
-<td align="right">3e-05</td>
-<td align="right">0.10875</td>
-<td align="right">97.00000</td>
-</tr>
-<tr class="odd">
-<td align="left">GLM</td>
+<td align="left">no</td>
 <td align="left">No</td>
 <td align="left">No</td>
-<td align="right">0.00103</td>
-<td align="right">9e-05</td>
-<td align="right">9e-05</td>
-<td align="right">0.10823</td>
-<td align="right">98.00000</td>
-</tr>
-<tr class="even">
-<td align="left">GLM</td>
-<td align="left">No</td>
-<td align="left">No</td>
-<td align="right">0.00103</td>
-<td align="right">9e-05</td>
-<td align="right">9e-05</td>
-<td align="right">0.10823</td>
-<td align="right">98.00000</td>
-</tr>
-<tr class="odd">
-<td align="left">GLM</td>
-<td align="left">No</td>
-<td align="left">No</td>
-<td align="right">0.00103</td>
-<td align="right">9e-05</td>
-<td align="right">9e-05</td>
-<td align="right">0.10823</td>
-<td align="right">98.00000</td>
-</tr>
-<tr class="even">
-<td align="left">GLM</td>
-<td align="left">No</td>
-<td align="left">No</td>
-<td align="right">0.00103</td>
-<td align="right">9e-05</td>
-<td align="right">9e-05</td>
-<td align="right">0.10823</td>
-<td align="right">98.00000</td>
-</tr>
-<tr class="odd">
-<td align="left">LASSO</td>
-<td align="left">No</td>
-<td align="left">Yes</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-</tr>
-<tr class="even">
-<td align="left">LASSO</td>
-<td align="left">No</td>
-<td align="left">Yes</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
+<td align="right">0.00217</td>
+<td align="right">0.00028</td>
+<td align="right">0.00028</td>
+<td align="right">0.13056</td>
+<td align="right">99.00000</td>
+<td align="left">old_null_sim_res_noDetQ_ic_glm_T11</td>
 </tr>
 </tbody>
 </table>
+<pre><code>## % latex table generated in R 4.0.4 by xtable 1.8-4 package
+## % Mon Apr 24 20:09:40 2023
+##  Random Forest &amp; no &amp; No &amp; Yes &amp; -0.00 &amp; 0.00 &amp; 0.00 &amp; -3.10 &amp; 12.00 &amp; old_null_sim_res_rf_ic_T11 \\ 
+##   LASSO &amp; yes &amp; Yes &amp; No &amp; 0.00 &amp; 0.00 &amp; 0.00 &amp; 0.38 &amp; 91.00 &amp; old_null_sim_res_noDetQ_Qint_ic_T11_iptw \\ 
+##   LASSO &amp; yes &amp; No &amp; No &amp; 0.00 &amp; 0.00 &amp; 0.00 &amp; 0.38 &amp; 91.00 &amp; old_null_sim_res_noDetQ_ic_T11_iptw \\ 
+##   GLM &amp; yes &amp; No &amp; No &amp; 0.00 &amp; 0.00 &amp; 0.00 &amp; 0.41 &amp; 91.00 &amp; old_null_sim_res_noDetQ_ic_glm_T11_iptw \\ 
+##   GLM, LASSO prescreen &amp; yes &amp; Yes &amp; No &amp; 0.00 &amp; 0.00 &amp; 0.00 &amp; 0.40 &amp; 91.88 &amp; old_null_sim_res_ic_Qint_noDetQ_lasso_prescreen_T11_iptw \\ 
+##   Elastic Net &amp; yes &amp; No &amp; Yes &amp; 0.00 &amp; 0.00 &amp; 0.00 &amp; 0.26 &amp; 92.00 &amp; old_null_sim_res_EN_ic_T11_iptw \\ 
+##   Random Forest &amp; yes &amp; No &amp; Yes &amp; 0.00 &amp; 0.00 &amp; 0.00 &amp; 0.47 &amp; 92.50 &amp; old_null_sim_res_rf_ic_T11_iptw \\ 
+##   Ridge &amp; yes &amp; No &amp; Yes &amp; 0.00 &amp; 0.00 &amp; 0.00 &amp; 0.23 &amp; 94.00 &amp; old_null_sim_res_ridge_ic_T11_iptw \\ 
+##   LASSO &amp; no &amp; Yes &amp; No &amp; -0.00 &amp; 0.00 &amp; 0.00 &amp; -0.01 &amp; 94.50 &amp; old_null_sim_res_noDetQ_Qint_ic_T11 \\ 
+##    \rowcolor{green!20!white}LASSO &amp; no &amp; No &amp; No &amp; -0.00 &amp; 0.00 &amp; 0.00 &amp; -0.01 &amp; 94.50 &amp; old_null_sim_res_noDetQ_ic_T11 \\ 
+##   Ridge &amp; no &amp; No &amp; Yes &amp; -0.00 &amp; 0.00 &amp; 0.00 &amp; -0.04 &amp; 94.50 &amp; old_null_sim_res_ridge_ic_T11 \\ 
+##   Elastic Net &amp; no &amp; No &amp; Yes &amp; -0.00 &amp; 0.00 &amp; 0.00 &amp; -0.03 &amp; 95.00 &amp; old_null_sim_res_EN_ic_T11 \\ 
+##   GLM, LASSO prescreen &amp; no &amp; Yes &amp; No &amp; 0.00 &amp; 0.00 &amp; 0.00 &amp; 0.08 &amp; 95.43 &amp; old_null_sim_res_ic_Qint_noDetQ_lasso_prescreen_T11 \\ 
+##   LASSO &amp; no &amp; No &amp; No &amp; -0.00 &amp; 0.00 &amp; 0.00 &amp; -0.01 &amp; 96.50 &amp; old_null_sim_res_noDetQ_tmle_T11 \\ 
+##   LASSO &amp; yes &amp; No &amp; No &amp; -0.00 &amp; 0.00 &amp; 0.00 &amp; -0.01 &amp; 96.50 &amp; old_null_sim_res_noDetQ_tmle_T11_iptw \\ 
+##   GLM &amp; no &amp; No &amp; No &amp; 0.00 &amp; 0.00 &amp; 0.00 &amp; 0.13 &amp; 99.00 &amp; old_null_sim_res_noDetQ_ic_glm_T11 \\ 
+## </code></pre>
 <div id="performance-of-difference-variance-estimators-on-null-data" class="section level2">
 <h2>Performance of difference variance estimators on null data</h2>
 <p><strong>Notes:</strong></p>
@@ -697,43 +626,56 @@ of the bootstrap.</li>
 intervals in all simulations (not shown).</li>
 </ul>
 <table>
+<colgroup>
+<col width="27%" />
+<col width="10%" />
+<col width="16%" />
+<col width="45%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th align="left">variance_estimator</th>
 <th align="right">coverage</th>
 <th align="right">mean_ci_width</th>
+<th align="left">filenames</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left">ic</td>
-<td align="right">51.0</td>
-<td align="right">0.00722</td>
+<td align="right">28.0</td>
+<td align="right">0.00203</td>
+<td align="left">old_null_sim_res_noDetQ_ic_T11_iptw</td>
 </tr>
 <tr class="even">
 <td align="left">ic</td>
-<td align="right">51.0</td>
-<td align="right">0.00722</td>
+<td align="right">31.5</td>
+<td align="right">0.00294</td>
+<td align="left">old_null_sim_res_noDetQ_ic_T11</td>
 </tr>
 <tr class="odd">
 <td align="left">tmle</td>
 <td align="right">100.0</td>
 <td align="right">0.11535</td>
+<td align="left">old_null_sim_res_noDetQ_tmle_T11</td>
 </tr>
 <tr class="even">
 <td align="left">tmle</td>
 <td align="right">100.0</td>
 <td align="right">0.11535</td>
+<td align="left">old_null_sim_res_noDetQ_tmle_T11_iptw</td>
 </tr>
 <tr class="odd">
 <td align="left">bootstrap</td>
 <td align="right">91.5</td>
 <td align="right">0.01288</td>
+<td align="left">bootstrap</td>
 </tr>
 <tr class="even">
 <td align="left">bootstrap-clustered ID</td>
 <td align="right">100.0</td>
 <td align="right">0.02023</td>
+<td align="left">bootstrap_iptw-IPTW</td>
 </tr>
 </tbody>
 </table>
@@ -761,133 +703,340 @@ bias/variance, so we should use in the bootstrap estimator</li>
 <h3>Risk difference</h3>
 <table>
 <colgroup>
-<col width="42%" />
+<col width="35%" />
+<col width="4%" />
+<col width="8%" />
+<col width="7%" />
+<col width="6%" />
 <col width="13%" />
-<col width="12%" />
-<col width="10%" />
-<col width="21%" />
+<col width="23%" />
 </colgroup>
 <thead>
 <tr class="header">
 <th align="left">estimator</th>
+<th align="left">iptw</th>
 <th align="right">bias</th>
 <th align="right">variance</th>
 <th align="right">mse</th>
 <th align="right">oracle.coverage</th>
+<th align="left">filenames</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">LASSO, Det-Q, AUC fit</td>
-<td align="right">-0.002080</td>
-<td align="right">6.0e-06</td>
-<td align="right">1.0e-05</td>
-<td align="right">84.50000</td>
-</tr>
-<tr class="even">
-<td align="left">LASSO, Lambda: 1se</td>
-<td align="right">-0.001631</td>
-<td align="right">1.0e-05</td>
-<td align="right">1.3e-05</td>
-<td align="right">91.50000</td>
-</tr>
-<tr class="odd">
-<td align="left">Elastic Net, Lambda: 1se</td>
-<td align="right">-0.001450</td>
-<td align="right">9.0e-06</td>
-<td align="right">1.2e-05</td>
-<td align="right">92.00000</td>
-</tr>
-<tr class="even">
-<td align="left">GLM, LASSO prescreen</td>
-<td align="right">0.002793</td>
-<td align="right">4.9e-05</td>
-<td align="right">5.7e-05</td>
-<td align="right">92.78351</td>
-</tr>
-<tr class="odd">
 <td align="left">LASSO, Q-intercept</td>
-<td align="right">-0.001583</td>
-<td align="right">1.1e-05</td>
-<td align="right">1.3e-05</td>
-<td align="right">93.00000</td>
+<td align="left">yes</td>
+<td align="right">0.005853</td>
+<td align="right">6.0e-06</td>
+<td align="right">4.1e-05</td>
+<td align="right">37.5</td>
+<td align="left">sim_res_noDetQ_Qint_ic_iptw</td>
 </tr>
 <tr class="even">
-<td align="left">LASSO, Det-Q, Lambda: 1se</td>
-<td align="right">-0.001109</td>
-<td align="right">8.0e-06</td>
-<td align="right">9.0e-06</td>
-<td align="right">93.50000</td>
+<td align="left">LASSO</td>
+<td align="left">yes</td>
+<td align="right">0.005853</td>
+<td align="right">6.0e-06</td>
+<td align="right">4.1e-05</td>
+<td align="right">37.5</td>
+<td align="left">sim_res_noDetQ_ic_v2_iptw</td>
 </tr>
 <tr class="odd">
-<td align="left">GLM</td>
-<td align="right">0.002819</td>
-<td align="right">5.6e-05</td>
-<td align="right">6.4e-05</td>
-<td align="right">93.50000</td>
+<td align="left">Ridge, AUC fit</td>
+<td align="left">yes</td>
+<td align="right">0.003943</td>
+<td align="right">5.0e-06</td>
+<td align="right">2.0e-05</td>
+<td align="right">53.5</td>
+<td align="left">sim_res_ridge_AUC_iptw</td>
 </tr>
 <tr class="even">
-<td align="left">GLM, LASSO prescreen, Det-Q</td>
-<td align="right">0.002795</td>
-<td align="right">5.1e-05</td>
-<td align="right">5.9e-05</td>
-<td align="right">93.87755</td>
+<td align="left">LASSO, Lambda: 1se, AUC fit</td>
+<td align="left">yes</td>
+<td align="right">0.003287</td>
+<td align="right">5.0e-06</td>
+<td align="right">1.5e-05</td>
+<td align="right">68.5</td>
+<td align="left">sim_res_AUC_1se_iptw</td>
 </tr>
 <tr class="odd">
-<td align="left">Ridge, Det-Q</td>
-<td align="right">0.000446</td>
-<td align="right">1.1e-05</td>
-<td align="right">1.1e-05</td>
-<td align="right">94.00000</td>
-</tr>
-<tr class="even">
-<td align="left">Elastic Net, Det-Q, Lambda: 1se</td>
-<td align="right">-0.000899</td>
-<td align="right">8.0e-06</td>
-<td align="right">8.0e-06</td>
-<td align="right">94.50000</td>
-</tr>
-<tr class="odd">
-<td align="left">LASSO, Det-Q</td>
-<td align="right">0.000267</td>
-<td align="right">1.4e-05</td>
-<td align="right">1.4e-05</td>
-<td align="right">94.50000</td>
-</tr>
-<tr class="even">
-<td align="left">Ridge, Lambda: 1se</td>
-<td align="right">-0.000978</td>
-<td align="right">8.0e-06</td>
-<td align="right">9.0e-06</td>
-<td align="right">94.50000</td>
-</tr>
-<tr class="odd">
-<td align="left">Ridge</td>
-<td align="right">-0.000118</td>
-<td align="right">1.3e-05</td>
-<td align="right">1.3e-05</td>
-<td align="right">94.50000</td>
+<td align="left">LASSO, Q-intercept, Lambda: 1se, AUC fit</td>
+<td align="left">yes</td>
+<td align="right">0.003287</td>
+<td align="right">5.0e-06</td>
+<td align="right">1.5e-05</td>
+<td align="right">68.5</td>
+<td align="left">sim_res_Qint_AUC_1se_iptw</td>
 </tr>
 <tr class="even">
 <td align="left">LASSO, AUC fit</td>
-<td align="right">-0.001365</td>
-<td align="right">1.2e-05</td>
+<td align="left">yes</td>
+<td align="right">0.003585</td>
+<td align="right">6.0e-06</td>
+<td align="right">1.9e-05</td>
+<td align="right">71.5</td>
+<td align="left">sim_res_AUC_iptw</td>
+</tr>
+<tr class="odd">
+<td align="left">LASSO, Q-intercept, AUC fit</td>
+<td align="left">yes</td>
+<td align="right">0.003585</td>
+<td align="right">6.0e-06</td>
+<td align="right">1.9e-05</td>
+<td align="right">71.5</td>
+<td align="left">sim_res_Qint_AUC_iptw</td>
+</tr>
+<tr class="even">
+<td align="left">Ridge</td>
+<td align="left">yes</td>
+<td align="right">0.003830</td>
+<td align="right">6.0e-06</td>
+<td align="right">2.1e-05</td>
+<td align="right">71.5</td>
+<td align="left">sim_res_ridge_iptw</td>
+</tr>
+<tr class="odd">
+<td align="left">Ridge, AUC fit</td>
+<td align="left">no</td>
+<td align="right">-0.002833</td>
+<td align="right">6.0e-06</td>
 <td align="right">1.4e-05</td>
-<td align="right">95.00000</td>
+<td align="right">76.5</td>
+<td align="left">sim_res_ridge_AUC</td>
+</tr>
+<tr class="even">
+<td align="left">LASSO, Lambda: 1se</td>
+<td align="left">yes</td>
+<td align="right">0.003240</td>
+<td align="right">6.0e-06</td>
+<td align="right">1.6e-05</td>
+<td align="right">77.5</td>
+<td align="left">sim_res_1se_iptw</td>
+</tr>
+<tr class="odd">
+<td align="left">LASSO, Q-intercept, Lambda: 1se</td>
+<td align="left">yes</td>
+<td align="right">0.003240</td>
+<td align="right">6.0e-06</td>
+<td align="right">1.6e-05</td>
+<td align="right">77.5</td>
+<td align="left">sim_res_Qint_1se_iptw</td>
+</tr>
+<tr class="even">
+<td align="left">LASSO, Lambda: 1se, AUC fit</td>
+<td align="left">no</td>
+<td align="right">-0.002824</td>
+<td align="right">6.0e-06</td>
+<td align="right">1.4e-05</td>
+<td align="right">78.0</td>
+<td align="left">sim_res_AUC_1se</td>
+</tr>
+<tr class="odd">
+<td align="left">LASSO, Q-intercept, Lambda: 1se, AUC fit</td>
+<td align="left">no</td>
+<td align="right">-0.002824</td>
+<td align="right">6.0e-06</td>
+<td align="right">1.4e-05</td>
+<td align="right">78.0</td>
+<td align="left">sim_res_Qint_AUC_1se</td>
+</tr>
+<tr class="even">
+<td align="left">LASSO, AUC fit</td>
+<td align="left">no</td>
+<td align="right">-0.002860</td>
+<td align="right">8.0e-06</td>
+<td align="right">1.6e-05</td>
+<td align="right">81.0</td>
+<td align="left">sim_res_AUC</td>
+</tr>
+<tr class="odd">
+<td align="left">LASSO, Q-intercept, AUC fit</td>
+<td align="left">no</td>
+<td align="right">-0.002860</td>
+<td align="right">8.0e-06</td>
+<td align="right">1.6e-05</td>
+<td align="right">81.0</td>
+<td align="left">sim_res_Qint_AUC</td>
+</tr>
+<tr class="even">
+<td align="left">Random Forest</td>
+<td align="left">yes</td>
+<td align="right">0.002300</td>
+<td align="right">5.0e-06</td>
+<td align="right">1.0e-05</td>
+<td align="right">84.0</td>
+<td align="left">sim_res_rf_iptw</td>
+</tr>
+<tr class="odd">
+<td align="left">LASSO, Det-Q</td>
+<td align="left">yes</td>
+<td align="right">0.003485</td>
+<td align="right">9.0e-06</td>
+<td align="right">2.1e-05</td>
+<td align="right">85.0</td>
+<td align="left">sim_res_DetQ_ic_v2_iptw</td>
+</tr>
+<tr class="even">
+<td align="left">Elastic Net</td>
+<td align="left">yes</td>
+<td align="right">0.003509</td>
+<td align="right">9.0e-06</td>
+<td align="right">2.1e-05</td>
+<td align="right">85.0</td>
+<td align="left">sim_res_EN_iptw</td>
+</tr>
+<tr class="odd">
+<td align="left">Elastic Net, Q-intercept</td>
+<td align="left">yes</td>
+<td align="right">0.003509</td>
+<td align="right">9.0e-06</td>
+<td align="right">2.1e-05</td>
+<td align="right">85.0</td>
+<td align="left">sim_res_Qint_EN_iptw</td>
+</tr>
+<tr class="even">
+<td align="left">LASSO, Q-intercept</td>
+<td align="left">yes</td>
+<td align="right">0.003485</td>
+<td align="right">9.0e-06</td>
+<td align="right">2.1e-05</td>
+<td align="right">85.0</td>
+<td align="left">sim_res_Qint_ic_iptw</td>
 </tr>
 <tr class="odd">
 <td align="left">LASSO</td>
-<td align="right">-0.000265</td>
-<td align="right">1.7e-05</td>
-<td align="right">1.7e-05</td>
-<td align="right">95.00000</td>
+<td align="left">yes</td>
+<td align="right">0.003485</td>
+<td align="right">9.0e-06</td>
+<td align="right">2.1e-05</td>
+<td align="right">85.0</td>
+<td align="left">sim_res_ic_iptw</td>
 </tr>
 <tr class="even">
-<td align="left">Ridge, Det-Q, Lambda: 1se</td>
-<td align="right">-0.000536</td>
-<td align="right">6.0e-06</td>
-<td align="right">7.0e-06</td>
-<td align="right">95.50000</td>
+<td align="left">GLM</td>
+<td align="left">yes</td>
+<td align="right">0.003525</td>
+<td align="right">9.0e-06</td>
+<td align="right">2.1e-05</td>
+<td align="right">87.5</td>
+<td align="left">sim_res_glm_ic_iptw</td>
+</tr>
+<tr class="odd">
+<td align="left">LASSO, Lambda: 1se</td>
+<td align="left">no</td>
+<td align="right">-0.002463</td>
+<td align="right">9.0e-06</td>
+<td align="right">1.5e-05</td>
+<td align="right">89.5</td>
+<td align="left">sim_res_1se</td>
+</tr>
+<tr class="even">
+<td align="left">LASSO, Q-intercept, Lambda: 1se</td>
+<td align="left">no</td>
+<td align="right">-0.002463</td>
+<td align="right">9.0e-06</td>
+<td align="right">1.5e-05</td>
+<td align="right">89.5</td>
+<td align="left">sim_res_Qint_1se</td>
+</tr>
+<tr class="odd">
+<td align="left">Elastic Net</td>
+<td align="left">no</td>
+<td align="right">-0.002305</td>
+<td align="right">1.4e-05</td>
+<td align="right">1.9e-05</td>
+<td align="right">92.0</td>
+<td align="left">sim_res_EN</td>
+</tr>
+<tr class="even">
+<td align="left">Elastic Net, Q-intercept</td>
+<td align="left">no</td>
+<td align="right">-0.002305</td>
+<td align="right">1.4e-05</td>
+<td align="right">1.9e-05</td>
+<td align="right">92.0</td>
+<td align="left">sim_res_Qint_EN</td>
+</tr>
+<tr class="odd">
+<td align="left">GLM</td>
+<td align="left">no</td>
+<td align="right">0.002048</td>
+<td align="right">6.4e-05</td>
+<td align="right">6.8e-05</td>
+<td align="right">93.0</td>
+<td align="left">sim_res_glm_ic</td>
+</tr>
+<tr class="even">
+<td align="left">LASSO, Det-Q</td>
+<td align="left">no</td>
+<td align="right">-0.000271</td>
+<td align="right">2.1e-05</td>
+<td align="right">2.1e-05</td>
+<td align="right">94.0</td>
+<td align="left">sim_res_DetQ_ic_v2</td>
+</tr>
+<tr class="odd">
+<td align="left">LASSO, Q-intercept</td>
+<td align="left">no</td>
+<td align="right">-0.000271</td>
+<td align="right">2.1e-05</td>
+<td align="right">2.1e-05</td>
+<td align="right">94.0</td>
+<td align="left">sim_res_Qint_ic</td>
+</tr>
+<tr class="even">
+<td align="left">LASSO</td>
+<td align="left">no</td>
+<td align="right">-0.000271</td>
+<td align="right">2.1e-05</td>
+<td align="right">2.1e-05</td>
+<td align="right">94.0</td>
+<td align="left">sim_res_ic</td>
+</tr>
+<tr class="odd">
+<td align="left">LASSO, Q-intercept</td>
+<td align="left">no</td>
+<td align="right">-0.000766</td>
+<td align="right">2.5e-05</td>
+<td align="right">2.5e-05</td>
+<td align="right">94.0</td>
+<td align="left">sim_res_noDetQ_Qint_ic</td>
+</tr>
+<tr class="even">
+<td align="left">LASSO</td>
+<td align="left">no</td>
+<td align="right">-0.000766</td>
+<td align="right">2.5e-05</td>
+<td align="right">2.5e-05</td>
+<td align="right">94.0</td>
+<td align="left">sim_res_noDetQ_ic_v2</td>
+</tr>
+<tr class="odd">
+<td align="left">LASSO, Q-intercept</td>
+<td align="left">no</td>
+<td align="right">-0.000744</td>
+<td align="right">2.6e-05</td>
+<td align="right">2.6e-05</td>
+<td align="right">94.5</td>
+<td align="left">sim_res_noDetQ_Qint_tmle</td>
+</tr>
+<tr class="even">
+<td align="left">Ridge</td>
+<td align="left">no</td>
+<td align="right">0.000039</td>
+<td align="right">1.5e-05</td>
+<td align="right">1.5e-05</td>
+<td align="right">94.5</td>
+<td align="left">sim_res_ridge</td>
+</tr>
+<tr class="odd">
+<td align="left">Random Forest</td>
+<td align="left">no</td>
+<td align="right">-0.000036</td>
+<td align="right">2.0e-06</td>
+<td align="right">2.0e-06</td>
+<td align="right">95.5</td>
+<td align="left">sim_res_rf</td>
 </tr>
 </tbody>
 </table>
@@ -910,10 +1059,11 @@ intervals in all simulations (not shown)</li>
 <h3>Risk difference coverage</h3>
 <table>
 <colgroup>
-<col width="47%" />
-<col width="10%" />
-<col width="15%" />
-<col width="6%" />
+<col width="37%" />
+<col width="8%" />
+<col width="12%" />
+<col width="5%" />
+<col width="16%" />
 <col width="20%" />
 </colgroup>
 <thead>
@@ -923,29 +1073,49 @@ intervals in all simulations (not shown)</li>
 <th align="right">mean_ci_width</th>
 <th align="right">power</th>
 <th align="right">bias_se_ratio_emp</th>
+<th align="left">filenames</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left">ic, Det-Q</td>
-<td align="right">67.0</td>
-<td align="right">0.00736</td>
-<td align="right">92.0</td>
-<td align="right">0.14223</td>
+<td align="right">41.0</td>
+<td align="right">0.00522</td>
+<td align="right">95.0</td>
+<td align="right">-0.20338</td>
+<td align="left">sim_res_DetQ_ic_v2</td>
 </tr>
 <tr class="even">
-<td align="left">tmle</td>
-<td align="right">99.5</td>
-<td align="right">0.02129</td>
-<td align="right">49.0</td>
-<td align="right">-0.05020</td>
+<td align="left">NA</td>
+<td align="right">41.0</td>
+<td align="right">0.00522</td>
+<td align="right">95.0</td>
+<td align="right">-0.20338</td>
+<td align="left">sim_res_ic</td>
 </tr>
 <tr class="odd">
 <td align="left">ic</td>
-<td align="right">62.0</td>
-<td align="right">0.00737</td>
-<td align="right">91.0</td>
-<td align="right">-0.14089</td>
+<td align="right">36.5</td>
+<td align="right">0.00523</td>
+<td align="right">96.0</td>
+<td align="right">-0.57351</td>
+<td align="left">sim_res_noDetQ_ic_v2</td>
+</tr>
+<tr class="even">
+<td align="left">tmle</td>
+<td align="right">90.0</td>
+<td align="right">0.01751</td>
+<td align="right">68.5</td>
+<td align="right">-0.16649</td>
+<td align="left">sim_res_noDetQ_tmle_v2</td>
+</tr>
+<tr class="odd">
+<td align="left">NA</td>
+<td align="right">46.5</td>
+<td align="right">0.00144</td>
+<td align="right">100.0</td>
+<td align="right">-0.09835</td>
+<td align="left">sim_res_rf</td>
 </tr>
 <tr class="even">
 <td align="left">Bootstrap, Det Q function</td>
@@ -953,6 +1123,7 @@ intervals in all simulations (not shown)</li>
 <td align="right">0.01346</td>
 <td align="right">68.5</td>
 <td align="right">NA</td>
+<td align="left">DetQ</td>
 </tr>
 <tr class="odd">
 <td align="left">Bootstrap, Det Q function, 500 iterations</td>
@@ -960,6 +1131,7 @@ intervals in all simulations (not shown)</li>
 <td align="right">0.01338</td>
 <td align="right">69.5</td>
 <td align="right">NA</td>
+<td align="left">DetQ, 500 iter</td>
 </tr>
 <tr class="even">
 <td align="left">Bootstrap-Ridge</td>
@@ -967,6 +1139,7 @@ intervals in all simulations (not shown)</li>
 <td align="right">0.01289</td>
 <td align="right">72.0</td>
 <td align="right">NA</td>
+<td align="left">Ridge</td>
 </tr>
 <tr class="odd">
 <td align="left">Bootstrap</td>
@@ -974,6 +1147,7 @@ intervals in all simulations (not shown)</li>
 <td align="right">0.01454</td>
 <td align="right">68.5</td>
 <td align="right">NA</td>
+<td align="left">no DetQ</td>
 </tr>
 <tr class="even">
 <td align="left">Bootstrap- IPTW</td>
@@ -981,6 +1155,7 @@ intervals in all simulations (not shown)</li>
 <td align="right">0.02341</td>
 <td align="right">0.0</td>
 <td align="right">NA</td>
+<td align="left">no DetQ_iptw-IPTW</td>
 </tr>
 </tbody>
 </table>

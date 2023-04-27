@@ -1,0 +1,34 @@
+
+\begin{longtable}[l]{lllllllll}
+\toprule
+Estimator & Method & Q-int & Det. Q & Bias & Variance & mse & Bias/SE & Oracle coverage\\
+\midrule
+Elastic Net & IPTW & No & Yes & 0.003509 & 9.0e-06 & 2.1e-05 & 1.196808 & 85.0\\
+Elastic Net & TMLE & No & Yes & -0.002305 & 1.4e-05 & 1.9e-05 & -0.620157 & 92.0\\
+Elastic Net & IPTW & Yes & Yes & 0.003509 & 9.0e-06 & 2.1e-05 & 1.196808 & 85.0\\
+Elastic Net & TMLE & Yes & Yes & -0.002305 & 1.4e-05 & 1.9e-05 & -0.620157 & 92.0\\
+GLM & IPTW & No & Yes & 0.003525 & 9.0e-06 & 2.1e-05 & 1.171211 & 87.5\\
+GLM & TMLE & No & Yes & 0.002048 & 6.4e-05 & 6.8e-05 & 0.256147 & 93.0\\
+LASSO & IPTW & No & No & 0.005853 & 6.0e-06 & 4.1e-05 & 2.309559 & 37.5\\
+LASSO & TMLE & No & No & -0.000766 & 2.5e-05 & 2.5e-05 & -0.153535 & 94.0\\
+LASSO & IPTW & No & Yes & 0.003485 & 9.0e-06 & 2.1e-05 & 1.185158 & 85.0\\
+\midrule
+\textbf{LASSO} & \textbf{TMLE} & \textbf{No} & \textbf{Yes} & \textbf{0.000267} & \textbf{1.4e-05} & \textbf{1.4e-05} & \textbf{0.070843} & \textbf{94.5}\\
+\midrule
+LASSO & IPTW & Yes & No & 0.005853 & 6.0e-06 & 4.1e-05 & 2.309559 & 37.5\\
+LASSO & TMLE & Yes & No & -0.000766 & 2.5e-05 & 2.5e-05 & -0.153535 & 94.0\\
+LASSO & IPTW & Yes & Yes & 0.003485 & 9.0e-06 & 2.1e-05 & 1.185158 & 85.0\\
+LASSO, AUC fit & IPTW & No & Yes & 0.003585 & 6.0e-06 & 1.9e-05 & 1.431366 & 71.5\\
+LASSO, AUC fit & TMLE & No & Yes & -0.002860 & 8.0e-06 & 1.6e-05 & -1.009325 & 81.0\\
+LASSO, AUC fit & IPTW & Yes & Yes & 0.003585 & 6.0e-06 & 1.9e-05 & 1.431366 & 71.5\\
+LASSO, AUC fit & TMLE & Yes & Yes & -0.002860 & 8.0e-06 & 1.6e-05 & -1.009325 & 81.0\\
+LASSO, Lambda: 1se & IPTW & No & Yes & 0.003240 & 6.0e-06 & 1.6e-05 & 1.357844 & 77.5\\
+LASSO, Lambda: 1se & TMLE & No & Yes & -0.002463 & 9.0e-06 & 1.5e-05 & -0.802549 & 89.5\\
+LASSO, Lambda: 1se & IPTW & Yes & Yes & 0.003240 & 6.0e-06 & 1.6e-05 & 1.357844 & 77.5\\
+LASSO, Lambda: 1se & TMLE & Yes & Yes & -0.002463 & 9.0e-06 & 1.5e-05 & -0.802549 & 89.5\\
+Ridge & IPTW & No & Yes & 0.003830 & 6.0e-06 & 2.1e-05 & 1.521015 & 71.5\\
+Ridge & TMLE & No & Yes & 0.000446 & 1.1e-05 & 1.1e-05 & 0.134349 & 94.0\\
+Ridge, AUC fit & IPTW & No & Yes & 0.003943 & 5.0e-06 & 2.0e-05 & 1.802503 & 53.5\\
+Ridge, AUC fit & TMLE & No & Yes & -0.002833 & 6.0e-06 & 1.4e-05 & -1.174903 & 76.5\\
+\bottomrule
+\end{longtable}
