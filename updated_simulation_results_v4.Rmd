@@ -28,6 +28,14 @@ library(kableExtra)
 ```
 
 
+# To do:
+
+  - Figure out why Qint and no Qint LASSO are equal and fix
+  - Highlight DetQ lasso for both
+  - Update the protective table caption on the
+
+
+
 To change in organization
 cgnage method to "Estimator" and put as first column
 change estimator to "algorithm" and put as second column
@@ -52,8 +60,8 @@ True RD: 0
 #Set Qint to NA if IPTW
 res_null_diff$Qint[res_null_diff$iptw=="IPTW"] <- "NA"
 
-#Set DetQ to NA if IPTW
-#res_null_diff$DetQ[res_null_diff$iptw=="IPTW"] <- "NA"
+#Set DetQ to NA if IPTW and drop duplicates
+res_null_diff$DetQ[res_null_diff$iptw=="IPTW"] <- "NA"
 
 
 
@@ -67,6 +75,8 @@ res_null_diff_coverage <- res_null_diff %>%
   # filter(filenames %in% c("old_null_sim_res_noDetQ_ic_T11","old_null_sim_res_noDetQ_Qint_ic_T11","old_null_sim_res_ic_glm_T11","old_null_sim_res_noDetQ_ic_glm_T11","old_null_sim_res_Qint_noDetQ_glm_tmle_T11")) %>%
   select(filenames, estimator, iptw, Qint, DetQ,bias,variance,mse,bias_se_ratio,o.coverage, ) %>% rename(oracle.coverage=o.coverage)
 
+#drop duplicate filenames
+res_null_diff_coverage <- res_null_diff_coverage %>% filter(!filenames %in% c("noDetQ_ic_T11","noDetQ_ic_glm_T11_iptw","noDetQ_tmle_T11_iptw","noDetQ_Qint_ic_T11_iptw","noDetQ_Qint_tmle_T11"))
 
 
 res_null_diff_coverage$estimator <- "LASSO"
@@ -75,8 +85,8 @@ res_null_diff_coverage$estimator[grepl("glm",res_null_diff_coverage$filenames)] 
 res_null_diff_coverage$estimator[grepl("ridge",res_null_diff_coverage$filenames)] <- "Ridge"
 res_null_diff_coverage$estimator[grepl("EN",res_null_diff_coverage$filenames)] <- "Elastic Net"
 res_null_diff_coverage$estimator[grepl("lasso_prescreen",res_null_diff_coverage$filenames)] <- "GLM, LASSO prescreen"
-res_null_diff_coverage$estimator[grepl("_DetQ",res_null_diff_coverage$filenames)] <- paste0(res_null_diff_coverage$estimator[grepl("_DetQ",res_null_diff_coverage$filenames)],", Det-Q")
-res_null_diff_coverage$estimator[grepl("_detQ",res_null_diff_coverage$filenames)] <- paste0(res_null_diff_coverage$estimator[grepl("_detQ",res_null_diff_coverage$filenames)],", Det-Q")
+# res_null_diff_coverage$estimator[grepl("_DetQ",res_null_diff_coverage$filenames)] <- paste0(res_null_diff_coverage$estimator[grepl("_DetQ",res_null_diff_coverage$filenames)],", Det-Q")
+# res_null_diff_coverage$estimator[grepl("_detQ",res_null_diff_coverage$filenames)] <- paste0(res_null_diff_coverage$estimator[grepl("_detQ",res_null_diff_coverage$filenames)],", Det-Q")
 
 
 res_null_table <- res_null_diff_coverage  %>%
@@ -86,10 +96,12 @@ res_null_table <- res_null_diff_coverage  %>%
 # identify index of rows to highlight
   row.i.1 <- which(res_null_table$filenames=="noDetQ_ic_T11")
   
-res_null_table <- res_null_table %>% select(filenames, estimator, iptw, Qint, DetQ,bias,variance,mse,bias_se_ratio,oracle.coverage) %>%
-                  rename(Estimator=estimator,  `Q-int`=Qint, `Det. Q`=DetQ, Method=iptw, `Bias/SE`=bias_se_ratio,
+res_null_table <- res_null_table %>% select(filenames, iptw, estimator, Qint, DetQ,bias,variance,
+                                            #mse,
+                                            bias_se_ratio,oracle.coverage) %>%
+                  arrange(iptw, estimator,  Qint, DetQ,  bias, variance) %>%
+                  rename(`Estimation method`=estimator,  `Q-int`=Qint, `Det. Q`=DetQ, Estimator=iptw, `Bias/SE`=bias_se_ratio,
                          Bias=bias, Variance=variance, `Oracle coverage`=oracle.coverage)
-
 
 knitr::kable(res_null_table)
 
@@ -118,32 +130,6 @@ save_kable(res_null_xtable, file="C:/Users/andre/Documents/jici/diab-dementia-se
 ```
 
   
-## Performance of difference variance estimators on null data
-
-**Notes:**
-  
-  * Only showing LASSO estimator results-all estimator performances assessed in the realistic simulated data below.
-  * Sanity-check on estimation performance on data with a known null association between GLP1 and dementia.
-  * The IC variance estimator is anti-conservative and the TMLE variance estimator is conservative.
-  * The bootstrap is anti-conservative but less so than the IC variance estimator.
-  * The TMLE estimator is very conservative, with CI widths 8-10X that of the bootstrap.
-  * The IPTW estimator is uniformly biased with overly-wide confidence intervals in all simulations (not shown).
-  
-
-```{r, echo=FALSE}
-
-#colnames(res_null_diff)
-#unique(res_null_diff$filenames)
-res_null_diff$variance_estimator[is.na(res_null_diff$variance_estimator)] <- "bootstrap"
-res_null_diff_coverage <- res_null_diff %>% 
-  filter(estimator=="LASSO"& Qint=="No"& DetQ=="No" |is.na(bias)) %>%
-  select(variance_estimator,coverage, mean_ci_width, filenames)
-
-knitr::kable(res_null_diff_coverage, digits =5)
-
-```
-
-
 
 
 
@@ -169,6 +155,12 @@ True Risk Difference: -0.009683665
 
 #colnames(res_v3_diff)
 #unique(res_v3_diff$filenames)
+
+res_v3_diff$DetQ[res_v3_diff$iptw=="IPTW"] <- "NA"
+res_v3_diff$DetQ[res_v3_diff$iptw=="IPTW"] <- "NA"
+
+
+
 res_v3_diff_coverage <- res_v3_diff %>% subset(., select = -c(bias_se_ratio_emp, power, censoring_in_data, mean_ci_width, simulated_data))
 res_v3_diff_coverage <- res_v3_diff_coverage %>% filter(variance_estimator=="ic" | is.na(variance_estimator), !is.na(bias))
 
@@ -193,10 +185,17 @@ res_v3_diff_coverage <- res_v3_diff_coverage %>%
 
 #knitr::kable(res_v3_diff_coverage, digits =6)
 
+# #remove duplicates /iptw repeats
+# res_v3_diff <- res_v3_diff %>% filter(!filenames %in% c("sim_res_ridge_ic_v3_iptw","sim_res_ridge","sim_res_Qint_ic","sim_res_Qint_ic_v3_iptw",                                                    "sim_res_DetQ__ridge_ic_v3_iptw","sim_res_ridge_ic_v3","sim_res_DetQ_ic_v3_iptw","sim_res_ic"))
+
+
 
 res_table <- res_v3_diff_coverage  %>%
-  filter(!(filenames %in% c("sim_res_noDetQ_Qint_tmle",
-                            "sim_res_DetQ_ic_v2","sim_res_DetQ_ic_v2_iptw"#, "sim_res_Qint_ic"
+  # #remove duplicates /iptw repeats
+  filter(!(filenames %in% c("sim_res_noDetQ_Qint_tmle", "sim_res_Qint_ic_iptw","sim_res_Qint_AUC_iptw", "sim_res_ridge_AUC_iptw",
+                            "sim_res_Qint_EN", "sim_res_Qint_1se_iptw",
+                            "sim_res_DetQ_ic_v2","sim_res_DetQ_ic_v2_iptw", "sim_res_Qint_EN_iptw",
+                            "sim_res_noDetQ_ic_v2_iptw","sim_res_noDetQ_Qint_ic_iptw"
                             )),
          estimator!="LASSO, Lambda: 1se, AUC fit", estimator!="Random Forest") %>%
   filter(!is.na(variance)) %>% arrange(estimator,  Qint, DetQ, iptw, bias, variance) 
@@ -205,11 +204,14 @@ res_table <- res_v3_diff_coverage  %>%
 # identify index of rows to highlight
   row.i.1 <- which(res_table$filenames=="sim_res_DetQ_ic_v3")
   
-res_table <- res_table %>% select(#filenames, 
+res_table <- res_table %>% select(filenames, 
                                   estimator,
                                   iptw, Qint, DetQ,
-                                  bias,variance,mse,bias_se_ratio,oracle.coverage) %>%
-                  rename(Estimator=estimator,  `Q-int`=Qint, `Det. Q`=DetQ, Method=iptw, `Bias/SE`=bias_se_ratio,
+                                  bias,variance,
+                                  #mse, #ask Maya if needed
+                                  bias_se_ratio,oracle.coverage) %>%
+                  arrange(iptw, estimator,  Qint, DetQ,  bias, variance) %>%
+                  rename(`Estimation method`=estimator,  `Q-int`=Qint, `Det. Q`=DetQ, Estimator=iptw, `Bias/SE`=bias_se_ratio,
                          Bias=bias, Variance=variance, `Oracle coverage`=oracle.coverage)
 
 
@@ -242,59 +244,6 @@ save_kable(res_xtable, file="C:/Users/andre/Documents/jici/diab-dementia-server-
 
 ```
 
-
-
-
-
-
-
-## Comparison of different variance estimators
-
-
-
-**Notes:**
-  
-  * Showing LASSO estimator results with modeled Q (rather than intercept-only)
-  * The IC variance estimator is anti-conservative and the TMLE variance estimator is conservative
-  * The bootstrap is anti-conservative but less so than the IC variance estimator
-  * The IPTW estimator is uniformly biased with overly-wide confidence intervals in all simulations (not shown)
-  
-### Risk difference coverage
-
-```{r, echo=FALSE}
-
-res_v3_diff_var <- res_v3_diff %>% subset(., select = -c(bias,variance,mse,bias_se_ratio, censoring_in_data, o.coverage, simulated_data))
-res_v3_diff_var <- res_v3_diff_var %>% filter(Qint  =="No" , !grepl("iptw",filenames)|is.na(variance_estimator), !grepl("ridge",filenames), !grepl("AUC",filenames),
-                                                          !grepl("EN",filenames), !grepl("1se",filenames), !grepl("glm",filenames), !grepl("_lasso_prescreen",filenames),
-                                                          filenames!="im_res_DetQ_ic_v3",
-                                                          filenames=="no DetQ_iptw-IPTW"|!grepl("iptw",filenames))
-
-
-#Add iptw variance
-
-resdf_noDetQ_ic <- readRDS(paste0(here::here(),"/data/sim_res_noDetQ_ic_v2.RDS"))
-iptw_variance = mean((mean(resdf_noDetQ_ic$iptw.ate)-resdf_noDetQ_ic$iptw.ate)^2)
-#      variance=mean((mean(log(estimate))-log(estimate))^2),
-
-
-
-res_v3_diff_var$variance_estimator[grepl("_DetQ",res_v3_diff_var$filenames)] <- paste0(res_v3_diff_var$variance_estimator[grepl("_DetQ",res_v3_diff_var$filenames)],", Det-Q")
-res_v3_diff_var <- res_v3_diff_var %>% mutate(variance_estimator=case_when(
-  filenames=="DetQ" ~ "Bootstrap, Det Q function",
-  filenames=="DetQ, 500 iter" ~ "Bootstrap, Det Q function, 500 iterations",
-  filenames=="no DetQ" ~ "Bootstrap",
-  filenames=="Ridge" ~ "Bootstrap-Ridge",
-  filenames=="no DetQ_iptw-IPTW" ~ "Bootstrap- IPTW",
-  variance_estimator==variance_estimator ~variance_estimator 
-)) %>% distinct() #%>% filter(filenames!="DetQ, 500 iter")
-
-res_v3_diff_var <- res_v3_diff_var %>% select(variance_estimator, coverage, mean_ci_width, power, bias_se_ratio_emp,filenames)
-
-
-
-knitr::kable(res_v3_diff_var, digits =5)
-
-```
 
 
 
