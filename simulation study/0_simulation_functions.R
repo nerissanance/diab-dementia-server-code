@@ -492,18 +492,30 @@ run_ltmle_glmnet <- function(d,
 
     if(N_time==11){
 
+      # qform = c(
+      #   insulin_0="Q.kplus1 ~ 1",
+      #   event_dementia_1="Q.kplus1 ~ 1",
+      #   event_dementia_2="Q.kplus1 ~ 1",
+      #   event_dementia_3="Q.kplus1 ~ 1",
+      #   event_dementia_4="Q.kplus1 ~ 1",
+      #   event_dementia_5="Q.kplus1 ~ 1",
+      #   event_dementia_6="Q.kplus1 ~ 1",
+      #   event_dementia_7="Q.kplus1 ~ 1",
+      #   event_dementia_8="Q.kplus1 ~ 1",
+      #   event_dementia_9="Q.kplus1 ~ 1",
+      #   event_dementia_10="Q.kplus1 ~ 1"
+      # )
       qform = c(
-        insulin_0="Q.kplus1 ~ 1",
-        event_dementia_1="Q.kplus1 ~ 1",
-        event_dementia_2="Q.kplus1 ~ 1",
-        event_dementia_3="Q.kplus1 ~ 1",
-        event_dementia_4="Q.kplus1 ~ 1",
-        event_dementia_5="Q.kplus1 ~ 1",
-        event_dementia_6="Q.kplus1 ~ 1",
-        event_dementia_7="Q.kplus1 ~ 1",
-        event_dementia_8="Q.kplus1 ~ 1",
-        event_dementia_9="Q.kplus1 ~ 1",
-        event_dementia_10="Q.kplus1 ~ 1"
+        insulin_1="Q.kplus1 ~ 1",
+        insulin_2="Q.kplus1 ~ 1",
+        insulin_3="Q.kplus1 ~ 1",
+        insulin_4="Q.kplus1 ~ 1",
+        insulin_5="Q.kplus1 ~ 1",
+        insulin_6="Q.kplus1 ~ 1",
+        insulin_7="Q.kplus1 ~ 1",
+        insulin_8="Q.kplus1 ~ 1",
+        insulin_9="Q.kplus1 ~ 1",
+        insulin_10="Q.kplus1 ~ 1"
       )
     }
     if(N_time==4){
