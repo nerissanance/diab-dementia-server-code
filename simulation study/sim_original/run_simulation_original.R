@@ -15,79 +15,79 @@ d_wide_list <- readRDS(file=here("data/simulated_data_list.RDS"))
 d_wide_list <- d_wide_list[1:200]
 gc()
 
-d=d_wide_list[[1]]
-head(d)
+# res <- run_ltmle_glmnet(d_wide_list[[1]], resdf=NULL, Qint=FALSE, det.Q =FALSE, varmethod = "ic")
+# res
+
+#-------------------------------------------------------------------------------------------
+# Rerun Q-intercept models with fix
+#-------------------------------------------------------------------------------------------
 
 
 
-res <- run_ltmle_glmnet(d_wide_list[[1]], resdf=NULL, Qint=FALSE, det.Q =FALSE, varmethod = "ic")
-res
+int.start.time <- Sys.time()
+resdf_noDetQ_Qint_ic <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, varmethod = "ic",N_time=11))
+  return(res)
+}
+saveRDS(resdf_noDetQ_Qint_ic, paste0(here::here(),"/sim_res/sim_res_noDetQ_Qint_ic.RDS"))
 
-N_time = 2
-SL.library = c("SL.glmnet")
-resdf=NULL
-Qint=F
-gcomp=F
-det.Q=T
-gbound = c(0.01, 1)
-override_function=SuperLearner_override
-varmethod = "ic" #variance method
-label=""
-glm=FALSE
-id=NULL
-
-  warn = getOption("warn")
-  options(warn=-1)
-
-  #clean competing events
-  d <-clean_sim_data(d, N_time=N_time)
-
-  if(!is.null(id)){
-    baseline_vars <- c(baseline_vars,"id")
-  }
-
-  #Use only first N time points
-  d <- d %>%
-    dplyr::select(!!(baseline_vars),matches(paste0("_(",paste0(0:(N_time-1),collapse="|"),")$")))
+resdf_DetQ_Qint_ic <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=TRUE, varmethod = "ic",N_time=11))
+  return(res)
+}
+saveRDS(resdf_DetQ_Qint_ic, paste0(here::here(),"/sim_res/sim_res_DetQ_Qint_ic.RDS"))
 
 
-  spec_ltmle <- spec_analysis_sim(data=d, c(long_covariates,"event_death_"),
-                                  baseline_vars, N_time,
-                                  Avars=c("glp1_"),
-                                  Yvars=c("event_dementia_"),
-                                  Cvars=c("censor_"))
-  #abar_spec = list(rep(1,N_time-1),rep(0,N_time-1))
-  abar_spec = list(rep(1,N_time),rep(0,N_time))
 
-  set.seed(12345)
-  fit = NULL
+resdf_noDetQ_ic_glm <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, varmethod = "ic",N_time=11, SL.library="glm"))
+  return(res)
+}
+saveRDS(resdf_noDetQ_ic_glm, paste0(here::here(),"/sim_res/sim_res_Qint_noDetQ_ic_glm.RDS"))
 
-    qform=NULL
-    det.q.fun = NULL
+resdf_ic_glm <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=TRUE, varmethod = "ic",N_time=11, SL.library="glm"))
+  return(res)
+}
+saveRDS(resdf_ic_glm, paste0(here::here(),"/sim_res/sim_res_Qint_ic_glm.RDS"))
 
 
-    package_stub("SuperLearner", "SuperLearner", override_function, {
-      testthatsomemore::package_stub("ltmle", "Estimate", Estimate_override, {
-        try(fit <- ltmle(data=spec_ltmle$data,
-                         Anodes = spec_ltmle$Anodes,
-                         Cnodes = spec_ltmle$Cnodes[-1],
-                         Lnodes = spec_ltmle$Lnodes[spec_ltmle$Lnodes!="event_death_0"],
-                         Ynodes = spec_ltmle$Ynodes[-1],
-                         gbound=gbound,
-                         survivalOutcome = T,
-                         abar = abar_spec,
-                         gcomp=gcomp,
-                         Qform = qform,
-                         estimate.time=F,
-                         deterministic.Q.function = det.q.fun,
-                         SL.library = SL.library,
-                         variance.method = varmethod,
-                         id=id
-        ))
-      })})
+#lasso prescreen
+resdf_Qint_noDetQ_lasso_prescreen <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, varmethod = "ic", override_function=SuperLearner_override_lasso_prescreen))
 
-    res <- summary(fit)
-    res
+  return(res)
+}
+saveRDS(resdf_Qint_noDetQ_lasso_prescreen, paste0(here::here(),"/sim_res/sim_res_ic_Qint_noDetQ_lasso_prescreen.RDS"))
+
+resdf_Qint_AUC <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, varmethod = "ic",override_function=SuperLearner_override_AUC))
+  return(res)
+}
+saveRDS(resdf_Qint_AUC, paste0(here::here(),"/sim_res/sim_res_Qint_AUC.RDS"))
+
+
+#lasso prescreen
+resdf_Qint_noDetQ_lasso_prescreen <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, varmethod = "ic", override_function=SuperLearner_override_lasso_prescreen))
+
+  return(res)
+}
+
+saveRDS(resdf_Qint_noDetQ_lasso_prescreen_ic, paste0(here::here(),"/data/sim_res_Qint_noDetQ_lasso_prescreen_ic.RDS"))
+
+
+
+#-------------------------------------------------------------------------------------------
+# Rerun others
+#-------------------------------------------------------------------------------------------
 
 
 
@@ -139,11 +139,6 @@ resdf_Qint_noDetQ_lasso_prescreen <- foreach(i = 1:length(d_wide_list), .combine
   return(res)
 }
 
-# resdf_noDetQ_Qint_tmle <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
-#   res <- NULL
-#   try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, varmethod = "tmle",N_time=2))
-#   return(res)
-# }
 saveRDS(resdf_Qint_noDetQ_lasso_prescreen, paste0(here::here(),"/data/sim_res_Qint_noDetQ_lasso_prescreen.RDS"))
 
 
@@ -178,7 +173,7 @@ saveRDS(resdf_Qint_noDetQ_lasso_prescreen, paste0(here::here(),"/data/sim_res_Qi
 
 int.start.time <- Sys.time()
 resdf_glm <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows') %dopar% {
-  res <- run_ltmle_glmnet(d_wide_list[[i]], varmethod = "ic", resdf=NULL, SL.library="glm")
+  res <- run_ltmle_glmnet(d_wide_list[[i]], varmethod = "ic", det.Q=FALSE, resdf=NULL, SL.library="glm")
 }
 int.end.time <- Sys.time()
 difftime(int.end.time, int.start.time, units="mins")
@@ -186,6 +181,18 @@ resdf_glm
 
 gc()
 saveRDS(resdf_glm, paste0(here::here(),"/data/sim_res_glm_ic.RDS"))
+
+
+int.start.time <- Sys.time()
+resdf_glm <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows') %dopar% {
+  res <- run_ltmle_glmnet(d_wide_list[[i]], varmethod = "ic", det.Q=TRUE, resdf=NULL, SL.library="glm")
+}
+int.end.time <- Sys.time()
+difftime(int.end.time, int.start.time, units="mins")
+resdf_glm
+
+gc()
+saveRDS(resdf_glm, paste0(here::here(),"/data/sim_res_glm_detQ_ic.RDS"))
 
 
 
@@ -319,6 +326,19 @@ difftime(int.end.time, int.start.time, units="mins")
 saveRDS(resdf_Qint_AUC_1se, paste0(here::here(),"/data/sim_res_Qint_AUC_1se.RDS"))
 
 
+
+SuperLearner_override_RF <- function(Y, X, newX = NULL, family = gaussian(), SL.library="SL.glmnet",
+                                     method = "method.NNLS", id = NULL, verbose = FALSE, control = list(),
+                                     cvControl = list(), obsWeights = NULL, env = parent.frame(), alpha=1, loss  = "auc") {
+  stopifnot(identical(SL.library, "SL.randomForest"))
+
+  res <- NULL
+  try(res <- SL.randomForest(Y, X, newX, family, obsWeights, id, mtry = ifelse(family=="gaussian", max(floor(ncol(X)/3), 1), floor(sqrt(ncol(X)))),
+                             ntree = 10, nodesize = ifelse(family == "gaussian", 5, 1), maxnodes = NULL, importance = FALSE))
+  if(is.null(res)){res <- SL.mean(Y, X, newX, family, obsWeights, id)}
+
+  list(model=res$fit, SL.predict = res$pred)
+}
 
 
 int.start.time <- Sys.time()
