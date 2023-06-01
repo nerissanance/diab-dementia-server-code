@@ -8,7 +8,7 @@ source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
 
 library(parallel)
 library(doParallel)
-registerDoParallel(cores=64)
+registerDoParallel(cores=100)
 
 gc()
 d_wide_list <- readRDS(file=here("data/simulated_data_list.RDS"))
@@ -23,21 +23,14 @@ gc()
 #-------------------------------------------------------------------------------------------
 
 
-
-int.start.time <- Sys.time()
-resdf_noDetQ_Qint_ic <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
-  res <- NULL
-  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, varmethod = "ic",N_time=11))
-  return(res)
-}
-saveRDS(resdf_noDetQ_Qint_ic, paste0(here::here(),"/sim_res/sim_res_noDetQ_Qint_ic.RDS"))
-
-resdf_DetQ_Qint_ic <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
-  res <- NULL
-  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=TRUE, varmethod = "ic",N_time=11))
-  return(res)
-}
-saveRDS(resdf_DetQ_Qint_ic, paste0(here::here(),"/sim_res/sim_res_DetQ_Qint_ic.RDS"))
+#Already run:
+# int.start.time <- Sys.time()
+# resdf_noDetQ_Qint_ic <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+#   res <- NULL
+#   try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, varmethod = "ic",N_time=11))
+#   return(res)
+# }
+# saveRDS(resdf_noDetQ_Qint_ic, paste0(here::here(),"/sim_res/sim_res_noDetQ_Qint_ic.RDS"))
 
 
 
@@ -54,6 +47,14 @@ resdf_ic_glm <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .erro
   return(res)
 }
 saveRDS(resdf_ic_glm, paste0(here::here(),"/sim_res/sim_res_Qint_ic_glm.RDS"))
+
+resdf_DetQ_Qint_ic <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=TRUE, varmethod = "ic",N_time=11))
+  return(res)
+}
+saveRDS(resdf_DetQ_Qint_ic, paste0(here::here(),"/sim_res/sim_res_DetQ_Qint_ic.RDS"))
+
 
 
 #lasso prescreen
