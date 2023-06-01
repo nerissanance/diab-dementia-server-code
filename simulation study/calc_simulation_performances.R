@@ -19,8 +19,9 @@ files <- dir(path=paste0(here::here(),"/sim_res/"), pattern = "*.RDS")
 files <- files[grepl("_null_",files)]
 files <- files[grepl("_T11",files)]
 
-temp <- readRDS(paste0(here::here(),"/sim_res/sim_res_RF_ic_v3.RDS"))
-head(temp)
+#old_null_sim_res_ic_glm_T11
+#temp <- readRDS(paste0(here::here(),"/sim_res/sim_res_RF_ic_v3.RDS"))
+# head(temp)
 
 #NOTE: check which files are missing from the old pipeline:
 old_files <- dir(path=paste0(here::here(),"/sim_res_old/"), pattern = "*.RDS")
@@ -48,7 +49,7 @@ length(boot_iter_files)
 trueRR=1
 trueRD=0
 iptw=T
-original_sim_res_null <- calc_sim_performance(files=files, boot_iter_files=boot_iter_files, trueRR=1, trueRD=0, iptw=T)
+original_sim_res_null <- calc_sim_performance_old(files=files, boot_iter_files=boot_iter_files, trueRR=1, trueRD=0, iptw=T)
 original_sim_res_null$perf_tab_RR
 original_sim_res_null$perf_tab_diff
 original_sim_res_null$perf_tab_diff$filenames
@@ -100,30 +101,19 @@ table(boot_iter_files$analysis)
 
 
 
-temp <- readRDS(paste0(here::here(),"/data/sim_res_EN.RDS"))
-head(temp)
-
-
 
 trueRR=0.5148661
 trueRD= -0.009683665
-
-files=files
-boot_iter_files=boot_iter_files
-trueRR=trueRR
-trueRD= trueRD
 iptw=T
 
 
-res_v3 <- calc_sim_performance(files=files, boot_iter_files=boot_iter_files, trueRR=trueRR, trueRD= trueRD, iptw=T )
 
+res_v3 <- calc_sim_performance_old(files=files, boot_iter_files=boot_iter_files, trueRR=trueRR, trueRD= trueRD, iptw=T )
+res_v3$perf_tab_diff
 
 res_v3_diff <- res_v3$perf_tab_diff
 res_v3_RR <- res_v3$perf_tab_RR
 
-#remove duplicates /iptw repeats
-res_v3_diff <- res_v3_diff %>% filter(!filenames %in% c("sim_res_ridge_ic_v3_iptw","sim_res_ridge","sim_res_Qint_ic","sim_res_Qint_ic_v3_iptw",
-                                                        "sim_res_DetQ__ridge_ic_v3_iptw","sim_res_ridge_ic_v3","sim_res_DetQ_ic_v3_iptw","sim_res_ic"))
 
 save(res_v3_diff, res_v3_RR,  file=paste0(here::here(),"/results/sim_performance_results_original.Rdata"))
 

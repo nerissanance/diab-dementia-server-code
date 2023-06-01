@@ -1,29 +1,22 @@
 
 \begin{longtable}[l]{lllllllll}
 \toprule
-Estimator & Method & Q-int & Det. Q & Bias & Variance & mse & Bias/SE & Oracle coverage\\
+filenames & Estimator & Estimation method & Q-int & Det. Q & Bias & Variance & Bias/SE & Oracle coverage\\
 \midrule
-Elastic Net & IPTW & No & Yes & 0.00121 & 0.00002 & 0.00002 & 0.26019 & 92.0\\
-Elastic Net & TMLE & No & Yes & -0.00012 & 0.00001 & 0.00001 & -0.03296 & 95.0\\
-GLM & IPTW & No & No & 0.00157 & 0.00001 & 0.00002 & 0.41362 & 91.0\\
-GLM & TMLE & No & No & 0.00217 & 0.00028 & 0.00028 & 0.13056 & 99.0\\
-GLM & IPTW & No & Yes & 0.00140 & 0.00002 & 0.00003 & 0.29214 & 92.0\\
-GLM & TMLE & No & Yes & 0.00369 & 0.00122 & 0.00123 & 0.10551 & 99.5\\
-GLM, LASSO prescreen & IPTW & Yes & No & 0.00144 & 0.00001 & 0.00002 & 0.38762 & 92.0\\
-GLM, LASSO prescreen & TMLE & Yes & No & 0.00031 & 0.00002 & 0.00002 & 0.06935 & 95.5\\
-LASSO & IPTW & No & No & -0.00006 & 0.00002 & 0.00002 & -0.01158 & 96.5\\
-LASSO & IPTW & No & No & 0.00137 & 0.00001 & 0.00002 & 0.37858 & 91.0\\
-LASSO & TMLE & No & No & -0.00006 & 0.00002 & 0.00002 & -0.01158 & 96.5\\
-\midrule
-\textbf{LASSO} & \textbf{TMLE} & \textbf{No} & \textbf{No} & \textbf{-0.00005} & \textbf{0.00001} & \textbf{0.00001} & \textbf{-0.01345} & \textbf{94.5}\\
-\midrule
-LASSO & IPTW & No & Yes & 0.00120 & 0.00002 & 0.00002 & 0.25865 & 92.0\\
-LASSO & TMLE & No & Yes & -0.00011 & 0.00001 & 0.00001 & -0.03099 & 95.0\\
-LASSO & IPTW & Yes & No & 0.00137 & 0.00001 & 0.00002 & 0.37858 & 91.0\\
-LASSO & TMLE & Yes & No & -0.00005 & 0.00001 & 0.00001 & -0.01345 & 94.5\\
-Random Forest & IPTW & No & Yes & 0.00206 & 0.00002 & 0.00002 & 0.46894 & 92.5\\
-Random Forest & TMLE & No & Yes & -0.00364 & 0.00000 & 0.00001 & -3.10176 & 12.0\\
-Ridge & IPTW & No & Yes & 0.00094 & 0.00002 & 0.00002 & 0.23294 & 94.0\\
-Ridge & TMLE & No & Yes & -0.00014 & 0.00001 & 0.00001 & -0.04208 & 94.5\\
+EN\_ic\_T11\_iptw & IPTW & Elastic Net & NA & NA & 0.00121 & 0.00002 & 0.26019 & 92.0\\
+ic\_glm\_T11\_iptw & IPTW & GLM & NA & NA & 0.00140 & 0.00002 & 0.29214 & 92.0\\
+ic\_Qint\_noDetQ\_lasso\_prescreen\_T11\_iptw & IPTW & GLM, LASSO prescreen & NA & NA & 0.00144 & 0.00001 & 0.38762 & 92.0\\
+ic\_T11\_iptw & IPTW & LASSO & NA & NA & 0.00120 & 0.00002 & 0.25865 & 92.0\\
+rf\_ic\_T11\_iptw & IPTW & Random Forest & NA & NA & 0.00206 & 0.00002 & 0.46894 & 92.5\\
+ridge\_ic\_T11\_iptw & IPTW & Ridge & NA & NA & 0.00094 & 0.00002 & 0.23294 & 94.0\\
+EN\_ic\_T11 & TMLE & Elastic Net & No & Yes & -0.00012 & 0.00001 & -0.03296 & 95.0\\
+noDetQ\_ic\_glm\_T11 & TMLE & GLM & No & No & 0.00217 & 0.00028 & 0.13056 & 99.0\\
+ic\_glm\_T11 & TMLE & GLM & No & Yes & 0.00369 & 0.00122 & 0.10551 & 99.5\\
+ic\_Qint\_noDetQ\_lasso\_prescreen\_T11 & TMLE & GLM, LASSO prescreen & Yes & No & 0.00031 & 0.00002 & 0.06935 & 95.5\\
+noDetQ\_tmle\_T11 & TMLE & LASSO & No & No & -0.00006 & 0.00002 & -0.01158 & 96.5\\
+ic\_T11 & TMLE & LASSO & No & Yes & -0.00011 & 0.00001 & -0.03099 & 95.0\\
+noDetQ\_Qint\_ic\_T11 & TMLE & LASSO & Yes & No & -0.00005 & 0.00001 & -0.01345 & 94.5\\
+rf\_ic\_T11 & TMLE & Random Forest & No & Yes & -0.00364 & 0.00000 & -3.10176 & 12.0\\
+ridge\_ic\_T11 & TMLE & Ridge & No & Yes & -0.00014 & 0.00001 & -0.04208 & 94.5\\
 \bottomrule
 \end{longtable}
