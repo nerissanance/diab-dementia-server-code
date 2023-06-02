@@ -1,0 +1,30 @@
+
+\begin{longtable}[l]{lllllllll}
+\toprule
+Estimator & Method & Q-int & Det. Q & Bias & Variance & mse & Bias/SE & Oracle coverage\\
+\midrule
+Elastic Net & IPTW & NA & NA & 0.003509 & 9.0e-06 & 2.1e-05 & 1.196808 & 85.0\\
+GLM & IPTW & NA & NA & 0.005905 & 7.0e-06 & 4.2e-05 & 2.269718 & 38.0\\
+GLM, LASSO prescreen & IPTW & NA & NA & 0.005936 & 7.0e-06 & 4.2e-05 & 2.290944 & 38.0\\
+LASSO & IPTW & NA & NA & 0.005853 & 6.0e-06 & 4.1e-05 & 2.309559 & 37.5\\
+LASSO, 1se fit, Lambda: 1se, AUC fit & IPTW & NA & NA & 0.003287 & 5.0e-06 & 1.5e-05 & 1.531400 & 68.5\\
+LASSO, AUC fit, AUC fit & IPTW & NA & NA & 0.003943 & 5.0e-06 & 2.0e-05 & 1.802503 & 53.5\\
+Ridge & IPTW & NA & NA & 0.003830 & 6.0e-06 & 2.1e-05 & 1.521015 & 71.5\\
+Elastic Net & TMLE & No & Yes & -0.002305 & 1.4e-05 & 1.9e-05 & -0.620157 & 92.0\\
+Elastic Net & TMLE & Yes & Yes & -0.002305 & 1.4e-05 & 1.9e-05 & -0.620157 & 92.0\\
+GLM & TMLE & No & Yes & 0.002048 & 6.4e-05 & 6.8e-05 & 0.256147 & 93.0\\
+GLM & TMLE & Yes & No & -0.002987 & 1.6e-05 & 2.5e-05 & -0.741520 & 89.0\\
+GLM & TMLE & Yes & Yes & -0.002299 & 1.4e-05 & 2.0e-05 & -0.606979 & 92.0\\
+GLM, LASSO prescreen & TMLE & Yes & No & -0.002943 & 1.6e-05 & 2.5e-05 & -0.735219 & 89.5\\
+LASSO & TMLE & No & No & -0.000766 & 2.5e-05 & 2.5e-05 & -0.153535 & 94.0\\
+\midrule
+\textbf{LASSO} & \textbf{TMLE} & \textbf{No} & \textbf{Yes} & \textbf{0.000267} & \textbf{1.4e-05} & \textbf{1.4e-05} & \textbf{0.070843} & \textbf{94.5}\\
+\midrule
+LASSO & TMLE & Yes & Yes & -0.002322 & 1.4e-05 & 1.9e-05 & -0.630226 & 91.5\\
+LASSO, 1se fit, Lambda: 1se, AUC fit & TMLE & No & Yes & -0.002824 & 6.0e-06 & 1.4e-05 & -1.136792 & 78.0\\
+LASSO, 1se fit, Lambda: 1se, AUC fit & TMLE & Yes & Yes & -0.002824 & 6.0e-06 & 1.4e-05 & -1.136792 & 78.0\\
+LASSO, AUC fit, AUC fit & TMLE & No & Yes & -0.002833 & 6.0e-06 & 1.4e-05 & -1.174903 & 76.5\\
+LASSO, AUC fit, AUC fit & TMLE & Yes & Yes & -0.002823 & 8.0e-06 & 1.6e-05 & -1.012092 & 81.5\\
+Ridge & TMLE & No & Yes & 0.000446 & 1.1e-05 & 1.1e-05 & 0.134349 & 94.0\\
+\bottomrule
+\end{longtable}
