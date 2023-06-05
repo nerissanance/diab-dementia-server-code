@@ -22,6 +22,30 @@ gc()
 # Rerun Q-intercept models with fix
 #-------------------------------------------------------------------------------------------
 
+int.start.time <- Sys.time()
+resdf_Qint_EN <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, override_function=SuperLearner_override_EN))
+  return(res)
+}
+int.end.time <- Sys.time()
+difftime(int.end.time, int.start.time, units="mins")
+
+saveRDS(resdf_Qint_EN, paste0(here::here(),"/data/sim_res_Qint_EN.RDS"))
+
+int.start.time <- Sys.time()
+resdf_Qint_AUC_1se <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+  res <- NULL
+  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, override_function=SuperLearner_override_AUC_1se))
+  return(res)
+}
+int.end.time <- Sys.time()
+difftime(int.end.time, int.start.time, units="mins")
+
+saveRDS(resdf_Qint_AUC_1se, paste0(here::here(),"/data/sim_res_Qint_AUC_1se.RDS"))
+
+
+
 
 #Already run:
 # int.start.time <- Sys.time()
@@ -56,25 +80,23 @@ gc()
 # saveRDS(resdf_DetQ_Qint_ic, paste0(here::here(),"/sim_res/sim_res_DetQ_Qint_ic.RDS"))
 
 
-
-
-resdf_Qint_AUC <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
-  res <- NULL
-  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, varmethod = "ic",override_function=SuperLearner_override_AUC))
-  return(res)
-}
-saveRDS(resdf_Qint_AUC, paste0(here::here(),"/sim_res/sim_res_Qint_AUC.RDS"))
-
-
-#lasso prescreen
-resdf_Qint_noDetQ_lasso_prescreen <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
-  res <- NULL
-  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, varmethod = "ic", override_function=SuperLearner_override_lasso_prescreen))
-
-  return(res)
-}
-
-saveRDS(resdf_Qint_noDetQ_lasso_prescreen, paste0(here::here(),"/sim_res/sim_res_Qint_noDetQ_lasso_prescreen_ic.RDS"))
+# resdf_Qint_AUC <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+#   res <- NULL
+#   try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, varmethod = "ic",override_function=SuperLearner_override_AUC))
+#   return(res)
+# }
+# saveRDS(resdf_Qint_AUC, paste0(here::here(),"/sim_res/sim_res_Qint_AUC.RDS"))
+#
+#
+# #lasso prescreen
+# resdf_Qint_noDetQ_lasso_prescreen <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+#   res <- NULL
+#   try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=FALSE, varmethod = "ic", override_function=SuperLearner_override_lasso_prescreen))
+#
+#   return(res)
+# }
+#
+# saveRDS(resdf_Qint_noDetQ_lasso_prescreen, paste0(here::here(),"/sim_res/sim_res_Qint_noDetQ_lasso_prescreen_ic.RDS"))
 
 
 
@@ -255,16 +277,6 @@ difftime(int.end.time, int.start.time, units="mins")
 saveRDS(resdf_EN, paste0(here::here(),"/data/sim_res_EN.RDS"))
 
 
-int.start.time <- Sys.time()
-resdf_Qint_EN <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
-  res <- NULL
-  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, override_function=SuperLearner_override_EN))
-  return(res)
-}
-int.end.time <- Sys.time()
-difftime(int.end.time, int.start.time, units="mins")
-
-saveRDS(resdf_Qint_EN, paste0(here::here(),"/data/sim_res_Qint_EN.RDS"))
 
 
 #-
@@ -306,17 +318,6 @@ resdf_AUC_1se <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .err
   return(res)
 }
 saveRDS(resdf_AUC_1se, paste0(here::here(),"/data/sim_res_AUC_1se.RDS"))
-
-int.start.time <- Sys.time()
-resdf_Qint_AUC_1se <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
-  res <- NULL
-  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, override_function=SuperLearner_override_AUC_1se))
-  return(res)
-}
-int.end.time <- Sys.time()
-difftime(int.end.time, int.start.time, units="mins")
-
-saveRDS(resdf_Qint_AUC_1se, paste0(here::here(),"/data/sim_res_Qint_AUC_1se.RDS"))
 
 
 
