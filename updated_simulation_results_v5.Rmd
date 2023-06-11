@@ -1,0 +1,93 @@
+---
+title: "Diabetes-dementia updated simulation results"
+author: "Andrew Mertens"
+date: "2022-11-17"
+output:
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, knitr.kable.NA = '')
+
+source(here::here("0_config.R"))
+source(paste0(here::here(),"/0_ltmle_Estimate_update.R"))
+try(source(paste0(here::here(),"/simulation study/0_simulation_functions.R")))
+
+
+load(paste0(here::here(),"/results/sim_performance_results_protective.Rdata"))
+load(paste0(here::here(),"/results/sim_performance_results_null.Rdata"))
+
+save(res_table_protective, res_table_protective_raw, file=paste0(here::here(),"/results/sim_performance_results_protective.Rdata"))
+
+res_null_table
+res_table_null_raw
+
+res_table_protective
+res_table_protective_raw
+
+library(knitr)
+library(xtable)
+library(kableExtra)
+library(DT)
+
+```
+
+
+# To do:
+
+
+To change in organization
+cgnage method to "Estimator" and put as first column
+change estimator to "Algorithm" and put as second column
+
+Add in different trunctation
+
+-Fix lasso pre-screening labeling
+
+# NULL
+
+```{r, echo = FALSE}
+
+res_null_table <- res_null_table %>% filter(Estimator!="IPTW")
+
+nrow(res_null_table)
+
+knitr::kable(res_null_table, digits = 3)
+
+```
+ 
+
+# Protective
+
+```{r, echo = FALSE}
+
+res_table_protective <- res_table_protective %>% filter(Estimator!="IPTW")
+
+
+nrow(res_table_protective)
+
+knitr::kable(res_table_protective, digits = 3)
+
+```
+
+
+# NULL
+
+```{r, echo = FALSE, warning=FALSE}
+
+res_table_null_raw <- res_table_null_raw %>% mutate(across(where(is.numeric), round, digits=3))
+
+datatable(res_table_null_raw)
+
+```
+ 
+
+# Protective
+
+```{r, echo = FALSE, warning=FALSE}
+
+res_table_protective_raw <- res_table_protective_raw %>% mutate(across(where(is.numeric), round, digits=3))
+
+datatable(res_table_protective_raw)
+
+```

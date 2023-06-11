@@ -1,0 +1,40 @@
+
+\begin{longtable}[l]{lllllllll}
+\toprule
+filenames & Estimator & Algorithm & Q-int & Det. Q & Bias & Variance & Bias/SE & Oracle coverage\\
+\midrule
+sim\_res\_EN\_iptw & IPTW & Elastic Net & NA & NA & 0.003509 & 9.0e-06 & 1.196808 & 85.0\\
+sim\_res\_Qint\_noDetQ\_ic\_glm\_iptw & IPTW & GLM & NA & NA & 0.005905 & 7.0e-06 & 2.269718 & 38.0\\
+sim\_res\_Qint\_noDetQ\_lasso\_prescreen\_ic\_iptw & IPTW & GLM, LASSO prescreen & NA & NA & 0.005936 & 7.0e-06 & 2.290944 & 38.0\\
+sim\_res\_noDetQ\_Qint\_ic\_iptw & IPTW & LASSO & NA & NA & 0.005853 & 6.0e-06 & 2.309559 & 37.5\\
+sim\_res\_ridge\_AUC\_iptw & IPTW & LASSO, AUC fit & NA & NA & 0.003943 & 5.0e-06 & 1.802503 & 53.5\\
+sim\_res\_AUC\_1se\_iptw & IPTW & LASSO, Lambda: 1se & NA & NA & 0.003287 & 5.0e-06 & 1.531400 & 68.5\\
+sim\_res\_noDetQ\_Qint\_rf\_v5\_iptw & IPTW & Random Forest & NA & NA & 0.003324 & 4.0e-06 & 1.646731 & 66.5\\
+sim\_res\_ridge\_Qint\_noDetQ\_v5\_iptw & IPTW & Ridge & NA & NA & 0.006024 & 4.0e-06 & 2.856435 & 14.5\\
+sim\_res\_EN & TMLE & Elastic Net & No & Yes & -0.002305 & 1.4e-05 & -0.620157 & 92.0\\
+sim\_res\_Qint\_EN & TMLE & Elastic Net & Yes & Yes & -0.002305 & 1.4e-05 & -0.620157 & 92.0\\
+sim\_res\_noDetQ\_ic\_glm\_v5 & TMLE & GLM & No & No & 0.002166 & 7.1e-05 & 0.257821 & 93.0\\
+sim\_res\_glm\_ic & TMLE & GLM & No & Yes & 0.002048 & 6.4e-05 & 0.256147 & 93.0\\
+sim\_res\_Qint\_noDetQ\_ic\_glm & TMLE & GLM & Yes & No & -0.002987 & 1.6e-05 & -0.741520 & 89.0\\
+sim\_res\_Qint\_ic\_glm & TMLE & GLM & Yes & Yes & -0.002299 & 1.4e-05 & -0.606979 & 92.0\\
+sim\_res\_Qint\_noDetQ\_lasso\_prescreen\_ic & TMLE & GLM, LASSO prescreen & Yes & No & -0.002943 & 1.6e-05 & -0.735219 & 89.5\\
+sim\_res\_noDetQ\_ic\_v2 & TMLE & LASSO & No & No & -0.000766 & 2.5e-05 & -0.153535 & 94.0\\
+\midrule
+\textbf{sim\_res\_DetQ\_ic\_v3} & \textbf{TMLE} & \textbf{LASSO} & \textbf{No} & \textbf{Yes} & \textbf{0.000267} & \textbf{1.4e-05} & \textbf{0.070843} & \textbf{94.5}\\
+\midrule
+sim\_res\_noDetQ\_Qint\_ic\_v5 & TMLE & LASSO & Yes & No & -0.003010 & 1.5e-05 & -0.770077 & 88.5\\
+sim\_res\_DetQ\_Qint\_ic & TMLE & LASSO & Yes & Yes & -0.002322 & 1.4e-05 & -0.630226 & 91.5\\
+sim\_res\_ridge\_AUC & TMLE & LASSO, AUC fit & No & Yes & -0.002833 & 6.0e-06 & -1.174903 & 76.5\\
+sim\_res\_Qint\_AUC & TMLE & LASSO, AUC fit & Yes & Yes & -0.002823 & 8.0e-06 & -1.012092 & 81.5\\
+sim\_res\_AUC\_1se & TMLE & LASSO, Lambda: 1se & No & Yes & -0.002824 & 6.0e-06 & -1.136792 & 78.0\\
+sim\_res\_Qint\_AUC\_1se & TMLE & LASSO, Lambda: 1se & Yes & Yes & -0.002824 & 6.0e-06 & -1.136792 & 78.0\\
+sim\_res\_noDetQ\_rf\_v5 & TMLE & Random Forest & No & No & -0.000132 & 3.0e-06 & -0.071383 & 93.5\\
+sim\_res\_detQ\_rf\_v5 & TMLE & Random Forest & No & Yes & -0.000036 & 2.0e-06 & -0.026596 & 95.5\\
+sim\_res\_noDetQ\_Qint\_rf\_v5 & TMLE & Random Forest & Yes & No & -0.002289 & 5.0e-06 & -1.040943 & 83.5\\
+sim\_res\_detQ\_Qint\_rf\_v5 & TMLE & Random Forest & Yes & Yes & -0.001457 & 5.0e-06 & -0.655371 & 91.5\\
+sim\_res\_ridge\_noDetQ\_v5 & TMLE & Ridge & No & No & -0.000457 & 1.8e-05 & -0.108421 & 93.0\\
+sim\_res\_DetQ\_\_ridge\_ic\_v3 & TMLE & Ridge & No & Yes & 0.000446 & 1.1e-05 & 0.134349 & 94.0\\
+sim\_res\_ridge\_Qint\_noDetQ\_v5 & TMLE & Ridge & Yes & No & -0.002759 & 1.1e-05 & -0.840515 & 87.5\\
+sim\_res\_ridge\_Qint\_v5 & TMLE & Ridge & Yes & Yes & -0.002123 & 1.0e-05 & -0.675750 & 91.5\\
+\bottomrule
+\end{longtable}

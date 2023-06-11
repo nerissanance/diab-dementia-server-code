@@ -18,7 +18,7 @@ library(kableExtra)
 # manuscript sim results: Null sim
 #---------------------------------------------------------
 files_null <- dir(path=paste0(here::here(),"/sim_res/null/"), pattern = "*.RDS")
-
+files_null
 # #load bootstrap
 # boot_iter_files <- dir(path=paste0(here::here(),"/data/bootstrap/"), pattern = "*.RDS")
 # boot_iter_files <- boot_iter_files[grepl("sim_res_boot_old_sim_null_T11_",boot_iter_files)]
@@ -36,12 +36,6 @@ original_sim_res_null <- calc_sim_performance(WD=paste0(here::here(),"/sim_res/n
 res_null_diff <- original_sim_res_null$perf_tab_diff
 res_null_diff$filenames
 
-#Set Qint to NA if IPTW
-res_null_diff$Qint[res_null_diff$iptw=="IPTW"] <- "NA"
-
-#Set DetQ to NA if IPTW and drop duplicates
-res_null_diff$DetQ[res_null_diff$iptw=="IPTW"] <- "NA"
-
 
 #Mark estimators
 res_null_diff$estimator <- "LASSO"
@@ -54,6 +48,15 @@ res_null_diff$estimator[grepl("_1se",res_null_diff$filenames)] <- "LASSO, 1se fi
 res_null_diff$estimator[grepl("lasso_prescreen",res_null_diff$filenames)] <- "GLM, LASSO prescreen"
 
 res_null_diff <- res_null_diff %>% distinct(estimator, iptw, DetQ, Qint, .keep_all = TRUE) %>% arrange(iptw, estimator,  Qint, DetQ, bias, variance)
+
+
+#Set Qint to NA if IPTW
+res_null_diff$Qint[res_null_diff$iptw=="IPTW"] <- "NA"
+
+#Set DetQ to NA if IPTW and drop duplicates
+res_null_diff$DetQ[res_null_diff$iptw=="IPTW"] <- "NA"
+
+res_diff_raw <- res_null_diff
 
 res_null_diff %>% select(estimator, iptw, DetQ, Qint, o.coverage, bias, filenames) %>% as.data.frame()
 
@@ -72,13 +75,18 @@ res_null_diff_coverage <- res_null_diff %>%
 
 
 
-res_null_table <- res_null_diff_coverage %>% select(filenames,iptw, estimator, Qint, DetQ,bias,variance,mse,bias_se_ratio,oracle.coverage) %>%
-  rename(Estimator=estimator,  `Q-int`=Qint, `Det. Q`=DetQ, Method=iptw, `Bias/SE`=bias_se_ratio,
-         Bias=bias, Variance=variance, `Oracle coverage`=oracle.coverage) %>% arrange(Method, Estimator, `Oracle coverage`)
+res_null_table <- res_null_diff_coverage %>% select(filenames,iptw, estimator, Qint, DetQ,bias,variance,bias_se_ratio,oracle.coverage) %>%
+  rename(Algorithm=estimator,  `Q-int`=Qint, `Det. Q`=DetQ, Estimator=iptw, `Bias/SE`=bias_se_ratio,
+         Bias=bias, Variance=variance, `Oracle coverage`=oracle.coverage) %>% arrange(Estimator, Algorithm, `Oracle coverage`)
 
 # identify index of rows to highlight
 row.i.1 <- which(res_null_table$filenames=="old_null_sim_res_ic_T11")
-res_null_table <- res_null_table %>% subset(., select = -c(filenames))
+#res_null_table <- res_null_table %>% subset(., select = -c(filenames))
+
+#save for html file
+res_table_null_raw <- res_diff_raw
+save(res_null_table, res_table_null_raw, file=paste0(here::here(),"/results/sim_performance_results_null.Rdata"))
+
 
 print(as.data.frame(res_null_table))
 
@@ -96,7 +104,6 @@ res_null_xtable <- res_null_table %>%
   row_spec(row.i.1-1, hline_after = T) %>%
   row_spec(row.i.1, bold=T,hline_after = T)
 
-res_null_xtable
 
 save_kable(res_null_xtable, file="C:/Users/andre/Documents/jici/diab-dementia-server-code/tables/null_sim_results_table.tex",float = FALSE)
 
