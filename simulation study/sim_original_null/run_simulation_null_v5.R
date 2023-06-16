@@ -129,36 +129,93 @@ gc()
 
 
 
-#gbounds
-resdf_DetQ_ic_gbound_001 <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+# #gbounds
+# resdf_DetQ_ic_gbound_001 <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+#   res <- NULL
+#   try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE,gbound = c(0.001, 1), det.Q=TRUE, varmethod = "ic"))
+#   return(res)
+# }
+# saveRDS(resdf_DetQ_ic_gbound_001, paste0(here::here(),"/sim_res/null/resdf_DetQ_ic_gbound_001.RDS"))
+#
+# resdf_DetQ_ic_gbound_005_9 <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+#   res <- NULL
+#   try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE,gbound = c(0.005, 0.9), det.Q=TRUE, varmethod = "ic"))
+#   return(res)
+# }
+# saveRDS(resdf_DetQ_ic_gbound_005_9, paste0(here::here(),"/sim_res/null/resdf_DetQ_ic_gbound_005_9.RDS"))
+#
+#
+# resdf_DetQ_ic_gbound_05 <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+#   res <- NULL
+#   try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE,gbound = c(0.05, 1), det.Q=TRUE, varmethod = "ic"))
+#   return(res)
+# }
+# saveRDS(resdf_DetQ_ic_gbound_05, paste0(here::here(),"/sim_res/null/resdf_DetQ_ic_gbound_05.RDS"))
+#
+# resdf_DetQ_Qint_ic_v5 <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+#   res <- NULL
+#   try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=TRUE, varmethod = "ic"))
+#   return(res)
+# }
+# saveRDS(resdf_DetQ_Qint_ic_v5, paste0(here::here(),"/sim_res/null/old_null_sim_res_DetQ_Qint_ic_v5.RDS"))
+
+
+
+
+# resdf_DetQ_Qint_EN_ic_v5 <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+#   res <- NULL
+#   try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=TRUE, varmethod = "ic", override_function=SuperLearner_override_EN))
+#   return(res)
+# }
+# saveRDS(resdf_DetQ_Qint_EN_ic_v5, paste0(here::here(),"/sim_res/null/old_null_sim_res_DetQ_Qint_ic_EN_v5.RDS"))
+#
+#
+# resdf_DetQ_AUC_ic_v5 <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+#   res <- NULL
+#   try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE, det.Q=TRUE, varmethod = "ic", override_function=SuperLearner_override_AUC))
+#   return(res)
+# }
+# saveRDS(resdf_DetQ_AUC_ic_v5, paste0(here::here(),"/sim_res/null/old_null_sim_res_DetQ_AUC_ic_v5.RDS"))
+#
+#
+#
+# int.start.time <- Sys.time()
+# resdf_AUC_1se <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+#   res <- NULL
+#   try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE, det.Q=TRUE, override_function=SuperLearner_override_AUC_1se))
+#   return(res)
+# }
+# int.end.time <- Sys.time()
+# difftime(int.end.time, int.start.time, units="mins")
+#
+# saveRDS(resdf_AUC_1se, paste0(here::here(),"/sim_res/null/sim_res_AUC_1se.RDS"))
+#
+# int.start.time <- Sys.time()
+# resdf_Qint_AUC_1se <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+#   res <- NULL
+#   try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=TRUE, override_function=SuperLearner_override_AUC_1se))
+#   return(res)
+# }
+# int.end.time <- Sys.time()
+# difftime(int.end.time, int.start.time, units="mins")
+#
+# saveRDS(resdf_Qint_AUC_1se, paste0(here::here(),"/sim_res/null/sim_res_Qint_AUC_1se.RDS"))
+#
+#
+# resdf_lasso_prescreen <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+#   res <- NULL
+#   try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE, det.Q=TRUE, varmethod = "ic", override_function=SuperLearner_override_lasso_prescreen))
+#
+#   return(res)
+# }
+#
+# saveRDS(resdf_lasso_prescreen, paste0(here::here(),"/sim_res/null/sim_res_lasso_prescreen_ic.RDS"))
+
+resdf_Qint_lasso_prescreen <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
   res <- NULL
-  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE,gbound = c(0.001, 1), det.Q=TRUE, varmethod = "ic"))
+  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=TRUE, varmethod = "ic", override_function=SuperLearner_override_lasso_prescreen))
+
   return(res)
 }
-saveRDS(resdf_DetQ_ic_gbound_001, paste0(here::here(),"/sim_res/null/resdf_DetQ_ic_gbound_001.RDS"))
 
-resdf_DetQ_ic_gbound_005_9 <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
-  res <- NULL
-  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE,gbound = c(0.005, 0.9), det.Q=TRUE, varmethod = "ic"))
-  return(res)
-}
-saveRDS(resdf_DetQ_ic_gbound_005_9, paste0(here::here(),"/sim_res/null/resdf_DetQ_ic_gbound_005_9.RDS"))
-
-
-resdf_DetQ_ic_gbound_05 <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
-  res <- NULL
-  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=FALSE,gbound = c(0.05, 1), det.Q=TRUE, varmethod = "ic"))
-  return(res)
-}
-saveRDS(resdf_DetQ_ic_gbound_05, paste0(here::here(),"/sim_res/null/resdf_DetQ_ic_gbound_05.RDS"))
-
-resdf_DetQ_Qint_ic_v5 <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
-  res <- NULL
-  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE, det.Q=TRUE, varmethod = "ic"))
-  return(res)
-}
-saveRDS(resdf_DetQ_Qint_ic_v5, paste0(here::here(),"/sim_res/null/old_null_sim_res_DetQ_Qint_ic_v5.RDS"))
-
-
-
-
+saveRDS(resdf_Qint_lasso_prescreen, paste0(here::here(),"/sim_res/null/sim_res_Qint_lasso_prescreen_ic.RDS"))
