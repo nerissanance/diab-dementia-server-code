@@ -9,7 +9,7 @@ source(paste0(here::here(),"/simulation study/0_simulation_functions.R"))
 
 library(parallel)
 library(doParallel)
-registerDoParallel(cores=100)
+registerDoParallel(cores=50)
 
 gc()
 d_wide_list <- readRDS(file=here("data/simulated_data_list.RDS"))
