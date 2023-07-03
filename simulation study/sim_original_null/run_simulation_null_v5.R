@@ -25,20 +25,20 @@ gc()
 # saveRDS(resdf_DetQ_ic_gbound_untrunc, paste0(here::here(),"/sim_res/null/null_resdf_DetQ_ic_gbound_untrunc.RDS"))
 #
 
-resdf_DetQ_ic_Qint_gbound_untrunc <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
-  res <- NULL
-  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE,gbound = c(0, 1), det.Q=TRUE, varmethod = "ic"))
-  return(res)
-}
-saveRDS(resdf_DetQ_ic_Qint_gbound_untrunc, paste0(here::here(),"/null/protective/null_resdf_DetQ_ic_Qint_gbound_untrunc.RDS"))
-
-
-resdf_DetQ_ic_Qint_gbound_001 <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
-  res <- NULL
-  try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE,gbound = c(0.001, 1), det.Q=TRUE, varmethod = "ic"))
-  return(res)
-}
-saveRDS(resdf_DetQ_ic_Qint_gbound_001, paste0(here::here(),"/null/protective/null_resdf_DetQ_ic_Qint_gbound_001.RDS"))
+# resdf_DetQ_ic_Qint_gbound_untrunc <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+#   res <- NULL
+#   try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE,gbound = c(0, 1), det.Q=TRUE, varmethod = "ic"))
+#   return(res)
+# }
+# saveRDS(resdf_DetQ_ic_Qint_gbound_untrunc, paste0(here::here(),"/sim_res/null/null_resdf_DetQ_ic_Qint_gbound_untrunc.RDS"))
+#
+#
+# resdf_DetQ_ic_Qint_gbound_001 <- foreach(i = 1:length(d_wide_list), .combine = 'bind_rows', .errorhandling = 'remove') %dopar% {
+#   res <- NULL
+#   try(res <- run_ltmle_glmnet(d_wide_list[[i]], resdf=NULL, Qint=TRUE,gbound = c(0.001, 1), det.Q=TRUE, varmethod = "ic"))
+#   return(res)
+# }
+# saveRDS(resdf_DetQ_ic_Qint_gbound_001, paste0(here::here(),"/sim_res/null/null_resdf_DetQ_ic_Qint_gbound_001.RDS"))
 
 
 
